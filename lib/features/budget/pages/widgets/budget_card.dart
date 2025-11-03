@@ -5,7 +5,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fintrack/features/budget/bloc/budget_bloc.dart';
+import 'package:fintrack/features/budget/bloc/budget_event.dart';
 import 'package:fintrack/features/budget/bloc/budget_state.dart';
+import 'package:fintrack/features/budget/pages/detail_budget.dart';
 import 'package:fintrack/features/budget/models/budget_model.dart';
 
 class BudgetCard extends StatelessWidget {
@@ -63,12 +65,32 @@ class BudgetCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(
-                        "See All",
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.grey,
-                          fontSize: 14,
-                        ),
+                      Builder(
+                        builder: (innerContext) {
+                          return GestureDetector(
+                            onTap: () {
+                              final bloc = innerContext.read<BudgetBloc>();
+                              bloc.add(SelectBudget(budget));
+
+                              Navigator.push(
+                                innerContext,
+                                MaterialPageRoute(
+                                  builder: (_) => BlocProvider.value(
+                                    value: bloc,
+                                    child: const DetailBudgetPage(),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              "See All",
+                              style: AppTextStyles.caption.copyWith(
+                                color: AppColors.grey,
+                                fontSize: 14,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -153,7 +175,6 @@ class BudgetCard extends StatelessWidget {
     double h,
   ) {
     if (status == "Overspending") {
-      // Nếu đã vượt chi: chỉ 1 section 100%
       return [
         PieChartSectionData(
           color: AppColors.blue,
@@ -163,7 +184,6 @@ class BudgetCard extends StatelessWidget {
         ),
       ];
     } else {
-      // Các trạng thái khác: Within / Risk
       return [
         PieChartSectionData(
           color: _getColorForStatus(status),

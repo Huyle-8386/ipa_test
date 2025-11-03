@@ -7,6 +7,7 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
   BudgetBloc() : super(BudgetState.initial()) {
     on<LoadBudgets>(_onLoadBudgets);
     on<BudgetTabChanged>(_onTabChanged);
+    on<SelectBudget>(_onSelectBudget);
   }
 
   void _onLoadBudgets(LoadBudgets event, Emitter<BudgetState> emit) {
@@ -23,5 +24,9 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
         .toList();
 
     emit(state.copyWith(selectedTab: event.selectedTab, budgets: filtered));
+  }
+
+  void _onSelectBudget(SelectBudget event, Emitter<BudgetState> emit) {
+    emit(state.copyWith(selectedBudget: event.budget));
   }
 }
