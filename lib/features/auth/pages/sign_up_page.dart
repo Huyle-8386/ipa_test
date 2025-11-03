@@ -42,17 +42,6 @@ class _SignUpPageState extends State<SignUpPage> {
     });
   }
 
-  bool _isFormValid() {
-    return _emailError == null &&
-        _passwordError == null &&
-        _fullNameController.text.isNotEmpty &&
-        _emailController.text.isNotEmpty &&
-        _passwordController.text.isNotEmpty &&
-        _phoneController.text.isNotEmpty &&
-        AuthValidator.validateEmail(_emailController.text) &&
-        AuthValidator.validatePassword(_passwordController.text);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,12 +58,23 @@ class _SignUpPageState extends State<SignUpPage> {
                 SizedBox(height: SizeUtils.height(context) * 0.08),
                 // Logo
                 Center(
-                  child: Text(
-                    'fintrack',
-                    style: AppTextStyles.heading1.copyWith(
-                      color: AppColors.main,
-                      fontSize: 36,
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/icons/fintrack_icon.png',
+                        width: 40,
+                        height: 40,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'fintrack',
+                        style: AppTextStyles.heading1.copyWith(
+                          color: AppColors.main,
+                          fontSize: 36,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(height: SizeUtils.height(context) * 0.08),
@@ -131,18 +131,15 @@ class _SignUpPageState extends State<SignUpPage> {
                 // Create account button
                 CustomButton(
                   label: 'Create account',
-                  onPressed: _isFormValid()
-                      ? () {
-                          // Navigate to home
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomePage(),
-                            ),
-                          );
-                        }
-                      : null,
-                  isEnabled: _isFormValid(),
+                  onPressed: () {
+                    // Navigate to home
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomePage(),
+                      ),
+                    );
+                  },
                 ),
                 SizedBox(height: SizeUtils.height(context) * 0.03),
                 // Sign in link

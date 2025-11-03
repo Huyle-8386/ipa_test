@@ -3,7 +3,6 @@ import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
 import 'package:fintrack/features/auth/pages/sign_up_page.dart';
 import 'package:fintrack/features/auth/widgets/auth_widgets.dart';
-import 'package:fintrack/features/home/pages/home_page.dart';
 import 'package:fintrack/features/navigation/pages/bottombar_page.dart';
 import 'package:flutter/material.dart';
 
@@ -40,15 +39,6 @@ class _SignInPageState extends State<SignInPage> {
     });
   }
 
-  bool _isFormValid() {
-    return _emailError == null &&
-        _passwordError == null &&
-        _emailController.text.isNotEmpty &&
-        _passwordController.text.isNotEmpty &&
-        AuthValidator.validateEmail(_emailController.text) &&
-        AuthValidator.validatePassword(_passwordController.text);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,21 +55,34 @@ class _SignInPageState extends State<SignInPage> {
                 SizedBox(height: SizeUtils.height(context) * 0.08),
                 // Logo
                 Center(
-                  child: Text(
-                    'fintrack',
-                    style: AppTextStyles.heading1.copyWith(
-                      color: AppColors.main,
-                      fontSize: 36,
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/icons/fintrack_icon.png',
+                        width: 40,
+                        height: 40,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'fintrack',
+                        style: AppTextStyles.heading1.copyWith(
+                          color: AppColors.main,
+                          fontSize: 36,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(height: SizeUtils.height(context) * 0.08),
                 // Welcome back title
-                Text(
-                  'Welcome back!',
-                  style: AppTextStyles.heading1.copyWith(
-                    color: AppColors.white,
-                    fontSize: 28,
+                Center(
+                  child: Text(
+                    'Welcome back!',
+                    style: AppTextStyles.heading1.copyWith(
+                      color: AppColors.white,
+                      fontSize: 28,
+                    ),
                   ),
                 ),
                 SizedBox(height: SizeUtils.height(context) * 0.04),
@@ -204,16 +207,7 @@ class _SignInPageState extends State<SignInPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SocialLoginButton(
-                      icon: Icons.g_mobiledata,
-                      label: 'Google',
-                      onPressed: () {
-                        // TODO: Implement social login
-                        // Chỗ này sẽ là chỗ làm thêm cho trang đăng nhập bằng gg
-                      },
-                    ),
-                    const SizedBox(width: 16),
-                    SocialLoginButton(
-                      icon: Icons.facebook,
+                      iconPath: 'assets/icons/facebook_logo.png',
                       label: 'Facebook',
                       onPressed: () {
                         // TODO: Implement social login
@@ -222,7 +216,16 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                     const SizedBox(width: 16),
                     SocialLoginButton(
-                      icon: Icons.link,
+                      iconPath: 'assets/icons/google_logo.png',
+                      label: 'Google',
+                      onPressed: () {
+                        // TODO: Implement social login
+                        // Chỗ này sẽ là chỗ làm thêm cho trang đăng nhập bằng gg
+                      },
+                    ),
+                    const SizedBox(width: 16),
+                    SocialLoginButton(
+                      iconPath: 'assets/icons/linkedin_logo.png',
                       label: 'LinkedIn',
                       onPressed: () {
                         // TODO: Implement social login

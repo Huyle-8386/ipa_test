@@ -27,7 +27,7 @@ class AuthValidator {
     }
 
     if (!email.endsWith('@gmail.com') || email.indexOf('@') < 2) {
-      return 'Vui lòng nhập đúng định dạng email';
+      return 'Please enter a valid email format';
     }
 
     return null;
@@ -73,7 +73,7 @@ class AuthValidator {
         !password.contains(RegExp(r'[A-Z]')) ||
         !password.contains(RegExp(r'[a-z]')) ||
         !password.contains(RegExp(r'[0-9]'))) {
-      return 'Vui lòng nhập mật khẩu có ít nhất 6 kí tự, chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số';
+      return 'Password must be at least 6 characters with 1 uppercase, 1 lowercase and 1 number';
     }
 
     return null;
