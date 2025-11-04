@@ -43,10 +43,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       scrollBehavior: DesktopScrollBehavior(),
-
       debugShowCheckedModeBanner: false,
-
       home: SignInPage(),
+      
     );
   }
 }
