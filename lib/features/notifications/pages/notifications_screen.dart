@@ -1,44 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
+import 'package:fintrack/features/notifications/bloc/notifications_bloc.dart';
+import 'package:fintrack/features/notifications/data/datasources/notification_remote_data_source.dart';
+import 'package:fintrack/features/notifications/data/repositories/notification_repository_impl.dart';
+import 'package:fintrack/features/notifications/domain/usecases/get_notifications.dart';
+import 'package:fintrack/features/notifications/domain/usecases/mark_as_read.dart';
+import 'package:fintrack/features/notifications/domain/usecases/mark_all_as_read.dart';
+import 'package:fintrack/features/notifications/domain/entities/notification_item.dart';
 
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final notifications = [
-      NotificationItem(
-        iconPath: 'assets/icons/new_transaction.png',
-        title: 'New Transaction',
-        time: 'Today | 8:21 AM',
-        description: 'You received a payment of \$50',
-        isUnread: true,
-      ),
-      NotificationItem(
-        iconPath: 'assets/icons/bill_reminder.png',
-        title: 'Bill Reminder',
-        time: 'Today | 10:42 AM',
-        description: 'Don\'t forget to pay your electricity bill by the end of the week',
-        isUnread: true,
-      ),
-      NotificationItem(
-        iconPath: 'assets/icons/alert.png',
-        title: 'Budget Alert',
-        time: '1 day ago | 11:42 PM',
-        description: 'You\'ve exceeded 90% of your monthly budget for "Groceries"',
-        isUnread: true,
-      ),
-      NotificationItem(
-        iconPath: 'assets/icons/alert.png',
-        title: 'Expense Alert',
-        time: '2 days ago | 11:25 PM',
-        description: 'Your recent grocery expense was higher than usual. Review your spending.',
-        isUnread: false,
-      ),
-    ];
+    // Setup dependencies
+    final remoteDataSource = NotificationRemoteDataSourceImpl();
+    final repository = NotificationRepositoryImpl(remoteDataSource: remoteDataSource);
+    final getNotifications = GetNotifications(repository);
+    final markAsRead = MarkAsRead(repository);
+    final markAllAsRead = MarkAllAsRead(repository);
 
-    return Scaffold(
+    return BlocProvider(
+      create: (context) => NotificationsBloc(
+        getNotifications: getNotifications,
+        markAsRead: markAsRead,
+        markAllAsRead: markAllAsRead,
+      )..add(LoadNotifications()),
+      child: Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
@@ -56,7 +46,9 @@ class NotificationsScreen extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              context.read<NotificationsBloc>().add(MarkAllAsReadEvent());
+            },
             child: Text(
               'Mark all as read',
               style: AppTextStyles.body2.copyWith(
@@ -68,18 +60,36 @@ class NotificationsScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: notifications.length,
-        itemBuilder: (context, index) {
-          final notification = notifications[index];
-          return _buildNotificationCard(notification);
+      body: BlocBuilder<NotificationsBloc, NotificationsState>(
+        builder: (context, state) {
+          if (state.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state.notifications.isEmpty) {
+            return Center(
+              child: Text(
+                'No notifications',
+                style: AppTextStyles.body2.copyWith(color: AppColors.grey),
+              ),
+            );
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: state.notifications.length,
+            itemBuilder: (context, index) {
+              final notification = state.notifications[index];
+              return _buildNotificationCard(context, notification);
+            },
+          );
         },
       ),
+    ),
     );
   }
 
-  Widget _buildNotificationCard(NotificationItem notification) {
+  Widget _buildNotificationCard(BuildContext context, NotificationItem notification) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -161,20 +171,4 @@ class NotificationsScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-class NotificationItem {
-  final String iconPath;
-  final String title;
-  final String time;
-  final String description;
-  final bool isUnread;
-
-  NotificationItem({
-    required this.iconPath,
-    required this.title,
-    required this.time,
-    required this.description,
-    this.isUnread = false,
-  });
 }

@@ -29,6 +29,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   final List _list = ['1', '2', '3'];
+
   @override
   Widget build(BuildContext context) {
     final h = SizeUtils.height(context);

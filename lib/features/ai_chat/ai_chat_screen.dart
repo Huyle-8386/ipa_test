@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
+import 'package:fintrack/features/ai_chat/bloc/chat_bloc.dart';
+import 'package:fintrack/features/ai_chat/data/datasources/chat_remote_data_source.dart';
+import 'package:fintrack/features/ai_chat/data/repositories/chat_repository_impl.dart';
+import 'package:fintrack/features/ai_chat/domain/usecases/get_chat_sessions.dart';
+import 'package:fintrack/features/ai_chat/domain/usecases/create_new_chat_session.dart';
 import 'chat_detail_screen.dart';
 
 class AIChatScreen extends StatelessWidget {
@@ -8,8 +14,19 @@ class AIChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
+    // Setup dependencies
+    final remoteDataSource = ChatRemoteDataSourceImpl();
+    final repository = ChatRepositoryImpl(remoteDataSource: remoteDataSource);
+    final getChatSessions = GetChatSessions(repository);
+    final createNewChatSession = CreateNewChatSession(repository);
+
+    return BlocProvider(
+      create: (context) => ChatBloc(
+        getChatSessions: getChatSessions,
+        createNewChatSession: createNewChatSession,
+      )..add(LoadChatSessions()),
+      child: Scaffold(
+        backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
@@ -91,110 +108,139 @@ class AIChatScreen extends StatelessWidget {
                   const SizedBox(height: 40),
                   
                   // New Chat Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: ElevatedButton(
-                      onPressed: () {
+                  BlocConsumer<ChatBloc, ChatState>(
+                    listener: (context, state) {
+                      if (state.newSessionId != null) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const ChatDetailScreen(),
+                            builder: (context) => ChatDetailScreen(
+                              sessionId: state.newSessionId!,
+                            ),
                           ),
                         );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.main,
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                      }
+                    },
+                    builder: (context, state) {
+                      return SizedBox(
+                        width: double.infinity,
+                        height: 56,
+                        child: ElevatedButton(
+                          onPressed: state.isLoading
+                              ? null
+                              : () {
+                                  context.read<ChatBloc>().add(CreateNewChatSessionEvent());
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.main,
+                            foregroundColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: state.isLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.black,
+                                  ),
+                                )
+                              : Text(
+                                  'New Chat',
+                                  style: AppTextStyles.body1.copyWith(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                         ),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        'New Chat',
-                        style: AppTextStyles.body1.copyWith(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
                 ],
               ),
             ),
             
             // Previous Chats Section
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Text(
-                    'Previous 7 days',
-                    style: AppTextStyles.caption.copyWith(
-                      color: AppColors.grey,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-                
-                // Chat History List
-                ...List.generate(
-                  4,
-                  (index) => Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ChatDetailScreen(),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: AppColors.widget,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.chat_bubble_outline,
-                              color: AppColors.grey,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                'Can you recommend investment strategy...',
-                                style: AppTextStyles.body2.copyWith(
-                                  color: AppColors.white,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
+            BlocBuilder<ChatBloc, ChatState>(
+              builder: (context, state) {
+                if (state.sessions.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Text(
+                        'Previous 7 days',
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.grey,
+                          fontSize: 12,
                         ),
                       ),
                     ),
-                  ),
-                ),
-              ],
+                    
+                    // Chat History List
+                    ...state.sessions.take(4).map(
+                      (session) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatDetailScreen(
+                                  sessionId: session.id,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppColors.widget,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.chat_bubble_outline,
+                                  color: AppColors.grey,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    session.title,
+                                    style: AppTextStyles.body2.copyWith(
+                                      color: AppColors.white,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 14,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
             const SizedBox(height: 16),
           ],
         ),
       ),
-      
-      // Bottom Navigation Bar
-      
+    ),
     );
   }
 }
