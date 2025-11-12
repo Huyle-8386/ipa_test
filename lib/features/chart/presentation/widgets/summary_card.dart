@@ -33,8 +33,6 @@ class SummaryCard extends StatelessWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.asset(
             icon,
@@ -44,7 +42,6 @@ class SummaryCard extends StatelessWidget {
           ),
           SizedBox(width: w * 0.03),
           Column(
-            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
@@ -56,7 +53,6 @@ class SummaryCard extends StatelessWidget {
                 "${change >= 0 ? '+' : ''}${change.toStringAsFixed(1)}%",
                 style: AppTextStyles.body2.copyWith(
                   color: AppColors.grey,
-                  // color: change >= 0 ? Colors.greenAccent : Colors.redAccent,
                   fontWeight: FontWeight.bold,
                 ),
               ),

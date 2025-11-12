@@ -1,14 +1,14 @@
+import 'package:fintrack/features/chart/presentation/widgets/account_item.dart';
+import 'package:fintrack/features/chart/presentation/widgets/chart_view.dart';
+import 'package:fintrack/features/chart/presentation/widgets/filter_button.dart';
+import 'package:fintrack/features/chart/presentation/widgets/summary_card.dart';
+import 'package:fintrack/features/home/bloc/home_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
-import 'package:fintrack/features/chart/bloc/chart_bloc.dart';
-import 'package:fintrack/features/chart/pages/widgets/account_item.dart';
-import 'package:fintrack/features/chart/pages/widgets/chart_view.dart';
-import 'package:fintrack/features/chart/pages/widgets/filter_button.dart';
-import 'package:fintrack/features/chart/pages/widgets/summary_card.dart';
-import 'package:fintrack/features/home/bloc/home_bloc.dart';
+import '../bloc/chart_bloc.dart';
 
 class ChartPage extends StatefulWidget {
   const ChartPage({super.key});
@@ -19,13 +19,6 @@ class ChartPage extends StatefulWidget {
 
 class _ChartPageState extends State<ChartPage> {
   final TextEditingController _searchController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    context.read<HomeBloc>().add(LoadAcountsEvent());
-    context.read<ChartBloc>().add(LoadChartDataEvent());
-  }
 
   @override
   void dispose() {
@@ -48,6 +41,7 @@ class _ChartPageState extends State<ChartPage> {
           ),
           child: Column(
             children: [
+              // Header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -73,7 +67,7 @@ class _ChartPageState extends State<ChartPage> {
               ),
               SizedBox(height: h * 0.02),
 
-              /// Search box
+              // Search box
               Container(
                 height: h * 0.06,
                 width: w * 0.9,
@@ -101,31 +95,37 @@ class _ChartPageState extends State<ChartPage> {
               ),
               SizedBox(height: h * 0.02),
 
-              /// Chart section
+              // Chart section
               BlocBuilder<ChartBloc, ChartState>(
                 builder: (context, state) {
                   return Column(
                     children: [
+                      // Filter buttons
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: ["Daily", "Weekly", "Monthly", "Yearly"].map((
-                          label,
-                        ) {
-                          return FilterButton(
-                            label: label,
-                            selected: state.selectedFilter == label,
-                            onTap: () => context.read<ChartBloc>().add(
-                              ChangeFilterEvent(label),
-                            ),
-                          );
-                        }).toList(),
+                        children: ["Daily", "Weekly", "Monthly", "Yearly"]
+                            .map(
+                              (label) => FilterButton(
+                                label: label,
+                                selected: state.selectedFilter == label,
+                                onTap: () => context.read<ChartBloc>().add(
+                                  ChangeFilterEvent(label),
+                                ),
+                              ),
+                            )
+                            .toList(),
                       ),
                       SizedBox(height: h * 0.02),
+
+                      // Chart view
                       if (state.chartData.isNotEmpty)
                         ChartView(data: state.chartData)
                       else
                         const CircularProgressIndicator(),
+
                       SizedBox(height: h * 0.02),
+
+                      // Summary cards
                       if (state.chartData.isNotEmpty)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -160,6 +160,7 @@ class _ChartPageState extends State<ChartPage> {
                   );
                 },
               ),
+
               SizedBox(height: h * 0.02),
 
               /// Balance info

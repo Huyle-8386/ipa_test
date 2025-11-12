@@ -1,12 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
-import 'package:fintrack/features/chart/models/chart_data.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
+import '../../domain/entities/chart.dart';
 
 class ChartView extends StatelessWidget {
-  final List<ChartData> data;
+  final List<Chart> data;
 
   const ChartView({super.key, required this.data});
 
@@ -15,11 +15,8 @@ class ChartView extends StatelessWidget {
     final h = SizeUtils.height(context);
     final w = SizeUtils.width(context);
 
-    if (data.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    if (data.isEmpty) return const Center(child: CircularProgressIndicator());
 
-    // Scale trục Y
     final maxIncome = data.map((e) => e.income).reduce((a, b) => a > b ? a : b);
     final maxExpense = data
         .map((e) => e.expense)
@@ -27,7 +24,6 @@ class ChartView extends StatelessWidget {
     final maxValue = (maxIncome > maxExpense ? maxIncome : maxExpense);
     final interval = (maxValue / 3).ceilToDouble();
 
-    // Format ngày hiện tại
     final now = DateTime.now();
     final day = now.day.toString().padLeft(2, '0');
     final monthNames = [
@@ -51,7 +47,6 @@ class ChartView extends StatelessWidget {
     return Container(
       width: w * 0.9,
       height: h * 0.25,
-      // padding: EdgeInsets.all(w * 0.05),
       padding: EdgeInsets.fromLTRB(w * 0.02, w * 0.01, w * 0.05, w * 0.01),
       decoration: BoxDecoration(
         color: AppColors.widget,

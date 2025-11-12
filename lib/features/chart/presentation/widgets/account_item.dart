@@ -53,7 +53,6 @@ class AccountItem extends StatelessWidget {
                   ),
                 ],
               ),
-
               Text(
                 money,
                 style: AppTextStyles.body2.copyWith(
