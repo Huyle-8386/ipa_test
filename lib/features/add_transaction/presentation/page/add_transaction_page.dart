@@ -8,6 +8,8 @@ import 'package:fintrack/features/add_transaction/presentation/widget/labeled_te
 import 'package:fintrack/features/add_transaction/presentation/widget/money_source_field.dart';
 import 'package:flutter/material.dart';
 
+enum EntryTab { manual, image }
+
 class AddTransactionPage extends StatefulWidget {
   const AddTransactionPage({super.key});
 
@@ -22,6 +24,8 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   final TextEditingController _noteController = TextEditingController();
 
   TransactionType _type = TransactionType.expense;
+  EntryTab _tab = EntryTab.manual; // mặc định Manual Entry
+
   List<Category> get _categories =>
       _type == TransactionType.expense ? expenseCategories : incomeCategories;
 
@@ -59,46 +63,82 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 children: [
                   Expanded(
                     flex: 1,
-                    child: Column(
-                      // mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: h * 0.02),
-                          child: Column(
+                    child: GestureDetector(
+                      onTap: () => setState(() => _tab = EntryTab.manual),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Image.asset("assets/icons/manual_entry.png"),
+                              Image.asset(
+                                "assets/icons/manual_entry.png",
+                                color: _tab == EntryTab.manual
+                                    ? AppColors.main
+                                    : AppColors.white,
+                              ),
                               Text(
                                 "Manual Entry",
                                 style: AppTextStyles.body2.copyWith(
-                                  color: AppColors.main,
+                                  color: _tab == EntryTab.manual
+                                      ? AppColors.main
+                                      : AppColors.white,
                                 ),
                               ),
                             ],
                           ),
-                        ),
-
-                        SizedBox(height: h * 0.027),
-                        Container(
-                          width: w * 0.5,
-                          height: h * 0.002,
-                          decoration: BoxDecoration(color: AppColors.main),
-                        ),
-                      ],
+                          Positioned(
+                            bottom: 0,
+                            child: Container(
+                              width: w * 0.5,
+                              height: 2,
+                              color: _tab == EntryTab.manual
+                                  ? AppColors.main
+                                  : Colors.transparent,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   Expanded(
                     flex: 1,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset("assets/icons/image_entry.png"),
-                        Text(
-                          "Image Entry",
-                          style: AppTextStyles.body2.copyWith(
-                            color: AppColors.white,
+                    child: GestureDetector(
+                      onTap: () => setState(() => _tab = EntryTab.image),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/icons/image_entry.png",
+                                color: _tab == EntryTab.image
+                                    ? AppColors.main
+                                    : AppColors.white,
+                              ),
+                              Text(
+                                "Image Entry",
+                                style: AppTextStyles.body2.copyWith(
+                                  color: _tab == EntryTab.image
+                                      ? AppColors.main
+                                      : AppColors.white,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                          Positioned(
+                            bottom: 0,
+                            child: Container(
+                              width: w * 0.5,
+                              height: 2,
+                              color: _tab == EntryTab.image
+                                  ? AppColors.main
+                                  : Colors.transparent,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -110,171 +150,17 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 horizontal: w * 0.05,
                 vertical: h * 0.03,
               ),
-              child: Container(
-                height: h * 0.6,
-                decoration: BoxDecoration(
-                  color: AppColors.widget,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: w * 0.05,
-                    vertical: h * 0.03,
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          GestureDetector(
-                            onTap: () =>
-                                setState(() => _type = TransactionType.expense),
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  "assets/icons/expenses_add_transaction.png",
-                                  color: _type == TransactionType.expense
-                                      ? AppColors.main
-                                      : AppColors.white,
-                                ),
-                                SizedBox(width: w * 0.02),
-                                Text(
-                                  "Expenses",
-                                  style: AppTextStyles.body1.copyWith(
-                                    color: _type == TransactionType.expense
-                                        ? AppColors.main
-                                        : AppColors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () =>
-                                setState(() => _type = TransactionType.income),
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  "assets/icons/income_add_transaction.png",
-                                  color: _type == TransactionType.income
-                                      ? AppColors.main
-                                      : AppColors.white,
-                                ),
-                                SizedBox(width: w * 0.02),
-                                Text(
-                                  "Income ",
-                                  style: AppTextStyles.body1.copyWith(
-                                    color: _type == TransactionType.income
-                                        ? AppColors.main
-                                        : AppColors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: h * 0.02),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: LabeledTextField(
-                              controller: _amountController,
-                              label: 'Amount',
-                              hint: '0đ',
-                              keyboardType: TextInputType.number,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: h * 0.02),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(left: w * 0.05),
-                                  child: Text(
-                                    "Category",
-                                    style: AppTextStyles.caption.copyWith(
-                                      color: AppColors.grey,
-                                      fontSize: 10,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: h * 0.01),
-                                SizedBox(
-                                  height: h * 0.1,
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: _categories.length,
-                                    itemBuilder: (context, index) {
-                                      final item = _categories[index];
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                          right: w * 0.04,
-                                        ), // tạo khoảng cách
-                                        child: CategoryWidget(category: item),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      SizedBox(height: h * 0.02),
-
-                      Row(
-                        children: [
-                          Expanded(
-                            child: DatePickerField(
-                              controller: _dateController,
-                              label: 'Transaction date',
-                              pickTime: true,
-                              hint: 'Date',
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      SizedBox(height: h * 0.02),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: MoneySourceField(
-                              controller: _moneyController,
-                              label: "Money Source",
-                              hint: "Money Source",
-                              onSelected: (value) {
-                                print("User chọn: $value");
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      SizedBox(height: h * 0.02),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: LabeledTextField(
-                              controller: _noteController,
-                              label: 'Note',
-                              hint: 'Enter transaction description',
-                              keyboardType: TextInputType.number,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              child: _tab == EntryTab.manual
+                  ? _buildManualEntry(
+                      context,
+                      h,
+                      w,
+                    ) // dùng nội dung manual bạn đã có
+                  : _buildImageEntry(
+                      context,
+                      h,
+                      w,
+                    ), // hiển thị từ ảnh image_entry.png
             ),
           ],
         ),
@@ -289,11 +175,210 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
           ),
           child: Center(
             child: Text(
-              _type == TransactionType.expense
-                  ? "Add expense transaction"
-                  : "Add income transaction",
-              style: AppTextStyles.body2.copyWith(),
+              _tab == EntryTab.manual
+                  ? (_type == TransactionType.expense
+                        ? "Add Expense Transaction"
+                        : "Add Income Transaction")
+                  : "Select Image Now", // đúng như mock Image Entry
+              style: AppTextStyles.body2.copyWith(fontSize: 18),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+
+
+  Widget _buildManualEntry(BuildContext context, double h, double w) {
+    return Container(
+      height: h * 0.6,
+      decoration: BoxDecoration(
+        color: AppColors.widget,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Container(
+        height: h * 0.6,
+        decoration: BoxDecoration(
+          color: AppColors.widget,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: w * 0.05,
+            vertical: h * 0.03,
+          ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  GestureDetector(
+                    onTap: () =>
+                        setState(() => _type = TransactionType.expense),
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          "assets/icons/expenses_add_transaction.png",
+                          color: _type == TransactionType.expense
+                              ? AppColors.main
+                              : AppColors.white,
+                        ),
+                        SizedBox(width: w * 0.02),
+                        Text(
+                          "Expenses",
+                          style: AppTextStyles.body1.copyWith(
+                            color: _type == TransactionType.expense
+                                ? AppColors.main
+                                : AppColors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => setState(() => _type = TransactionType.income),
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          "assets/icons/income_add_transaction.png",
+                          color: _type == TransactionType.income
+                              ? AppColors.main
+                              : AppColors.white,
+                        ),
+                        SizedBox(width: w * 0.02),
+                        Text(
+                          "Income ",
+                          style: AppTextStyles.body1.copyWith(
+                            color: _type == TransactionType.income
+                                ? AppColors.main
+                                : AppColors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: h * 0.02),
+              Row(
+                children: [
+                  Expanded(
+                    child: LabeledTextField(
+                      controller: _amountController,
+                      label: 'Amount',
+                      hint: '0đ',
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: h * 0.02),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: w * 0.05),
+                          child: Text(
+                            "Category",
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.grey,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: h * 0.01),
+                        SizedBox(
+                          height: h * 0.1,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: _categories.length,
+                            itemBuilder: (context, index) {
+                              final item = _categories[index];
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                  right: w * 0.04,
+                                ), // tạo khoảng cách
+                                child: CategoryWidget(category: item),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: h * 0.02),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: DatePickerField(
+                      controller: _dateController,
+                      label: 'Transaction date',
+                      pickTime: true,
+                      hint: 'Date',
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: h * 0.02),
+              Row(
+                children: [
+                  Expanded(
+                    child: MoneySourceField(
+                      controller: _moneyController,
+                      label: "Money Source",
+                      hint: "Money Source",
+                      onSelected: (value) {
+                        print("User chọn: $value");
+                      },
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: h * 0.02),
+              Row(
+                children: [
+                  Expanded(
+                    child: LabeledTextField(
+                      controller: _noteController,
+                      label: 'Note',
+                      hint: 'Enter transaction description',
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImageEntry(BuildContext context, double h, double w) {
+    return Container(
+      height: h * 0.6,
+      width: w,
+      decoration: BoxDecoration(
+        // color: AppColors.widget,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15),
+        child: Center(
+          child: Image.asset(
+            'assets/images/image_entry.png',
+            width: w,
+            fit: BoxFit.contain,
           ),
         ),
       ),
