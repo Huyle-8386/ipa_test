@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:fintrack/features/add_transaction/data/datasource/category.dart';
+// import 'package:fintrack/features/add_transaction/data/datasource/category.dart';
+import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_state.dart';
 
-enum EntryTab { manual, image }
+// enum EntryTab { manual, image }
 
 
 abstract class AddTxEvent {}

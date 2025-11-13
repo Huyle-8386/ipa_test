@@ -1,4 +1,4 @@
-enum TransactionType { expense, income }
+// enum TransactionType { expense, income }
 
 class Category {
   final String name;

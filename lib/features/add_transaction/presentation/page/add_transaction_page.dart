@@ -1,6 +1,7 @@
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
+import 'package:fintrack/di/injector.dart';
 import 'package:fintrack/features/add_transaction/data/datasource/category.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_bloc.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_event.dart';
@@ -49,8 +50,8 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   Widget build(BuildContext context) {
     final h = SizeUtils.height(context);
     final w = SizeUtils.width(context);
-    return BlocProvider(
-      create: (_) => AddTxBloc()..add(AddTxInitEvent()),
+    return BlocProvider<AddTxBloc>(
+      create: (_) => sl<AddTxBloc>()..add(AddTxInitEvent()),
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(

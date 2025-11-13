@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:fintrack/di/injector.dart' as di;
 import 'package:fintrack/features/add_transaction/presentation/page/add_transaction_page.dart';
 import 'package:fintrack/features/auth/pages/sign_in_page.dart';
 import 'package:fintrack/features/navigation/pages/bottombar_page.dart';
@@ -7,8 +8,10 @@ import 'package:fintrack/features/navigation/pages/bottombar_page.dart';
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 
-void main() {
+void main() async{
+  await di.init();
   runApp(const MyApp());
+
 
   // Setup cửa sổ khi app khởi động
   doWhenWindowReady(() {
@@ -30,6 +33,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       scrollBehavior: DesktopScrollBehavior(),
       debugShowCheckedModeBanner: false,
+      
       home: AddTransactionPage(),
       // home: SignInPage(),
     );

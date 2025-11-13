@@ -2,10 +2,11 @@ import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
 import 'package:fintrack/features/add_transaction/data/datasource/category.dart';
+import 'package:fintrack/features/add_transaction/domain/entities/category_entity.dart';
 import 'package:flutter/material.dart';
 
 class CategoryWidget extends StatelessWidget {
-  final Category category;
+  final CategoryEntity category;
   final bool selected;
 
   const CategoryWidget({super.key, required this.category,this.selected = false,});
