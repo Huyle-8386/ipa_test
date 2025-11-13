@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fintrack/features/transaction_ history/bloc/transaction_ history_event.dart';
-import 'package:fintrack/features/transaction_ history/bloc/transaction_ history_state.dart';
-import 'package:fintrack/features/transaction_ history/datasources/transaction_ history_data.dart';
+import 'package:fintrack/features/transaction_%20history/presentation/bloc/transaction_%20history_event.dart';
+import 'package:fintrack/features/transaction_%20history/presentation/bloc/transaction_%20history_state.dart';
+import 'package:fintrack/features/transaction_%20history/data/datasources/transaction_%20history_data.dart';
 
 class TransactionHistoryBloc
     extends Bloc<TransactionHistoryEvent, TransactionHistoryState> {

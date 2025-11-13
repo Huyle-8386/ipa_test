@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:fintrack/features/transaction_%20history/bloc/transaction_%20history_bloc.dart';
-import 'package:fintrack/features/transaction_%20history/pages/transaction_%20history_page.dart';
+import 'package:fintrack/features/transaction_%20history/presentation/bloc/transaction_%20history_bloc.dart';
+import 'package:fintrack/features/transaction_%20history/presentation/pages/transaction_%20history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';

@@ -1,12 +1,13 @@
-import 'package:fintrack/features/transaction_ history/datasources/transaction_ history_data.dart';
+import 'package:fintrack/core/theme/app_text_styles.dart';
+import 'package:fintrack/features/transaction_%20history/data/datasources/transaction_%20history_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
-import 'package:fintrack/features/transaction_ history/bloc/transaction_ history_bloc.dart';
-import 'package:fintrack/features/transaction_ history/bloc/transaction_ history_event.dart';
-import 'package:fintrack/features/transaction_ history/bloc/transaction_ history_state.dart';
-import 'package:fintrack/features/transaction_ history/pages/build_transaction_ history_list.dart';
+import 'package:fintrack/features/transaction_%20history/presentation/bloc/transaction_%20history_bloc.dart';
+import 'package:fintrack/features/transaction_%20history/presentation/bloc/transaction_%20history_event.dart';
+import 'package:fintrack/features/transaction_%20history/presentation/bloc/transaction_%20history_state.dart';
+import 'package:fintrack/features/transaction_%20history/presentation/widgets/build_transaction_%20history_list.dart';
 
 class TransactionHistoryPage extends StatefulWidget {
   const TransactionHistoryPage({super.key});
@@ -38,7 +39,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: w * 0.05, vertical: h * 0.01),
+        padding: EdgeInsets.symmetric(horizontal: w * 0.05, vertical: h * 0.03),
         child: BlocConsumer<TransactionHistoryBloc, TransactionHistoryState>(
           listener: (context, state) {
             if (state is TransactionHistoryError) {
@@ -145,16 +146,19 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
             );
           },
           decoration: InputDecoration(
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.send, color: AppColors.white),
+            prefixIcon: IconButton(
+              icon: const Icon(Icons.search, color: AppColors.white),
               onPressed: () {
                 context.read<TransactionHistoryBloc>().add(
                   SearchTransactions(_searchController.text),
                 );
               },
             ),
-            hintText: "Search",
-            hintStyle: const TextStyle(color: AppColors.grey),
+            hintText: "Super AI Search",
+            hintStyle: TextStyle(
+              color: AppColors.grey,
+              fontFamily: AppTextStyles.body2.fontFamily,
+            ),
             filled: true,
             fillColor: AppColors.widget,
             border: OutlineInputBorder(
@@ -195,7 +199,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
         Expanded(
           child: state.transactions.isEmpty
               ? _buildEmptyState()
-              : buildTransactionHistoryList(state.groupedTransactions),
+              : buildTransactionHistoryList(context, state.groupedTransactions),
         ),
       ],
     );

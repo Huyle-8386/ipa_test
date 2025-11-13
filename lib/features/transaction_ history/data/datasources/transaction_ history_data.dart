@@ -29,7 +29,7 @@ enum TransactionType { spending, income, all }
 final List<TransactionData> transactions = [
   // 2 July 2025
   TransactionData(
-    icon: 'assets/images/Taxi.png',
+    icon: 'assets/icons/taxi.png',
     color: Colors.blue,
     name: "Taxi",
     category: "Uber",
@@ -40,7 +40,7 @@ final List<TransactionData> transactions = [
     type: TransactionType.spending,
   ),
   TransactionData(
-    icon: 'assets/images/Transfer.png',
+    icon: 'assets/icons/transfer.png',
     color: Colors.green,
     name: "Transfer",
     category: "Agribank",
@@ -51,7 +51,7 @@ final List<TransactionData> transactions = [
     type: TransactionType.income,
   ),
   TransactionData(
-    icon: 'assets/images/Food.png',
+    icon: 'assets/icons/food.png',
     color: Colors.red,
     name: "Food",
     category: "Starbucks",
@@ -62,7 +62,7 @@ final List<TransactionData> transactions = [
     type: TransactionType.spending,
   ),
   TransactionData(
-    icon: 'assets/images/Food.png',
+    icon: 'assets/icons/food.png',
     color: Colors.red,
     name: "Food",
     category: "Highland",
@@ -75,7 +75,7 @@ final List<TransactionData> transactions = [
 
   // 1 July 2025
   TransactionData(
-    icon: 'assets/images/Shopping.png',
+    icon: 'assets/icons/shopping.png',
     color: Colors.orange,
     name: "Shopping",
     category: "Bravo",
@@ -88,7 +88,7 @@ final List<TransactionData> transactions = [
 
   // 14 June 2025
   TransactionData(
-    icon: 'assets/images/Taxi.png',
+    icon: 'assets/icons/taxi.png',
     color: Colors.blue,
     name: "Taxi",
     category: "Uber",
