@@ -1,16 +1,28 @@
-class BudgetModel {
+// lib/features/budget/domain/entities/budget_entity.dart
+import 'package:flutter/material.dart';
+
+class BudgetExpenseEntity {
+  final String category;
+  final double amount;
+  final int colorValue;
+
+  const BudgetExpenseEntity({
+    required this.category,
+    required this.amount,
+    required this.colorValue,
+  });
+}
+
+class BudgetEntity {
   final String name;
   final double spent;
   final double total;
   final bool isActive;
-
   final List<double> monthlySpending;
-
   final List<double> monthlyBudgetLimit;
+  final List<BudgetExpenseEntity> expenses;
 
-  final List<BudgetExpense> expenses;
-
-  BudgetModel({
+  const BudgetEntity({
     required this.name,
     required this.spent,
     required this.total,
@@ -27,16 +39,4 @@ class BudgetModel {
     if (percent >= 80 && percent < 100) return "Risk";
     return "Overspending";
   }
-}
-
-class BudgetExpense {
-  final String category;
-  final double amount;
-  final int colorValue;
-
-  const BudgetExpense({
-    required this.category,
-    required this.amount,
-    required this.colorValue,
-  });
 }

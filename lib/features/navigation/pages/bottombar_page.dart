@@ -2,6 +2,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
 import 'package:fintrack/features/auth/pages/sign_up_page.dart';
+import 'package:fintrack/features/chart/chart_injection.dart';
 // import 'package:fintrack/features/chart/bloc/chart_bloc.dart';
 import 'package:fintrack/features/chart/data/datasources/chart_data_source.dart';
 import 'package:fintrack/features/chart/data/repositories/chart_repository_impl.dart';
@@ -26,23 +27,11 @@ class BottombarPage extends StatelessWidget {
     final List<Widget> _page = [
       BlocProvider(create: (context) => HomeBloc(), child: HomePage()),
 
-      // MultiBlocProvider(
-      //   providers: [ BlocProvider(create: (context) => ChartBloc()),
-      //   BlocProvider(create: (context) => HomeBloc()),],
-      //   child: ChartPage()
-      //   ),
       MultiBlocProvider(
         providers: [
           BlocProvider<ChartBloc>(
-            create: (context) {
-              // Khởi tạo dependencies cho ChartBloc theo Clean Architecture
-              final chartDataSource = ChartDataSource();
-              final chartRepository = ChartRepositoryImpl(chartDataSource);
-              final getChartDataUseCase = GetChartDataUseCase(chartRepository);
-
-              return ChartBloc(getChartDataUseCase: getChartDataUseCase)
-                ..add(LoadChartDataEvent());
-            },
+            create: (context) =>
+                ChartInjection.injectBloc()..add(LoadChartDataEvent()),
           ),
           BlocProvider<HomeBloc>(
             create: (context) => HomeBloc()..add(LoadAcountsEvent()),

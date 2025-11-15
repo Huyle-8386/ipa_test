@@ -4,9 +4,15 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
-import 'package:fintrack/features/budget/bloc/budget_bloc.dart';
-import 'package:fintrack/features/budget/bloc/budget_event.dart';
-import 'package:fintrack/features/budget/pages/budget_page.dart';
+import 'package:fintrack/features/budget/budget_injection.dart';
+import 'package:fintrack/features/budget/data/datasources/budget_datasource.dart';
+
+import 'package:fintrack/features/budget/data/repositories/budget_repository_impl.dart';
+import 'package:fintrack/features/budget/domain/usecases/get_budgets.dart';
+import 'package:fintrack/features/budget/domain/usecases/select_budget.dart';
+import 'package:fintrack/features/budget/presentation/bloc/budget_bloc.dart';
+import 'package:fintrack/features/budget/presentation/bloc/budget_event.dart';
+import 'package:fintrack/features/budget/presentation/pages/budget_page.dart';
 import 'package:fintrack/features/home/bloc/home_bloc.dart';
 import 'package:fintrack/features/home/pages/account_item.dart';
 import 'package:fintrack/features/home/pages/my_pie_chart.dart';
@@ -208,9 +214,10 @@ class _HomePageState extends State<HomePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => BlocProvider(
-                                  create: (context) =>
-                                      BudgetBloc()..add(const LoadBudgets()),
+                                builder: (_) => BlocProvider(
+                                  create: (_) =>
+                                      BudgetInjection.injectBloc()
+                                        ..add(LoadBudgets()),
                                   child: const BudgetPage(),
                                 ),
                               ),

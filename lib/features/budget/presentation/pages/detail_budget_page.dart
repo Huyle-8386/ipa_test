@@ -1,14 +1,14 @@
-import 'package:fintrack/features/budget/pages/widgets/bar_chart_card.dart';
-import 'package:fintrack/features/budget/pages/widgets/line_chart_card.dart';
-import 'package:fintrack/features/budget/pages/widgets/pie_chart_card.dart';
+// lib/features/budget/presentation/pages/detail_budget_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fintrack/features/budget/bloc/budget_bloc.dart';
-import 'package:fintrack/features/budget/bloc/budget_state.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
-import 'package:fintrack/features/budget/models/budget_model.dart';
+import '../bloc/budget_bloc.dart';
+import '../bloc/budget_state.dart';
+import 'widgets/bar_chart_card.dart';
+import 'widgets/line_chart_card.dart';
+import 'widgets/pie_chart_card.dart';
 
 class DetailBudgetPage extends StatelessWidget {
   const DetailBudgetPage({super.key});
@@ -33,7 +33,7 @@ class DetailBudgetPage extends StatelessWidget {
       ),
       body: BlocBuilder<BudgetBloc, BudgetState>(
         builder: (context, state) {
-          final BudgetModel? budget = state.selectedBudget;
+          final budget = state.selectedBudget;
           if (budget == null) {
             return Center(
               child: Text(
@@ -60,7 +60,6 @@ class DetailBudgetPage extends StatelessWidget {
                   style: AppTextStyles.caption.copyWith(color: AppColors.grey),
                 ),
                 SizedBox(height: h * 0.0005),
-
                 // Progress bar + percent right
                 Row(
                   children: [
@@ -86,9 +85,7 @@ class DetailBudgetPage extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 SizedBox(height: h * 0.02),
-
                 // ListView cho các card biểu đồ
                 Expanded(
                   child: ListView(
@@ -124,9 +121,7 @@ class DetailBudgetPage extends StatelessWidget {
                           ],
                         ),
                       ),
-
                       SizedBox(height: h * 0.02),
-
                       // Card: Last 6 periods (Bar)
                       Container(
                         width: double.infinity,
@@ -157,9 +152,7 @@ class DetailBudgetPage extends StatelessWidget {
                           ],
                         ),
                       ),
-
                       SizedBox(height: h * 0.02),
-
                       // Card: Expenses (Pie)
                       Container(
                         width: double.infinity,
@@ -234,7 +227,6 @@ class DetailBudgetPage extends StatelessWidget {
                           ],
                         ),
                       ),
-
                       SizedBox(height: h * 0.05),
                     ],
                   ),

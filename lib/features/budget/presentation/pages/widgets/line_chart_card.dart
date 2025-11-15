@@ -1,3 +1,4 @@
+// lib/features/budget/presentation/pages/widgets/line_chart_card.dart
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
@@ -23,7 +24,6 @@ class LineChartCard extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    // Tính giá trị lớn nhất cho trục Y
     final maxSpend = spending.reduce((a, b) => a > b ? a : b);
     final maxBudget = (budgetLimit != null && budgetLimit!.isNotEmpty)
         ? budgetLimit!.reduce((a, b) => a > b ? a : b)
@@ -85,14 +85,10 @@ class LineChartCard extends StatelessWidget {
                           "Nov",
                           "Dec",
                         ];
-
                         if (index < 0 || index >= spending.length) {
                           return const SizedBox();
                         }
-
-                        // Chỉ hiển thị mỗi 2 tháng
                         if (index % 2 != 0) return const SizedBox();
-
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 6),
                           child: Text(
@@ -121,9 +117,7 @@ class LineChartCard extends StatelessWidget {
               ),
             ),
           ),
-
           SizedBox(height: h * 0.01),
-
           // Chú thích
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -138,7 +132,6 @@ class LineChartCard extends StatelessWidget {
     );
   }
 
-  /// Vẽ một đường line chart
   LineChartBarData _buildLine(List<double> values, Color color) {
     return LineChartBarData(
       isCurved: true,
@@ -152,7 +145,6 @@ class LineChartCard extends StatelessWidget {
     );
   }
 
-  /// Chú thích màu cho biểu đồ
   Widget _buildLegendItem(double h, double w, Color color, String label) {
     return Row(
       children: [

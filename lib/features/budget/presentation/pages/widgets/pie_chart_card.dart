@@ -1,11 +1,12 @@
+// lib/features/budget/presentation/pages/widgets/pie_chart_card.dart
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
-import 'package:fintrack/features/budget/models/budget_model.dart';
+import '../../../domain/entities/budget_entity.dart';
 
 class PieChartCard extends StatelessWidget {
-  final List<BudgetExpense> expenses;
+  final List<BudgetExpenseEntity> expenses;
   final double h;
   final double w;
 
@@ -77,7 +78,6 @@ class PieChartCard extends StatelessWidget {
               ],
             ),
           ),
-
           SizedBox(height: h * 0.015),
         ],
       ),

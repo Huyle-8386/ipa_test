@@ -1,14 +1,14 @@
+// lib/features/budget/presentation/pages/widgets/budget_card.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fintrack/features/budget/bloc/budget_bloc.dart';
-import 'package:fintrack/features/budget/bloc/budget_event.dart';
-import 'package:fintrack/features/budget/bloc/budget_state.dart';
-import 'package:fintrack/features/budget/pages/detail_budget.dart';
-import 'package:fintrack/features/budget/models/budget_model.dart';
+import '../../bloc/budget_bloc.dart';
+import '../../bloc/budget_event.dart';
+import '../../bloc/budget_state.dart';
+import '../detail_budget_page.dart';
 
 class BudgetCard extends StatelessWidget {
   const BudgetCard({super.key});
@@ -38,7 +38,9 @@ class BudgetCard extends StatelessWidget {
 
         return Column(
           children: budgets.map((budget) {
-            final spentPercent = (budget.spent / budget.total) * 100;
+            final spentPercent = (budget.total == 0)
+                ? 0
+                : (budget.spent / budget.total) * 100;
             final remainingPercent = 100 - spentPercent;
             final status = budget.status;
 
@@ -70,8 +72,7 @@ class BudgetCard extends StatelessWidget {
                           return GestureDetector(
                             onTap: () {
                               final bloc = innerContext.read<BudgetBloc>();
-                              bloc.add(SelectBudget(budget));
-
+                              bloc.add(SelectBudgetEvent(budget));
                               Navigator.push(
                                 innerContext,
                                 MaterialPageRoute(
@@ -95,7 +96,6 @@ class BudgetCard extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: h * 0.02),
-
                   // Body: Info + Chart
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -122,7 +122,6 @@ class BudgetCard extends StatelessWidget {
                           ],
                         ),
                       ),
-
                       // Pie Chart
                       Expanded(
                         flex: 1,
@@ -135,8 +134,8 @@ class BudgetCard extends StatelessWidget {
                               centerSpaceRadius: h * 0.04,
                               sections: _buildChartSections(
                                 status,
-                                spentPercent,
-                                remainingPercent,
+                                spentPercent.toDouble(),
+                                remainingPercent.toDouble(),
                                 h,
                               ),
                             ),
@@ -145,9 +144,7 @@ class BudgetCard extends StatelessWidget {
                       ),
                     ],
                   ),
-
                   SizedBox(height: h * 0.03),
-
                   // Legend
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

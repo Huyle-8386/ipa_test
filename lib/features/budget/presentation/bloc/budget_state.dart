@@ -1,12 +1,12 @@
+// lib/features/budget/presentation/bloc/budget_state.dart
 import 'package:equatable/equatable.dart';
-import 'package:fintrack/features/budget/models/budget_model.dart';
+import '../../domain/entities/budget_entity.dart';
 
 class BudgetState extends Equatable {
   final String selectedTab;
-  final List<BudgetModel> budgets;
+  final List<BudgetEntity> budgets;
   final bool isLoading;
-
-  final BudgetModel? selectedBudget;
+  final BudgetEntity? selectedBudget;
 
   const BudgetState({
     required this.selectedTab,
@@ -24,9 +24,9 @@ class BudgetState extends Equatable {
 
   BudgetState copyWith({
     String? selectedTab,
-    List<BudgetModel>? budgets,
+    List<BudgetEntity>? budgets,
     bool? isLoading,
-    BudgetModel? selectedBudget,
+    BudgetEntity? selectedBudget,
   }) {
     return BudgetState(
       selectedTab: selectedTab ?? this.selectedTab,

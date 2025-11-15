@@ -1,11 +1,12 @@
+// lib/features/budget/presentation/pages/widgets/filter_tab.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
-import 'package:fintrack/features/budget/bloc/budget_bloc.dart';
-import 'package:fintrack/features/budget/bloc/budget_event.dart';
-import 'package:fintrack/features/budget/bloc/budget_state.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../bloc/budget_bloc.dart';
+import '../../bloc/budget_event.dart';
+import '../../bloc/budget_state.dart';
 
 class FilterTab extends StatelessWidget {
   const FilterTab({super.key});
@@ -40,6 +41,8 @@ class FilterTab extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         context.read<BudgetBloc>().add(BudgetTabChanged(label));
+        // Also trigger load to refresh list
+        context.read<BudgetBloc>().add(const LoadBudgets());
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,

@@ -1,5 +1,6 @@
+// lib/features/budget/presentation/bloc/budget_event.dart
 import 'package:equatable/equatable.dart';
-import 'package:fintrack/features/budget/models/budget_model.dart';
+import '../../domain/entities/budget_entity.dart';
 
 abstract class BudgetEvent extends Equatable {
   const BudgetEvent();
@@ -8,7 +9,10 @@ abstract class BudgetEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-// đổi tab
+class LoadBudgets extends BudgetEvent {
+  const LoadBudgets();
+}
+
 class BudgetTabChanged extends BudgetEvent {
   final String selectedTab;
   const BudgetTabChanged(this.selectedTab);
@@ -17,15 +21,9 @@ class BudgetTabChanged extends BudgetEvent {
   List<Object?> get props => [selectedTab];
 }
 
-// load dữ liệu
-class LoadBudgets extends BudgetEvent {
-  const LoadBudgets();
-}
-
-// chọn 1 budget để xem chi tiết
-class SelectBudget extends BudgetEvent {
-  final BudgetModel budget;
-  const SelectBudget(this.budget);
+class SelectBudgetEvent extends BudgetEvent {
+  final BudgetEntity budget;
+  const SelectBudgetEvent(this.budget);
 
   @override
   List<Object?> get props => [budget];

@@ -1,7 +1,9 @@
-import 'package:fintrack/features/budget/models/budget_model.dart';
+// lib/features/budget/data/datasources/budget_datasource.dart
 import 'package:flutter/material.dart';
+import '../../data/models/budget_model.dart';
 
 class BudgetDataSource {
+  // Static in-memory data (kept from original)
   static List<BudgetModel> budgets = [
     BudgetModel(
       name: "Monthly Budget",
@@ -37,22 +39,22 @@ class BudgetDataSource {
         700,
       ],
       expenses: [
-        BudgetExpense(
+        BudgetExpenseModel(
           category: "Shopping",
           amount: 1200,
           colorValue: Colors.orange.value,
         ),
-        BudgetExpense(
+        BudgetExpenseModel(
           category: "Food",
           amount: 800,
           colorValue: Colors.red.value,
         ),
-        BudgetExpense(
+        BudgetExpenseModel(
           category: "Groceries",
           amount: 600,
           colorValue: Colors.green.value,
         ),
-        BudgetExpense(
+        BudgetExpenseModel(
           category: "Health",
           amount: 450,
           colorValue: Colors.blue.value,
@@ -67,12 +69,12 @@ class BudgetDataSource {
       monthlySpending: [100, 200, 300, 250, 150, 24],
       monthlyBudgetLimit: [150, 250, 350, 300, 200, 100],
       expenses: [
-        BudgetExpense(
+        BudgetExpenseModel(
           category: "Clothes",
           amount: 600,
           colorValue: Colors.deepOrange.value,
         ),
-        BudgetExpense(
+        BudgetExpenseModel(
           category: "Accessories",
           amount: 424,
           colorValue: Colors.brown.value,
@@ -87,17 +89,17 @@ class BudgetDataSource {
       monthlySpending: [400, 500, 700, 800, 900, 1200, 1000],
       monthlyBudgetLimit: [600, 600, 700, 800, 800, 900, 900],
       expenses: [
-        BudgetExpense(
+        BudgetExpenseModel(
           category: "Flights",
           amount: 2000,
           colorValue: Colors.purple.value,
         ),
-        BudgetExpense(
+        BudgetExpenseModel(
           category: "Hotels",
           amount: 2000,
           colorValue: Colors.teal.value,
         ),
-        BudgetExpense(
+        BudgetExpenseModel(
           category: "Food",
           amount: 1500,
           colorValue: Colors.red.value,

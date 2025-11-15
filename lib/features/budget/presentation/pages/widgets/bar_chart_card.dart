@@ -1,3 +1,4 @@
+// lib/features/budget/presentation/pages/widgets/bar_chart_card.dart
 import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,11 @@ class BarChartCard extends StatelessWidget {
     final lastSpending = spending.sublist(startIdx);
     final lastBudgets = budgets.sublist(startIdx);
 
-    final maxY = lastSpending.reduce((a, b) => a > b ? a : b) * 1.2;
+    final maxY =
+        (lastSpending.isNotEmpty
+            ? lastSpending.reduce((a, b) => a > b ? a : b)
+            : 1) *
+        1.2;
     final interval = (maxY / 3).ceilToDouble();
 
     Color getColor(double spend, double budget) {
