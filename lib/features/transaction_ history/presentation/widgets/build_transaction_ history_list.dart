@@ -108,7 +108,7 @@ Widget _buildTransactionItem(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  transaction.name,
+                  transaction.category,
                   style: const TextStyle(
                     color: AppColors.white,
                     fontSize: 16,
@@ -117,7 +117,7 @@ Widget _buildTransactionItem(
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  transaction.category,
+                  transaction.note,
                   style: TextStyle(color: AppColors.grey, fontSize: 13),
                 ),
               ],

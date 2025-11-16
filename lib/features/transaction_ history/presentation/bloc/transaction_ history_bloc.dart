@@ -95,8 +95,8 @@ class TransactionHistoryBloc
         await Future.delayed(const Duration(milliseconds: 300));
 
         final searchResults = transactions.where((transaction) {
-          final name = transaction.name.toLowerCase();
-          final category = transaction.category.toLowerCase();
+          final name = transaction.category.toLowerCase();
+          final category = transaction.note.toLowerCase();
           final query = event.query.toLowerCase();
           return name.contains(query) || category.contains(query);
         }).toList();

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 class TransactionData {
   final String icon;
   final Color color;
-  final String name;
-  final String category; // Ví dụ: Uber, Starbucks, Highland, etc.
+  final String category;
+  final String note; // Ví dụ: Uber, Starbucks, Highland, etc.
   final double value;
   final String amount;
   final DateTime date;
@@ -14,8 +14,8 @@ class TransactionData {
   TransactionData({
     required this.icon,
     required this.color,
-    required this.name,
     required this.category,
+    required this.note,
     required this.value,
     required this.amount,
     required this.date,
@@ -31,8 +31,8 @@ final List<TransactionData> transactions = [
   TransactionData(
     icon: 'assets/icons/taxi.png',
     color: Colors.blue,
-    name: "Taxi",
-    category: "Uber",
+    category: "Taxi",
+    note: "Uber",
     value: -15.00,
     amount: "-\$15",
     date: DateTime(2025, 7, 2),
@@ -42,8 +42,8 @@ final List<TransactionData> transactions = [
   TransactionData(
     icon: 'assets/icons/transfer.png',
     color: Colors.green,
-    name: "Transfer",
-    category: "Agribank",
+    category: "Transfer",
+    note: "Agribank",
     value: 550.00,
     amount: "+\$550",
     date: DateTime(2025, 7, 2),
@@ -53,8 +53,8 @@ final List<TransactionData> transactions = [
   TransactionData(
     icon: 'assets/icons/food.png',
     color: Colors.red,
-    name: "Food",
-    category: "Starbucks",
+    category: "Food",
+    note: "Starbucks",
     value: -17.00,
     amount: "-\$17",
     date: DateTime(2025, 7, 2),
@@ -64,8 +64,8 @@ final List<TransactionData> transactions = [
   TransactionData(
     icon: 'assets/icons/food.png',
     color: Colors.red,
-    name: "Food",
-    category: "Highland",
+    category: "Food",
+    note: "Highland",
     value: -15.00,
     amount: "-\$15",
     date: DateTime(2025, 7, 2),
@@ -77,8 +77,8 @@ final List<TransactionData> transactions = [
   TransactionData(
     icon: 'assets/icons/shopping.png',
     color: Colors.orange,
-    name: "Shopping",
-    category: "Bravo",
+    category: "Shopping",
+    note: "Bravo",
     value: -46.00,
     amount: "-\$46",
     date: DateTime(2025, 7, 1),
@@ -90,8 +90,8 @@ final List<TransactionData> transactions = [
   TransactionData(
     icon: 'assets/icons/taxi.png',
     color: Colors.blue,
-    name: "Taxi",
-    category: "Uber",
+    category: "Taxi",
+    note: "Uber",
     value: -12.00,
     amount: "-\$12",
     date: DateTime(2025, 6, 14),
