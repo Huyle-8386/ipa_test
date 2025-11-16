@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "name": "Flutter (lib/main_transaction_history.dart)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main_transaction_history.dart"
+        }
+    ]
+}

@@ -1,3 +1,4 @@
+import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ExpenseData {
@@ -23,7 +24,7 @@ class ExpenseData {
 final List<ExpenseData> expenses = [
   ExpenseData(
     icon: 'assets/images/Groeries.png',
-    color: Colors.green,
+    color: AppColors.green,
     name: "Groceries",
     value: 167.30,
     amount: "\$167.30",
@@ -32,7 +33,7 @@ final List<ExpenseData> expenses = [
   ),
   ExpenseData(
     icon: 'assets/images/Shopping.png',
-    color: Colors.orange,
+    color: AppColors.red,
     name: "Shopping",
     value: 245.50,
     amount: "\$245.50",
@@ -41,7 +42,7 @@ final List<ExpenseData> expenses = [
   ),
   ExpenseData(
     icon: 'assets/images/Food.png',
-    color: Colors.red,
+    color: AppColors.orange,
     name: "Food",
     value: 89.20,
     amount: "\$89.20",
@@ -50,7 +51,7 @@ final List<ExpenseData> expenses = [
   ),
   ExpenseData(
     icon: 'assets/images/Health.png',
-    color: Colors.cyan,
+    color: AppColors.turquoise,
     name: "Health",
     value: 55.00,
     amount: "\$55.00",
@@ -59,7 +60,7 @@ final List<ExpenseData> expenses = [
   ),
   ExpenseData(
     icon: 'assets/images/Travel.png',
-    color: Colors.purple,
+    color: AppColors.purple,
     name: "Travel",
     value: 310.00,
     amount: "\$310.00",
@@ -68,7 +69,7 @@ final List<ExpenseData> expenses = [
   ),
   ExpenseData(
     icon: 'assets/images/Taxi.png',
-    color: Colors.blue,
+    color: AppColors.blue,
     name: "Taxi",
     value: 76.97,
     amount: "\$76.97",

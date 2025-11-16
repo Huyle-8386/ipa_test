@@ -1,9 +1,8 @@
-import 'package:fintrack/core/theme/app_text_styles.dart';
-import 'package:fintrack/features/expenses/bloc/expenses_bloc.dart';
-import 'package:fintrack/features/expenses/bloc/expenses_event.dart';
-import 'package:fintrack/features/expenses/bloc/expenses_state.dart';
-import 'package:fintrack/features/expenses/pages/build_chart_section.dart';
-import 'package:fintrack/features/expenses/pages/build_expenses_list.dart';
+import 'package:fintrack/features/expenses/presentation/bloc/expenses_bloc.dart';
+import 'package:fintrack/features/expenses/presentation/bloc/expenses_event.dart';
+import 'package:fintrack/features/expenses/presentation/bloc/expenses_state.dart';
+import 'package:fintrack/features/expenses/presentation/widgets/build_chart_section.dart';
+import 'package:fintrack/features/expenses/presentation/widgets/build_expenses_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
@@ -47,7 +46,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('Lỗi: ${state.message}'),
-                  backgroundColor: AppColors.red,
+                  backgroundColor: Colors.red,
                 ),
               );
             }
@@ -56,7 +55,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Không tìm thấy khoản chi tiêu nào'),
-                  backgroundColor: AppColors.orange,
+                  backgroundColor: Colors.orange,
                 ),
               );
             }
@@ -73,13 +72,13 @@ class _ExpensesPageState extends State<ExpensesPage> {
                   children: [
                     const Icon(
                       Icons.error_outline,
-                      color: AppColors.red,
+                      color: Colors.red,
                       size: 48,
                     ),
                     const SizedBox(height: 16),
                     Text(
                       'Đã xảy ra lỗi: ${state.message}',
-                      style: const TextStyle(color: AppColors.red),
+                      style: const TextStyle(color: Colors.red),
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
@@ -115,6 +114,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        SizedBox(height: h * 0.02),
         Row(
           children: [
             GestureDetector(
@@ -123,14 +123,18 @@ class _ExpensesPageState extends State<ExpensesPage> {
               },
               child: const Icon(
                 Icons.arrow_back,
-                color: AppColors.white,
+                color: Colors.white,
                 size: 18,
               ),
             ),
             const SizedBox(width: 16),
-            Text(
+            const Text(
               "Expenses",
-              style: AppTextStyles.heading2.copyWith(color: AppColors.white),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: 18,
+              ),
             ),
           ],
         ),
@@ -140,8 +144,8 @@ class _ExpensesPageState extends State<ExpensesPage> {
           padding: const EdgeInsets.only(bottom: 20, top: 20),
           child: TextField(
             controller: _searchController,
-            style: const TextStyle(color: AppColors.white),
-            cursorColor: AppColors.white,
+            style: const TextStyle(color: Colors.white),
+            cursorColor: Colors.white,
             // Thêm sự kiện onSubmitted để xử lý khi người dùng nhấn Enter
             onSubmitted: (value) {
               context.read<ExpensesBloc>().add(SearchExpenses(value));
@@ -149,7 +153,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
             decoration: InputDecoration(
               // prefixIcon: const Icon(Icons.search, color: Colors.white70),
               // Thêm icon tìm kiếm bên phải có thể nhấn để tìm kiếm
-              suffixIcon: IconButton(
+              prefixIcon: IconButton(
                 icon: const Icon(Icons.search, color: AppColors.white),
                 onPressed: () {
                   // Gửi sự kiện tìm kiếm khi nhấn vào icon
@@ -158,7 +162,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                   );
                 },
               ),
-              hintText: "Search",
+              hintText: "Super AI search",
               hintStyle: const TextStyle(color: AppColors.grey),
               filled: true,
               fillColor: AppColors.widget,
@@ -191,7 +195,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                     Text(
                       category,
                       style: TextStyle(
-                        color: isSelected ? AppColors.main : AppColors.grey,
+                        color: isSelected ? AppColors.main : Colors.white70,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
@@ -200,7 +204,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                     Container(
                       height: 1,
                       width: 40,
-                      color: isSelected ? AppColors.main : AppColors.background,
+                      color: isSelected ? AppColors.main : Colors.transparent,
                     ),
                   ],
                 ),
@@ -215,7 +219,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
             child: Column(
               children: [
                 // Biểu đồ và chú giải với dữ liệu từ BLoC
-                buildChartSection(state.expenses, state.totalValue),
+                buildChartSection(state.totalValue),
                 const SizedBox(height: 20),
                 // Custom widget để hiển thị danh sách chi tiêu từ BLoC
                 state.expenses.isEmpty
