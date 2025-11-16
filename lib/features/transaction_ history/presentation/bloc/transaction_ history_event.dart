@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:fintrack/features/transaction_ history/datasources/transaction_ history_data.dart';
+import 'package:fintrack/features/transaction_%20history/data/datasources/transaction_%20history_data.dart';
 
 abstract class TransactionHistoryEvent extends Equatable {
   const TransactionHistoryEvent();
