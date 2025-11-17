@@ -60,11 +60,11 @@ jobs:
       # - name: Test
       #   run: flutter test --no-pub
 
-      - name: Build Android (APK)
-        run: flutter build apk --release
+      # - name: Build Android (APK)
+      #   run: flutter build apk --release
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+      # - name: Upload APK artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: app-release-apk
+      #     path: build/app/outputs/flutter-apk/app-release.apk
