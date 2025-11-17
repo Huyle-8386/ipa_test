@@ -135,9 +135,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     // Navigate to home
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => HomePage(),
-                      ),
+                      MaterialPageRoute(builder: (context) => HomePage()),
                     );
                   },
                 ),

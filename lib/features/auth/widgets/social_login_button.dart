@@ -26,10 +26,7 @@ class SocialLoginButton extends StatelessWidget {
           child: InkWell(
             onTap: onPressed,
             borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              iconPath,
-              fit: BoxFit.contain,
-            ),
+            child: Image.asset(iconPath, fit: BoxFit.contain),
           ),
         ),
       ),

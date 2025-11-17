@@ -13,7 +13,6 @@ class TransactionHistory extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        
         Row(
           children: [
             Image.asset("assets/icons/food.png"),
@@ -51,7 +50,6 @@ class TransactionHistory extends StatelessWidget {
             ),
           ],
         ),
-        
       ],
     );
   }

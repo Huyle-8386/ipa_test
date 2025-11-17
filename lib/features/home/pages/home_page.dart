@@ -216,8 +216,7 @@ class _HomePageState extends State<HomePage> {
                               MaterialPageRoute(
                                 builder: (_) => BlocProvider(
                                   create: (_) =>
-                                      BudgetInjection.injectBloc()
-                                        ..add(LoadBudgets()),
+                                      sl<BudgetBloc>()..add(LoadBudgets()),
                                   child: const BudgetPage(),
                                 ),
                               ),

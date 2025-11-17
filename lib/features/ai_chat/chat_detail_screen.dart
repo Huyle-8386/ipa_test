@@ -11,7 +11,7 @@ class ChatDetailScreen extends StatefulWidget {
 
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final TextEditingController _messageController = TextEditingController();
-  
+
   // Man hinh chi tiet doan chat
   final List<ChatMessage> _messages = [
     ChatMessage(
@@ -23,19 +23,22 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     ChatMessage(
       isUser: false,
       userName: 'AI Chat',
-      message: 'Of course! What are you saving for, and how much do you want to save?',
+      message:
+          'Of course! What are you saving for, and how much do you want to save?',
       time: '10:30 AM',
     ),
     ChatMessage(
       isUser: true,
       userName: 'Phung Thanh Hao',
-      message: 'I\'m saving for a vacation, and I want to save \$1,200 in 6 months.',
+      message:
+          'I\'m saving for a vacation, and I want to save \$1,200 in 6 months.',
       time: '10:31 AM',
     ),
     ChatMessage(
       isUser: false,
       userName: 'AI Chat',
-      message: 'Great! To achieve that, you\'ll need to save \$200 per month. Would you like to set up an automatic transfer from your checking account to a dedicated savings account for this goal?',
+      message:
+          'Great! To achieve that, you\'ll need to save \$200 per month. Would you like to set up an automatic transfer from your checking account to a dedicated savings account for this goal?',
       time: '10:31 AM',
       showRegenerate: true,
     ),
@@ -71,7 +74,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               height: 40,
             ),
           ),
-          
+
           // Messages List
           Expanded(
             child: ListView.builder(
@@ -83,7 +86,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               },
             ),
           ),
-          
+
           // Input Bar
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -98,7 +101,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               child: Row(
                 children: [
                   IconButton(
-                    icon: Icon(Icons.add_circle_outline, color: AppColors.grey, size: 24),
+                    icon: Icon(
+                      Icons.add_circle_outline,
+                      color: AppColors.grey,
+                      size: 24,
+                    ),
                     onPressed: () {},
                     padding: EdgeInsets.zero,
                     constraints: BoxConstraints(),
@@ -181,13 +188,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   backgroundColor: AppColors.widget,
                   child: Padding(
                     padding: const EdgeInsets.all(4),
-                    child: Image.asset(
-                      'assets/icons/AI_logo.png',
-                    ),
+                    child: Image.asset('assets/icons/AI_logo.png'),
                   ),
                 ),
           const SizedBox(width: 10),
-          
+
           // Message Content
           Expanded(
             child: Column(
@@ -203,12 +208,14 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   ),
                 ),
                 const SizedBox(height: 6),
-                
+
                 // Message Bubble
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: message.isUser ? AppColors.widget : Color(0xFF0A0A0A),
+                    color: message.isUser
+                        ? AppColors.widget
+                        : Color(0xFF0A0A0A),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -221,7 +228,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                     ),
                   ),
                 ),
-                
+
                 // Regenerate Button (phan hoi cua AI messages)
                 if (message.showRegenerate) ...[
                   const SizedBox(height: 10),

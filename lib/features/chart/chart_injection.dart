@@ -3,23 +3,26 @@ import 'data/datasources/chart_data_source.dart';
 import 'data/repositories/chart_repository_impl.dart';
 
 // Domain
+import 'domain/repositories/chart_repository.dart';
 import 'domain/usecases/get_chart_data_usecase.dart';
 
 // Presentation (BLoC)
 import 'presentation/bloc/chart_bloc.dart';
 
-class ChartInjection {
-  static ChartBloc injectBloc() {
-    // 1. Data Source
-    final dataSource = ChartDataSource();
+import 'package:get_it/get_it.dart';
 
-    // 2. Repository
-    final repository = ChartRepositoryImpl(dataSource);
+final sl = GetIt.instance;
 
-    // 3. Usecase
-    final getChartData = GetChartDataUseCase(repository);
+Future<void> initChartFeature() async {
+  // 1. Data Source
+  sl.registerLazySingleton<ChartDataSource>(() => ChartDataSource());
 
-    // 4. Bloc
-    return ChartBloc(getChartDataUseCase: getChartData);
-  }
+  // 2. Repository
+  sl.registerLazySingleton<ChartRepository>(() => ChartRepositoryImpl(sl()));
+
+  // 3. Usecase
+  sl.registerLazySingleton(() => GetChartDataUseCase(sl()));
+
+  // 4. Bloc
+  sl.registerFactory(() => ChartBloc(getChartDataUseCase: sl()));
 }

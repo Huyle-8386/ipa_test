@@ -107,9 +107,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               widget.errorText!,
-              style: AppTextStyles.caption.copyWith(
-                color: AppColors.red,
-              ),
+              style: AppTextStyles.caption.copyWith(color: AppColors.red),
             ),
           ),
       ],

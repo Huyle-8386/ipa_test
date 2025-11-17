@@ -1,23 +1,18 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fintrack/features/budget/data/repositories/budget_repository_impl.dart';
+import 'package:get_it/get_it.dart';
 
-// Domain
 import 'domain/usecases/get_budgets.dart';
-
-// Data
-import 'data/repositories/budget_repository_impl.dart';
-
-// Presentation
 import 'presentation/bloc/budget_bloc.dart';
 
-class BudgetInjection {
-  static BudgetBloc injectBloc() {
-    // Repository không nhận tham số → khởi tạo trực tiếp
-    final repository = BudgetRepositoryImpl();
+final sl = GetIt.instance;
 
-    // Usecase
-    final getBudgets = GetBudgets(repository);
+Future<void> injectBudgets() async {
+  // repository
+  sl.registerLazySingleton(() => BudgetRepositoryImpl());
 
-    // Bloc
-    return BudgetBloc(getBudgets: getBudgets);
-  }
+  // usecase
+  sl.registerLazySingleton(() => GetBudgets(sl()));
+
+  // bloc
+  sl.registerFactory(() => BudgetBloc(getBudgets: sl()));
 }

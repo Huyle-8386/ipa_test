@@ -30,8 +30,7 @@ class BottombarPage extends StatelessWidget {
       MultiBlocProvider(
         providers: [
           BlocProvider<ChartBloc>(
-            create: (context) =>
-                ChartInjection.injectBloc()..add(LoadChartDataEvent()),
+            create: (context) => sl<ChartBloc>()..add(LoadChartDataEvent()),
           ),
           BlocProvider<HomeBloc>(
             create: (context) => HomeBloc()..add(LoadAcountsEvent()),
@@ -40,6 +39,10 @@ class BottombarPage extends StatelessWidget {
         child: const ChartPage(),
       ),
 
+      // BlocProvider<ChartBloc>(
+      //   create: (_) => sl<ChartBloc>()..add(LoadChartDataEvent()),
+      //   child: const ChartPage(),
+      // ),
       SignUpPage(),
       BlocProvider(create: (context) => HomeBloc(), child: HomePage()),
       BlocProvider(create: (context) => HomeBloc(), child: HomePage()),

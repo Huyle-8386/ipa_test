@@ -40,9 +40,7 @@ class CustomButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: bgColor,
           foregroundColor: textColor ?? Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: borderRadius,
-          ),
+          shape: RoundedRectangleBorder(borderRadius: borderRadius),
           disabledBackgroundColor: AppColors.grey,
           disabledForegroundColor: Colors.black54,
         ),
@@ -52,9 +50,7 @@ class CustomButton extends StatelessWidget {
                 width: 24,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation(
-                    textColor ?? Colors.black,
-                  ),
+                  valueColor: AlwaysStoppedAnimation(textColor ?? Colors.black),
                 ),
               )
             : Text(

@@ -34,10 +34,10 @@ class MyPieChart extends StatelessWidget {
                   value: 35,
                   radius: 15,
                   color: Color(0xFF425B39),
-              
+
                   showTitle: false,
+
                   // round
-                  
                 ),
               ],
             ),
@@ -52,10 +52,9 @@ class MyPieChart extends StatelessWidget {
               Text(
                 "Saved",
                 style: AppTextStyles.caption.copyWith(color: AppColors.white),
-              )
+              ),
             ],
-
-          )
+          ),
         ],
       ),
     );

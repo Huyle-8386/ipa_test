@@ -16,7 +16,7 @@ class OnboardingPage1 extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: SizeUtils.width(context) * 0.06,
-          ), 
+          ),
           child: Column(
             children: [
               SizedBox(height: SizeUtils.height(context) * 0.08),
@@ -85,9 +85,7 @@ class OnboardingPage1 extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const SignInPage(),
-                    ),
+                    MaterialPageRoute(builder: (context) => const SignInPage()),
                   );
                 },
                 child: Text(

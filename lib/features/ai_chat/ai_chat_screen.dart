@@ -60,7 +60,7 @@ class AIChatScreen extends StatelessWidget {
                     height: 120,
                   ),
                   const SizedBox(height: 32),
-                  
+
                   // Welcome Text
                   Text(
                     'Welcome to',
@@ -79,7 +79,7 @@ class AIChatScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   Text(
                     'Start chatting with AI Chat now.',
                     style: AppTextStyles.body2.copyWith(
@@ -89,7 +89,7 @@ class AIChatScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  
+
                   // New Chat Button
                   SizedBox(
                     width: double.infinity,
@@ -124,7 +124,7 @@ class AIChatScreen extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Previous Chats Section
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,7 +139,7 @@ class AIChatScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                
+
                 // Chat History List
                 ...List.generate(
                   4,
@@ -192,9 +192,8 @@ class AIChatScreen extends StatelessWidget {
           ],
         ),
       ),
-      
+
       // Bottom Navigation Bar
-      
     );
   }
 }
