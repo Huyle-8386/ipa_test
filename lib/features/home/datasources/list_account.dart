@@ -14,7 +14,7 @@ List<Account> listAccount = [
   Account(
     images: "assets/icons/cash_usd.png",
     money: "\$600",
-    resource: "Cash USD",
+    resource: "Cash VND",
   ),
   Account(
     images: "assets/icons/pashabank_usd.png",

@@ -23,8 +23,13 @@ class ExpenseData {
 
 final List<ExpenseData> expenses = [
   ExpenseData(
-    icon: 'assets/images/Groeries.png',
-    color: AppColors.green,
+
+    icon: 'assets/images/groeries.png',
+    color: Colors.green,
+
+  
+
+
     name: "Groceries",
     value: 167.30,
     amount: "\$167.30",
@@ -32,17 +37,22 @@ final List<ExpenseData> expenses = [
     isUp: true,
   ),
   ExpenseData(
-    icon: 'assets/images/Shopping.png',
-    color: AppColors.red,
-    name: "Shopping",
+
+    icon: 'assets/images/shopping.png',
+    color: Colors.orange,
+    name: "shopping",
+
+
     value: 245.50,
     amount: "\$245.50",
     percentage: "26%",
     isUp: false,
   ),
   ExpenseData(
-    icon: 'assets/images/Food.png',
+
+    icon: 'assets/images/food.png',
     color: AppColors.orange,
+
     name: "Food",
     value: 89.20,
     amount: "\$89.20",
@@ -50,8 +60,10 @@ final List<ExpenseData> expenses = [
     isUp: true,
   ),
   ExpenseData(
-    icon: 'assets/images/Health.png',
-    color: AppColors.turquoise,
+
+    icon: 'assets/images/health.png',
+    color: Colors.cyan,
+
     name: "Health",
     value: 55.00,
     amount: "\$55.00",
@@ -59,8 +71,11 @@ final List<ExpenseData> expenses = [
     isUp: false,
   ),
   ExpenseData(
-    icon: 'assets/images/Travel.png',
-    color: AppColors.purple,
+
+    icon: 'assets/images/travel.png',
+    color: Colors.purple,
+
+ 
     name: "Travel",
     value: 310.00,
     amount: "\$310.00",
@@ -68,8 +83,10 @@ final List<ExpenseData> expenses = [
     isUp: true,
   ),
   ExpenseData(
-    icon: 'assets/images/Taxi.png',
+
+    icon: 'assets/images/taxi.png',
     color: AppColors.blue,
+
     name: "Taxi",
     value: 76.97,
     amount: "\$76.97",
