@@ -7,7 +7,7 @@ import 'package:fintrack/features/ai_chat/domain/repositories/chat_repository.da
 class ChatRepositoryImpl implements ChatRepository {
   final ChatRemoteDataSource remoteDataSource;
 
-  ChatRepositoryImpl({required this.remoteDataSource});
+  ChatRepositoryImpl(this.remoteDataSource);
 
   @override
   Future<Either<String, List<ChatSession>>> getChatSessions() async {

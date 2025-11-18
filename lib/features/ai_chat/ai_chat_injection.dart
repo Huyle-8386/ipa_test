@@ -18,9 +18,7 @@ Future<void> initAiChat() async {
   );
 
   // repository
-  sl.registerLazySingleton<ChatRepository>(
-    () => ChatRepositoryImpl(remoteDataSource: sl()),
-  );
+  sl.registerLazySingleton<ChatRepository>(() => ChatRepositoryImpl(sl()));
 
   // usecases
   sl.registerLazySingleton(() => GetChatSessions(sl()));
