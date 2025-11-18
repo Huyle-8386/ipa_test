@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
-import 'package:fintrack/features/ai_chat/notifications_screen.dart';
+import 'package:fintrack/features/notifications/presentation/page/notifications_page.dart';
 
 void main() {
   runApp(const NotificationApp());
@@ -37,7 +37,7 @@ class NotificationApp extends StatelessWidget {
           background: AppColors.background,
         ),
       ),
-      home: const NotificationsScreen(),
+      home: const NotificationsPage(),
     );
   }
 }

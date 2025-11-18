@@ -1,6 +1,5 @@
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
-import 'package:fintrack/core/utils/size_utils.dart';
 import 'package:flutter/material.dart';
 
 class ManualEntry extends StatelessWidget {
@@ -19,7 +18,6 @@ class ManualEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final h = SizeUtils.height(context);
     return GestureDetector(
       onTap: onTap,
       child: SizedBox.expand(

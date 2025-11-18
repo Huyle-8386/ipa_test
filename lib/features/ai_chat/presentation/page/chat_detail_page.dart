@@ -1,48 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
+import 'package:fintrack/features/ai_chat/presentation/bloc/chat_detail_bloc.dart';
+import 'package:fintrack/features/ai_chat/data/datasource/chat_remote_data_source.dart';
+import 'package:fintrack/features/ai_chat/data/repositories/chat_repository_impl.dart';
+import 'package:fintrack/features/ai_chat/domain/usecases/get_messages.dart';
+import 'package:fintrack/features/ai_chat/domain/usecases/send_message.dart';
+import 'package:fintrack/features/ai_chat/domain/usecases/regenerate_message.dart';
+import 'package:fintrack/features/ai_chat/domain/entities/chat_message.dart';
 
-class ChatDetailScreen extends StatefulWidget {
-  const ChatDetailScreen({super.key});
+class ChatDetailPage extends StatelessWidget {
+  final String sessionId;
+
+  const ChatDetailPage({super.key, required this.sessionId});
 
   @override
-  State<ChatDetailScreen> createState() => _ChatDetailScreenState();
+  Widget build(BuildContext context) {
+    // Setup dependencies
+    final remoteDataSource = ChatRemoteDataSourceImpl();
+    final repository = ChatRepositoryImpl(remoteDataSource: remoteDataSource);
+    final getMessages = GetMessages(repository);
+    final sendMessage = SendMessage(repository);
+    final regenerateMessage = RegenerateMessage(repository);
+
+    return BlocProvider(
+      create: (context) => ChatDetailBloc(
+        sessionId: sessionId,
+        getMessages: getMessages,
+        sendMessage: sendMessage,
+        regenerateMessage: regenerateMessage,
+      )..add(LoadMessages()),
+      child: const _ChatDetailView(),
+    );
+  }
 }
 
-class _ChatDetailScreenState extends State<ChatDetailScreen> {
+class _ChatDetailView extends StatefulWidget {
+  const _ChatDetailView();
+
+  @override
+  State<_ChatDetailView> createState() => _ChatDetailViewState();
+}
+
+class _ChatDetailViewState extends State<_ChatDetailView> {
   final TextEditingController _messageController = TextEditingController();
 
-  // Man hinh chi tiet doan chat
-  final List<ChatMessage> _messages = [
-    ChatMessage(
-      isUser: true,
-      userName: 'Phung Thanh Hao',
-      message: 'Help me set a monthly savings goal',
-      time: '10:30 AM',
-    ),
-    ChatMessage(
-      isUser: false,
-      userName: 'AI Chat',
-      message:
-          'Of course! What are you saving for, and how much do you want to save?',
-      time: '10:30 AM',
-    ),
-    ChatMessage(
-      isUser: true,
-      userName: 'Phung Thanh Hao',
-      message:
-          'I\'m saving for a vacation, and I want to save \$1,200 in 6 months.',
-      time: '10:31 AM',
-    ),
-    ChatMessage(
-      isUser: false,
-      userName: 'AI Chat',
-      message:
-          'Great! To achieve that, you\'ll need to save \$200 per month. Would you like to set up an automatic transfer from your checking account to a dedicated savings account for this goal?',
-      time: '10:31 AM',
-      showRegenerate: true,
-    ),
-  ];
+  @override
+  void dispose() {
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  void _sendMessage() {
+    final message = _messageController.text.trim();
+    if (message.isNotEmpty) {
+      context.read<ChatDetailBloc>().add(SendMessageEvent(message));
+      _messageController.clear();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,12 +93,31 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
           // Messages List
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                final message = _messages[index];
-                return _buildMessageBubble(message);
+            child: BlocBuilder<ChatDetailBloc, ChatDetailState>(
+              builder: (context, state) {
+                if (state.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (state.messages.isEmpty) {
+                  return Center(
+                    child: Text(
+                      'Start a conversation',
+                      style: AppTextStyles.body2.copyWith(
+                        color: AppColors.grey,
+                      ),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: state.messages.length,
+                  itemBuilder: (context, index) {
+                    final message = state.messages[index];
+                    return _buildMessageBubble(message);
+                  },
+                );
               },
             ),
           ),
@@ -140,6 +175,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                   vertical: 12,
                                 ),
                               ),
+                              onSubmitted: (_) => _sendMessage(),
                             ),
                           ),
                           Icon(Icons.mic_none, color: AppColors.grey, size: 20),
@@ -148,11 +184,15 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  IconButton(
-                    icon: Icon(Icons.send, color: AppColors.main, size: 24),
-                    onPressed: () {},
-                    padding: EdgeInsets.zero,
-                    constraints: BoxConstraints(),
+                  BlocBuilder<ChatDetailBloc, ChatDetailState>(
+                    builder: (context, state) {
+                      return IconButton(
+                        icon: Icon(Icons.send, color: AppColors.main, size: 24),
+                        onPressed: state.isSending ? null : _sendMessage,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -233,7 +273,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 if (message.showRegenerate) ...[
                   const SizedBox(height: 10),
                   OutlinedButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.read<ChatDetailBloc>().add(
+                        RegenerateMessageEvent(message.id),
+                      );
+                    },
                     icon: Image.asset(
                       'assets/icons/regenerate.png',
                       width: 14,
@@ -267,26 +311,4 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       ),
     );
   }
-
-  @override
-  void dispose() {
-    _messageController.dispose();
-    super.dispose();
-  }
-}
-
-class ChatMessage {
-  final bool isUser;
-  final String userName;
-  final String message;
-  final String time;
-  final bool showRegenerate;
-
-  ChatMessage({
-    required this.isUser,
-    required this.userName,
-    required this.message,
-    required this.time,
-    this.showRegenerate = false,
-  });
 }

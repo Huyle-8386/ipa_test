@@ -84,7 +84,7 @@ class MoneySourceBottomSheet extends StatelessWidget {
                     final List<MoneySourceEntity> sources = state.moneySources;
 
                     return GridView.builder(
-                      itemCount: sources?.length,
+                      itemCount: sources.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,

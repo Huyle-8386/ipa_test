@@ -6,12 +6,8 @@ import 'package:fintrack/core/di/injector.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_bloc.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_event.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_state.dart';
-import 'package:fintrack/features/add_transaction/presentation/widget/category_widget.dart';
-import 'package:fintrack/features/add_transaction/presentation/widget/date_picker_field.dart';
 import 'package:fintrack/features/add_transaction/presentation/widget/image_entry.dart';
-import 'package:fintrack/features/add_transaction/presentation/widget/labeled_text_field.dart';
 import 'package:fintrack/features/add_transaction/presentation/widget/manual_form.dart';
-import 'package:fintrack/features/add_transaction/presentation/widget/money_source_field.dart';
 import 'package:fintrack/features/add_transaction/presentation/widget/manual_entry.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,17 +20,10 @@ class AddTransactionPage extends StatefulWidget {
 }
 
 class _AddTransactionPageState extends State<AddTransactionPage> {
-  final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _moneyController = TextEditingController();
-  final TextEditingController _noteController = TextEditingController();
   final amountCtrl = TextEditingController();
   final dateCtrl = TextEditingController();
   final moneyCtrl = TextEditingController();
   final noteCtrl = TextEditingController();
-
-  TransactionType _type = TransactionType.expense;
-  EntryTab _tab = EntryTab.manual; // mặc định Manual Entry
 
   @override
   void initState() {

@@ -1,7 +1,6 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
-import 'package:fintrack/features/auth/pages/sign_up_page.dart';
+import 'package:fintrack/features/auth/presentation/page/sign_up_page.dart';
 import 'package:fintrack/features/chart/chart_injection.dart';
 // import 'package:fintrack/features/chart/bloc/chart_bloc.dart';
 import 'package:fintrack/features/chart/data/datasources/chart_data_source.dart';
@@ -17,9 +16,14 @@ import 'package:fintrack/features/navigation/pages/bottom_nav_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class BottombarPage extends StatelessWidget {
-  int _index = 2;
+class BottombarPage extends StatefulWidget {
+  const BottombarPage({super.key});
 
+  @override
+  State<BottombarPage> createState() => _BottombarPageState();
+}
+
+class _BottombarPageState extends State<BottombarPage> {
   @override
   Widget build(BuildContext context) {
     final h = SizeUtils.height(context);
