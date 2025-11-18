@@ -1,8 +1,14 @@
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
 import 'package:fintrack/features/auth/presentation/page/sign_up_page.dart';
-import 'package:fintrack/features/chart/bloc/chart_bloc.dart';
-import 'package:fintrack/features/chart/pages/chart_page.dart';
+import 'package:fintrack/features/chart/chart_injection.dart';
+// import 'package:fintrack/features/chart/bloc/chart_bloc.dart';
+import 'package:fintrack/features/chart/data/datasources/chart_data_source.dart';
+import 'package:fintrack/features/chart/data/repositories/chart_repository_impl.dart';
+import 'package:fintrack/features/chart/domain/usecases/get_chart_data_usecase.dart';
+// import 'package:fintrack/features/chart/pages/chart_page.dart';
+import 'package:fintrack/features/chart/presentation/bloc/chart_bloc.dart';
+import 'package:fintrack/features/chart/presentation/pages/chart_page.dart';
 import 'package:fintrack/features/home/bloc/home_bloc.dart';
 import 'package:fintrack/features/home/pages/home_page.dart';
 import 'package:fintrack/features/navigation/bloc/bottom_bloc.dart';
@@ -25,15 +31,23 @@ class _BottombarPageState extends State<BottombarPage> {
     final w = SizeUtils.width(context);
     final List<Widget> _page = [
       BlocProvider(create: (context) => HomeBloc(), child: HomePage()),
+
       MultiBlocProvider(
         providers: [
-          BlocProvider(create: (context) => ChartBloc()),
-          BlocProvider(create: (context) => HomeBloc()),
+          BlocProvider<ChartBloc>(
+            create: (context) => sl<ChartBloc>()..add(LoadChartDataEvent()),
+          ),
+          BlocProvider<HomeBloc>(
+            create: (context) => HomeBloc()..add(LoadAcountsEvent()),
+          ),
         ],
-        child: ChartPage(),
+        child: const ChartPage(),
       ),
 
-      // BlocProvider(create: (context) => HomeBloc(), child: HomePage()),
+      // BlocProvider<ChartBloc>(
+      //   create: (_) => sl<ChartBloc>()..add(LoadChartDataEvent()),
+      //   child: const ChartPage(),
+      // ),
       SignUpPage(),
       BlocProvider(create: (context) => HomeBloc(), child: HomePage()),
       BlocProvider(create: (context) => HomeBloc(), child: HomePage()),

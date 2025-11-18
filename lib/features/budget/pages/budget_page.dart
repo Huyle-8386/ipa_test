@@ -1,8 +1,9 @@
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
-import 'package:fintrack/features/budget/pages/widgets/budget_card.dart';
-import 'package:fintrack/features/budget/pages/widgets/filter_tab.dart';
+import 'package:fintrack/features/budget/presentation/pages/widgets/budget_card.dart';
+import 'package:fintrack/features/budget/presentation/pages/widgets/filter_tab.dart';
+
 import 'package:flutter/material.dart';
 
 class BudgetPage extends StatelessWidget {
