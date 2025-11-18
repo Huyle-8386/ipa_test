@@ -21,7 +21,8 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       iconPath: 'assets/icons/bill_reminder.png',
       title: 'Bill Reminder',
       time: 'Today | 10:42 AM',
-      description: 'Don\'t forget to pay your electricity bill by the end of the week',
+      description:
+          'Don\'t forget to pay your electricity bill by the end of the week',
       isUnread: true,
     ),
     const NotificationItemModel(
@@ -29,7 +30,8 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       iconPath: 'assets/icons/alert.png',
       title: 'Budget Alert',
       time: '1 day ago | 11:42 PM',
-      description: 'You\'ve exceeded 90% of your monthly budget for "Groceries"',
+      description:
+          'You\'ve exceeded 90% of your monthly budget for "Groceries"',
       isUnread: true,
     ),
     const NotificationItemModel(
@@ -37,7 +39,8 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       iconPath: 'assets/icons/alert.png',
       title: 'Expense Alert',
       time: '2 days ago | 11:25 PM',
-      description: 'Your recent grocery expense was higher than usual. Review your spending.',
+      description:
+          'Your recent grocery expense was higher than usual. Review your spending.',
       isUnread: false,
     ),
   ];

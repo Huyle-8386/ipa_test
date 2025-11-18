@@ -10,7 +10,6 @@ import '../../bloc/budget_event.dart';
 import '../../bloc/budget_state.dart';
 import '../detail_budget_page.dart';
 
-
 class BudgetCard extends StatelessWidget {
   const BudgetCard({super.key});
 

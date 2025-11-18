@@ -14,10 +14,7 @@ class ChatState extends Equatable {
   });
 
   factory ChatState.initial() {
-    return const ChatState(
-      sessions: [],
-      isLoading: false,
-    );
+    return const ChatState(sessions: [], isLoading: false);
   }
 
   ChatState copyWith({

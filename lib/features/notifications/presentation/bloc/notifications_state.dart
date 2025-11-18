@@ -12,10 +12,7 @@ class NotificationsState extends Equatable {
   });
 
   factory NotificationsState.initial() {
-    return const NotificationsState(
-      notifications: [],
-      isLoading: false,
-    );
+    return const NotificationsState(notifications: [], isLoading: false);
   }
 
   NotificationsState copyWith({

@@ -24,7 +24,6 @@ class BottombarPage extends StatefulWidget {
 }
 
 class _BottombarPageState extends State<BottombarPage> {
-
   @override
   Widget build(BuildContext context) {
     final h = SizeUtils.height(context);

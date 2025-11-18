@@ -7,7 +7,10 @@ class SendMessage {
 
   SendMessage(this.repository);
 
-  Future<Either<String, ChatMessage>> call(String sessionId, String message) async {
+  Future<Either<String, ChatMessage>> call(
+    String sessionId,
+    String message,
+  ) async {
     return await repository.sendMessage(sessionId, message);
   }
 }

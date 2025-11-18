@@ -11,10 +11,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final GetChatSessions getChatSessions;
   final CreateNewChatSession createNewChatSession;
 
-  ChatBloc({
-    required this.getChatSessions,
-    required this.createNewChatSession,
-  }) : super(ChatState.initial()) {
+  ChatBloc({required this.getChatSessions, required this.createNewChatSession})
+    : super(ChatState.initial()) {
     on<LoadChatSessions>(_onLoadChatSessions);
     on<CreateNewChatSessionEvent>(_onCreateNewChatSession);
   }
@@ -28,14 +26,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     final result = await getChatSessions();
 
     result.fold(
-      (error) => emit(state.copyWith(
-        isLoading: false,
-        errorMessage: error,
-      )),
-      (sessions) => emit(state.copyWith(
-        sessions: sessions,
-        isLoading: false,
-      )),
+      (error) => emit(state.copyWith(isLoading: false, errorMessage: error)),
+      (sessions) => emit(state.copyWith(sessions: sessions, isLoading: false)),
     );
   }
 
@@ -48,17 +40,16 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     final result = await createNewChatSession.call();
 
     result.fold(
-      (error) => emit(state.copyWith(
-        isLoading: false,
-        errorMessage: error,
-      )),
+      (error) => emit(state.copyWith(isLoading: false, errorMessage: error)),
       (newSession) {
         final updatedSessions = <ChatSession>[newSession, ...state.sessions];
-        emit(state.copyWith(
-          sessions: updatedSessions,
-          isLoading: false,
-          newSessionId: newSession.id,
-        ));
+        emit(
+          state.copyWith(
+            sessions: updatedSessions,
+            isLoading: false,
+            newSessionId: newSession.id,
+          ),
+        );
         // Reset newSessionId after emitting
         emit(state.copyWith(newSessionId: null));
       },

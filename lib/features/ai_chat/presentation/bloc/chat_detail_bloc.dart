@@ -34,14 +34,8 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
     final result = await getMessages.call(sessionId);
 
     result.fold(
-      (error) => emit(state.copyWith(
-        isLoading: false,
-        errorMessage: error,
-      )),
-      (messages) => emit(state.copyWith(
-        messages: messages,
-        isLoading: false,
-      )),
+      (error) => emit(state.copyWith(isLoading: false, errorMessage: error)),
+      (messages) => emit(state.copyWith(messages: messages, isLoading: false)),
     );
   }
 
@@ -67,16 +61,10 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
     final result = await sendMessage(sessionId, event.message);
 
     result.fold(
-      (error) => emit(state.copyWith(
-        isSending: false,
-        errorMessage: error,
-      )),
+      (error) => emit(state.copyWith(isSending: false, errorMessage: error)),
       (aiMessage) {
         final finalMessages = <ChatMessage>[...updatedMessages, aiMessage];
-        emit(state.copyWith(
-          messages: finalMessages,
-          isSending: false,
-        ));
+        emit(state.copyWith(messages: finalMessages, isSending: false));
       },
     );
   }
@@ -90,10 +78,7 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
     final result = await regenerateMessage(event.messageId);
 
     result.fold(
-      (error) => emit(state.copyWith(
-        isSending: false,
-        errorMessage: error,
-      )),
+      (error) => emit(state.copyWith(isSending: false, errorMessage: error)),
       (regeneratedMessage) {
         final updatedMessages = <ChatMessage>[];
         for (final msg in state.messages) {
@@ -104,10 +89,7 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
           }
         }
 
-        emit(state.copyWith(
-          messages: updatedMessages,
-          isSending: false,
-        ));
+        emit(state.copyWith(messages: updatedMessages, isSending: false));
       },
     );
   }

@@ -30,7 +30,9 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Future<Either<String, List<ChatMessage>>> getMessages(String sessionId) async {
+  Future<Either<String, List<ChatMessage>>> getMessages(
+    String sessionId,
+  ) async {
     try {
       final messages = await remoteDataSource.getMessages(sessionId);
       return Right(messages);
@@ -40,7 +42,10 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Future<Either<String, ChatMessage>> sendMessage(String sessionId, String message) async {
+  Future<Either<String, ChatMessage>> sendMessage(
+    String sessionId,
+    String message,
+  ) async {
     try {
       final response = await remoteDataSource.sendMessage(sessionId, message);
       return Right(response);
@@ -50,7 +55,9 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Future<Either<String, ChatMessage>> regenerateMessage(String messageId) async {
+  Future<Either<String, ChatMessage>> regenerateMessage(
+    String messageId,
+  ) async {
     try {
       final message = await remoteDataSource.regenerateMessage(messageId);
       return Right(message);

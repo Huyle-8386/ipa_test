@@ -31,10 +31,7 @@ Future<void> initAiChat() async {
 
   // bloc
   sl.registerFactory(
-    () => ChatBloc(
-      getChatSessions: sl(),
-      createNewChatSession: sl(),
-    ),
+    () => ChatBloc(getChatSessions: sl(), createNewChatSession: sl()),
   );
 
   // Note: ChatDetailBloc requires sessionId parameter, so it should be created

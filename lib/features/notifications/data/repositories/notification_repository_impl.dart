@@ -19,7 +19,9 @@ class NotificationRepositoryImpl implements NotificationRepository {
   }
 
   @override
-  Future<Either<String, NotificationItem>> markAsRead(String notificationId) async {
+  Future<Either<String, NotificationItem>> markAsRead(
+    String notificationId,
+  ) async {
     try {
       final notification = await remoteDataSource.markAsRead(notificationId);
       return Right(notification);

@@ -63,21 +63,25 @@ class AuthState extends Equatable {
     );
   }
 
-  bool get isSignInValid => emailError == null && passwordError == null && email.isNotEmpty && password.isNotEmpty;
-  
+  bool get isSignInValid =>
+      emailError == null &&
+      passwordError == null &&
+      email.isNotEmpty &&
+      password.isNotEmpty;
+
   bool get isSignUpValid => isSignInValid && fullName.isNotEmpty;
 
   @override
   List<Object?> get props => [
-        email,
-        password,
-        fullName,
-        phone,
-        rememberMe,
-        isLoading,
-        isAuthenticated,
-        emailError,
-        passwordError,
-        errorMessage,
-      ];
+    email,
+    password,
+    fullName,
+    phone,
+    rememberMe,
+    isLoading,
+    isAuthenticated,
+    emailError,
+    passwordError,
+    errorMessage,
+  ];
 }

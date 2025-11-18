@@ -33,19 +33,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<GoogleSignInSubmitted>(_onGoogleSignInSubmitted);
   }
 
-  Future<void> _onEmailChanged(EmailChanged event, Emitter<AuthState> emit) async {
+  Future<void> _onEmailChanged(
+    EmailChanged event,
+    Emitter<AuthState> emit,
+  ) async {
     final result = await validateEmail(event.email);
     result.fold(
       (error) => emit(state.copyWith(email: event.email, emailError: error)),
-      (errorMessage) => emit(state.copyWith(email: event.email, emailError: errorMessage)),
+      (errorMessage) =>
+          emit(state.copyWith(email: event.email, emailError: errorMessage)),
     );
   }
 
-  Future<void> _onPasswordChanged(PasswordChanged event, Emitter<AuthState> emit) async {
+  Future<void> _onPasswordChanged(
+    PasswordChanged event,
+    Emitter<AuthState> emit,
+  ) async {
     final result = await validatePassword(event.password);
     result.fold(
-      (error) => emit(state.copyWith(password: event.password, passwordError: error)),
-      (errorMessage) => emit(state.copyWith(password: event.password, passwordError: errorMessage)),
+      (error) =>
+          emit(state.copyWith(password: event.password, passwordError: error)),
+      (errorMessage) => emit(
+        state.copyWith(password: event.password, passwordError: errorMessage),
+      ),
     );
   }
 
@@ -83,10 +93,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
 
     if (emailError != null || passwordError != null) {
-      emit(state.copyWith(
-        emailError: emailError,
-        passwordError: passwordError,
-      ));
+      emit(
+        state.copyWith(emailError: emailError, passwordError: passwordError),
+      );
       return;
     }
 
@@ -99,14 +108,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
 
     result.fold(
-      (error) => emit(state.copyWith(
-        isLoading: false,
-        errorMessage: error,
-      )),
-      (user) => emit(state.copyWith(
-        isLoading: false,
-        isAuthenticated: true,
-      )),
+      (error) => emit(state.copyWith(isLoading: false, errorMessage: error)),
+      (user) => emit(state.copyWith(isLoading: false, isAuthenticated: true)),
     );
   }
 
@@ -132,10 +135,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
 
     if (emailError != null || passwordError != null) {
-      emit(state.copyWith(
-        emailError: emailError,
-        passwordError: passwordError,
-      ));
+      emit(
+        state.copyWith(emailError: emailError, passwordError: passwordError),
+      );
       return;
     }
 
@@ -154,14 +156,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
 
     result.fold(
-      (error) => emit(state.copyWith(
-        isLoading: false,
-        errorMessage: error,
-      )),
-      (user) => emit(state.copyWith(
-        isLoading: false,
-        isAuthenticated: true,
-      )),
+      (error) => emit(state.copyWith(isLoading: false, errorMessage: error)),
+      (user) => emit(state.copyWith(isLoading: false, isAuthenticated: true)),
     );
   }
 
@@ -174,14 +170,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await signInWithGoogle();
 
     result.fold(
-      (error) => emit(state.copyWith(
-        isLoading: false,
-        errorMessage: error,
-      )),
-      (user) => emit(state.copyWith(
-        isLoading: false,
-        isAuthenticated: true,
-      )),
+      (error) => emit(state.copyWith(isLoading: false, errorMessage: error)),
+      (user) => emit(state.copyWith(isLoading: false, isAuthenticated: true)),
     );
   }
 }

@@ -87,158 +87,160 @@ class _SignUpViewState extends State<_SignUpView> {
         backgroundColor: AppColors.background,
         body: SafeArea(
           child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: SizeUtils.width(context) * 0.06,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: SizeUtils.height(context) * 0.08),
-                // Logo
-                Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/icons/fintrack_icon.png',
-                        width: 40,
-                        height: 40,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'fintrack',
-                        style: AppTextStyles.heading1.copyWith(
-                          color: AppColors.main,
-                          fontSize: 36,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: SizeUtils.width(context) * 0.06,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: SizeUtils.height(context) * 0.08),
+                  // Logo
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/icons/fintrack_icon.png',
+                          width: 40,
+                          height: 40,
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: SizeUtils.height(context) * 0.08),
-                // Sign up title
-                Text(
-                  'Sign up!',
-                  style: AppTextStyles.heading1.copyWith(
-                    color: AppColors.white,
-                    fontSize: 28,
-                  ),
-                ),
-                SizedBox(height: SizeUtils.height(context) * 0.04),
-                // Full name field
-                BlocBuilder<AuthBloc, AuthState>(
-                  builder: (context, state) {
-                    return CustomTextField(
-                      label: 'Full name',
-                      hintText: 'Enter your full name',
-                      controller: _fullNameController,
-                      onChanged: (value) {
-                        context.read<AuthBloc>().add(FullNameChanged(value));
-                      },
-                    );
-                  },
-                ),
-                SizedBox(height: SizeUtils.height(context) * 0.02),
-                // Email field
-                BlocBuilder<AuthBloc, AuthState>(
-                  builder: (context, state) {
-                    return CustomTextField(
-                      label: 'E-mail',
-                      hintText: 'Enter your email',
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      errorText: state.emailError,
-                      onChanged: (value) {
-                        context.read<AuthBloc>().add(EmailChanged(value));
-                      },
-                    );
-                  },
-                ),
-                SizedBox(height: SizeUtils.height(context) * 0.02),
-                // Password field
-                BlocBuilder<AuthBloc, AuthState>(
-                  builder: (context, state) {
-                    return CustomTextField(
-                      label: 'Password',
-                      hintText: 'Enter your password',
-                      controller: _passwordController,
-                      isPassword: true,
-                      errorText: state.passwordError,
-                      onChanged: (value) {
-                        context.read<AuthBloc>().add(PasswordChanged(value));
-                      },
-                    );
-                  },
-                ),
-                SizedBox(height: SizeUtils.height(context) * 0.02),
-                // Phone number field
-                BlocBuilder<AuthBloc, AuthState>(
-                  builder: (context, state) {
-                    return CustomTextField(
-                      label: 'Phone number',
-                      hintText: 'Enter your phone number',
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
-                      onChanged: (value) {
-                        context.read<AuthBloc>().add(PhoneChanged(value));
-                      },
-                    );
-                  },
-                ),
-                SizedBox(height: SizeUtils.height(context) * 0.04),
-                // Create account button
-                BlocBuilder<AuthBloc, AuthState>(
-                  builder: (context, state) {
-                    return CustomButton(
-                      label: state.isLoading ? 'Creating account...' : 'Create account',
-                      onPressed: state.isLoading
-                          ? null
-                          : () {
-                              context.read<AuthBloc>().add(SignUpSubmitted());
-                            },
-                    );
-                  },
-                ),
-                SizedBox(height: SizeUtils.height(context) * 0.03),
-                // Sign in link
-                Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Already have an account? ',
-                        style: AppTextStyles.body2.copyWith(
-                          color: AppColors.grey,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SignInPage(),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          'Sign in',
-                          style: AppTextStyles.body2.copyWith(
+                        const SizedBox(width: 8),
+                        Text(
+                          'fintrack',
+                          style: AppTextStyles.heading1.copyWith(
                             color: AppColors.main,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 36,
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(height: SizeUtils.height(context) * 0.04),
-              ],
+                  SizedBox(height: SizeUtils.height(context) * 0.08),
+                  // Sign up title
+                  Text(
+                    'Sign up!',
+                    style: AppTextStyles.heading1.copyWith(
+                      color: AppColors.white,
+                      fontSize: 28,
+                    ),
+                  ),
+                  SizedBox(height: SizeUtils.height(context) * 0.04),
+                  // Full name field
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      return CustomTextField(
+                        label: 'Full name',
+                        hintText: 'Enter your full name',
+                        controller: _fullNameController,
+                        onChanged: (value) {
+                          context.read<AuthBloc>().add(FullNameChanged(value));
+                        },
+                      );
+                    },
+                  ),
+                  SizedBox(height: SizeUtils.height(context) * 0.02),
+                  // Email field
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      return CustomTextField(
+                        label: 'E-mail',
+                        hintText: 'Enter your email',
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        errorText: state.emailError,
+                        onChanged: (value) {
+                          context.read<AuthBloc>().add(EmailChanged(value));
+                        },
+                      );
+                    },
+                  ),
+                  SizedBox(height: SizeUtils.height(context) * 0.02),
+                  // Password field
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      return CustomTextField(
+                        label: 'Password',
+                        hintText: 'Enter your password',
+                        controller: _passwordController,
+                        isPassword: true,
+                        errorText: state.passwordError,
+                        onChanged: (value) {
+                          context.read<AuthBloc>().add(PasswordChanged(value));
+                        },
+                      );
+                    },
+                  ),
+                  SizedBox(height: SizeUtils.height(context) * 0.02),
+                  // Phone number field
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      return CustomTextField(
+                        label: 'Phone number',
+                        hintText: 'Enter your phone number',
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        onChanged: (value) {
+                          context.read<AuthBloc>().add(PhoneChanged(value));
+                        },
+                      );
+                    },
+                  ),
+                  SizedBox(height: SizeUtils.height(context) * 0.04),
+                  // Create account button
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      return CustomButton(
+                        label: state.isLoading
+                            ? 'Creating account...'
+                            : 'Create account',
+                        onPressed: state.isLoading
+                            ? null
+                            : () {
+                                context.read<AuthBloc>().add(SignUpSubmitted());
+                              },
+                      );
+                    },
+                  ),
+                  SizedBox(height: SizeUtils.height(context) * 0.03),
+                  // Sign in link
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Already have an account? ',
+                          style: AppTextStyles.body2.copyWith(
+                            color: AppColors.grey,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SignInPage(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Sign in',
+                            style: AppTextStyles.body2.copyWith(
+                              color: AppColors.main,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: SizeUtils.height(context) * 0.04),
+                ],
+              ),
             ),
           ),
         ),
-      ),
       ), // closes BlocListener
     );
   }

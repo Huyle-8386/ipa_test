@@ -32,14 +32,9 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     final result = await getNotifications();
 
     result.fold(
-      (error) => emit(state.copyWith(
-        isLoading: false,
-        errorMessage: error,
-      )),
-      (notifications) => emit(state.copyWith(
-        notifications: notifications,
-        isLoading: false,
-      )),
+      (error) => emit(state.copyWith(isLoading: false, errorMessage: error)),
+      (notifications) =>
+          emit(state.copyWith(notifications: notifications, isLoading: false)),
     );
   }
 
@@ -49,21 +44,20 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   ) async {
     final result = await markAsRead.call(event.notificationId);
 
-    result.fold(
-      (error) => emit(state.copyWith(errorMessage: error)),
-      (updatedNotification) {
-        final updatedNotifications = <NotificationItem>[];
-        for (final notif in state.notifications) {
-          if (notif.id == event.notificationId) {
-            updatedNotifications.add(updatedNotification);
-          } else {
-            updatedNotifications.add(notif);
-          }
+    result.fold((error) => emit(state.copyWith(errorMessage: error)), (
+      updatedNotification,
+    ) {
+      final updatedNotifications = <NotificationItem>[];
+      for (final notif in state.notifications) {
+        if (notif.id == event.notificationId) {
+          updatedNotifications.add(updatedNotification);
+        } else {
+          updatedNotifications.add(notif);
         }
+      }
 
-        emit(state.copyWith(notifications: updatedNotifications));
-      },
-    );
+      emit(state.copyWith(notifications: updatedNotifications));
+    });
   }
 
   Future<void> _onMarkAllAsRead(

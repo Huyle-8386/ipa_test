@@ -28,8 +28,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl({
     firebase_auth.FirebaseAuth? firebaseAuth,
     GoogleSignIn? googleSignIn,
-  })  : _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance,
-        _googleSignIn = googleSignIn ?? GoogleSignIn();
+  }) : _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance,
+       _googleSignIn = googleSignIn ?? GoogleSignIn();
 
   @override
   Future<UserModel> signIn({
@@ -100,13 +100,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       // Trigger the authentication flow
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      
+
       if (googleUser == null) {
         throw Exception('Google sign in was cancelled');
       }
 
       // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       // Create a new credential
       final credential = firebase_auth.GoogleAuthProvider.credential(
@@ -115,8 +116,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       // Sign in to Firebase with the Google credential
-      final userCredential = await _firebaseAuth.signInWithCredential(credential);
-      
+      final userCredential = await _firebaseAuth.signInWithCredential(
+        credential,
+      );
+
       final user = userCredential.user;
       if (user == null) {
         throw Exception('Failed to sign in with Google');
@@ -131,17 +134,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } on firebase_auth.FirebaseAuthException catch (e) {
       throw Exception(_getErrorMessage(e.code));
     } catch (e) {
-      throw Exception('An error occurred during Google sign in: ${e.toString()}');
+      throw Exception(
+        'An error occurred during Google sign in: ${e.toString()}',
+      );
     }
   }
 
   @override
   Future<void> signOut() async {
     try {
-      await Future.wait([
-        _firebaseAuth.signOut(),
-        _googleSignIn.signOut(),
-      ]);
+      await Future.wait([_firebaseAuth.signOut(), _googleSignIn.signOut()]);
     } catch (e) {
       throw Exception('An error occurred during sign out');
     }

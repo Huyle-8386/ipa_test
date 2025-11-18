@@ -13,10 +13,7 @@ import 'package:fintrack/features/ai_chat/domain/entities/chat_message.dart';
 class ChatDetailScreen extends StatelessWidget {
   final String sessionId;
 
-  const ChatDetailScreen({
-    super.key,
-    required this.sessionId,
-  });
+  const ChatDetailScreen({super.key, required this.sessionId});
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +90,7 @@ class _ChatDetailViewState extends State<_ChatDetailView> {
               height: 40,
             ),
           ),
-          
+
           // Messages List
           Expanded(
             child: BlocBuilder<ChatDetailBloc, ChatDetailState>(
@@ -106,7 +103,9 @@ class _ChatDetailViewState extends State<_ChatDetailView> {
                   return Center(
                     child: Text(
                       'Start a conversation',
-                      style: AppTextStyles.body2.copyWith(color: AppColors.grey),
+                      style: AppTextStyles.body2.copyWith(
+                        color: AppColors.grey,
+                      ),
                     ),
                   );
                 }
@@ -122,7 +121,7 @@ class _ChatDetailViewState extends State<_ChatDetailView> {
               },
             ),
           ),
-          
+
           // Input Bar
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -137,7 +136,11 @@ class _ChatDetailViewState extends State<_ChatDetailView> {
               child: Row(
                 children: [
                   IconButton(
-                    icon: Icon(Icons.add_circle_outline, color: AppColors.grey, size: 24),
+                    icon: Icon(
+                      Icons.add_circle_outline,
+                      color: AppColors.grey,
+                      size: 24,
+                    ),
                     onPressed: () {},
                     padding: EdgeInsets.zero,
                     constraints: BoxConstraints(),
@@ -225,13 +228,11 @@ class _ChatDetailViewState extends State<_ChatDetailView> {
                   backgroundColor: AppColors.widget,
                   child: Padding(
                     padding: const EdgeInsets.all(4),
-                    child: Image.asset(
-                      'assets/icons/AI_logo.png',
-                    ),
+                    child: Image.asset('assets/icons/AI_logo.png'),
                   ),
                 ),
           const SizedBox(width: 10),
-          
+
           // Message Content
           Expanded(
             child: Column(
@@ -247,12 +248,14 @@ class _ChatDetailViewState extends State<_ChatDetailView> {
                   ),
                 ),
                 const SizedBox(height: 6),
-                
+
                 // Message Bubble
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: message.isUser ? AppColors.widget : Color(0xFF0A0A0A),
+                    color: message.isUser
+                        ? AppColors.widget
+                        : Color(0xFF0A0A0A),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -265,13 +268,15 @@ class _ChatDetailViewState extends State<_ChatDetailView> {
                     ),
                   ),
                 ),
-                
+
                 // Regenerate Button (phan hoi cua AI messages)
                 if (message.showRegenerate) ...[
                   const SizedBox(height: 10),
                   OutlinedButton.icon(
                     onPressed: () {
-                      context.read<ChatDetailBloc>().add(RegenerateMessageEvent(message.id));
+                      context.read<ChatDetailBloc>().add(
+                        RegenerateMessageEvent(message.id),
+                      );
                     },
                     icon: Image.asset(
                       'assets/icons/regenerate.png',

@@ -70,21 +70,24 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
         id: '${sessionId}_msg_2',
         isUser: false,
         userName: 'AI Chat',
-        message: 'Of course! What are you saving for, and how much do you want to save?',
+        message:
+            'Of course! What are you saving for, and how much do you want to save?',
         time: '10:30 AM',
       ),
       ChatMessageModel(
         id: '${sessionId}_msg_3',
         isUser: true,
         userName: 'Phung Hao',
-        message: 'I\'m saving for a vacation, and I want to save \$1,200 in 6 months.',
+        message:
+            'I\'m saving for a vacation, and I want to save \$1,200 in 6 months.',
         time: '10:31 AM',
       ),
       ChatMessageModel(
         id: '${sessionId}_msg_4',
         isUser: false,
         userName: 'AI Chat',
-        message: 'Great! To achieve that, you\'ll need to save \$200 per month. Would you like to set up an automatic transfer from your checking account to a dedicated savings account for this goal?',
+        message:
+            'Great! To achieve that, you\'ll need to save \$200 per month. Would you like to set up an automatic transfer from your checking account to a dedicated savings account for this goal?',
         time: '10:31 AM',
         showRegenerate: true,
       ),
@@ -101,7 +104,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       id: '${sessionId}_msg_${DateTime.now().millisecondsSinceEpoch}',
       isUser: false,
       userName: 'AI Chat',
-      message: 'Thank you for your message. I\'m here to help you with your financial questions!',
+      message:
+          'Thank you for your message. I\'m here to help you with your financial questions!',
       time: _formatTime(DateTime.now()),
       showRegenerate: true,
     );
@@ -116,7 +120,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       id: messageId,
       isUser: false,
       userName: 'AI Chat',
-      message: 'Here\'s a regenerated response. I can help you better understand your financial situation.',
+      message:
+          'Here\'s a regenerated response. I can help you better understand your financial situation.',
       time: _formatTime(DateTime.now()),
       showRegenerate: true,
     );

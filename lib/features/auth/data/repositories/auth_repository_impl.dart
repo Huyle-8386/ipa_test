@@ -94,22 +94,30 @@ class AuthRepositoryImpl implements AuthRepository {
 
     // Check minimum length
     if (password.length < 6) {
-      return const Right('Please enter a password with at least 6 characters, containing at least 1 uppercase letter, 1 lowercase letter and 1 number');
+      return const Right(
+        'Please enter a password with at least 6 characters, containing at least 1 uppercase letter, 1 lowercase letter and 1 number',
+      );
     }
 
     // Check for at least 1 uppercase letter
     if (!password.contains(RegExp(r'[A-Z]'))) {
-      return const Right('Please enter a password with at least 6 characters, containing at least 1 uppercase letter, 1 lowercase letter and 1 number');
+      return const Right(
+        'Please enter a password with at least 6 characters, containing at least 1 uppercase letter, 1 lowercase letter and 1 number',
+      );
     }
 
     // Check for at least 1 lowercase letter
     if (!password.contains(RegExp(r'[a-z]'))) {
-      return const Right('Please enter a password with at least 6 characters, containing at least 1 uppercase letter, 1 lowercase letter and 1 number');
+      return const Right(
+        'Please enter a password with at least 6 characters, containing at least 1 uppercase letter, 1 lowercase letter and 1 number',
+      );
     }
 
     // Check for at least 1 number
     if (!password.contains(RegExp(r'[0-9]'))) {
-      return const Right('Please enter a password with at least 6 characters, containing at least 1 uppercase letter, 1 lowercase letter and 1 number');
+      return const Right(
+        'Please enter a password with at least 6 characters, containing at least 1 uppercase letter, 1 lowercase letter and 1 number',
+      );
     }
 
     return const Right(null); // Valid password

@@ -17,7 +17,9 @@ class NotificationsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Setup dependencies
     final remoteDataSource = NotificationRemoteDataSourceImpl();
-    final repository = NotificationRepositoryImpl(remoteDataSource: remoteDataSource);
+    final repository = NotificationRepositoryImpl(
+      remoteDataSource: remoteDataSource,
+    );
     final getNotifications = GetNotifications(repository);
     final markAsRead = MarkAsRead(repository);
     final markAllAsRead = MarkAllAsRead(repository);
@@ -29,67 +31,70 @@ class NotificationsPage extends StatelessWidget {
         markAllAsRead: markAllAsRead,
       )..add(LoadNotifications()),
       child: Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
         backgroundColor: AppColors.background,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: AppColors.white, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          'Notifications',
-          style: AppTextStyles.body1.copyWith(
-            color: AppColors.white,
-            fontSize: 16,
+        appBar: AppBar(
+          backgroundColor: AppColors.background,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios, color: AppColors.white, size: 20),
+            onPressed: () => Navigator.pop(context),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              context.read<NotificationsBloc>().add(MarkAllAsReadEvent());
-            },
-            child: Text(
-              'Mark all as read',
-              style: AppTextStyles.body2.copyWith(
-                color: AppColors.main,
-                fontWeight: FontWeight.w400,
-                fontSize: 13,
-              ),
+          title: Text(
+            'Notifications',
+            style: AppTextStyles.body1.copyWith(
+              color: AppColors.white,
+              fontSize: 16,
             ),
           ),
-        ],
-      ),
-      body: BlocBuilder<NotificationsBloc, NotificationsState>(
-        builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (state.notifications.isEmpty) {
-            return Center(
+          actions: [
+            TextButton(
+              onPressed: () {
+                context.read<NotificationsBloc>().add(MarkAllAsReadEvent());
+              },
               child: Text(
-                'No notifications',
-                style: AppTextStyles.body2.copyWith(color: AppColors.grey),
+                'Mark all as read',
+                style: AppTextStyles.body2.copyWith(
+                  color: AppColors.main,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 13,
+                ),
               ),
-            );
-          }
+            ),
+          ],
+        ),
+        body: BlocBuilder<NotificationsBloc, NotificationsState>(
+          builder: (context, state) {
+            if (state.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: state.notifications.length,
-            itemBuilder: (context, index) {
-              final notification = state.notifications[index];
-              return _buildNotificationCard(context, notification);
-            },
-          );
-        },
+            if (state.notifications.isEmpty) {
+              return Center(
+                child: Text(
+                  'No notifications',
+                  style: AppTextStyles.body2.copyWith(color: AppColors.grey),
+                ),
+              );
+            }
+
+            return ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: state.notifications.length,
+              itemBuilder: (context, index) {
+                final notification = state.notifications[index];
+                return _buildNotificationCard(context, notification);
+              },
+            );
+          },
+        ),
       ),
-    ),
     );
   }
 
-  Widget _buildNotificationCard(BuildContext context, NotificationItem notification) {
+  Widget _buildNotificationCard(
+    BuildContext context,
+    NotificationItem notification,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -108,7 +113,7 @@ class NotificationsPage extends StatelessWidget {
             fit: BoxFit.contain,
           ),
           const SizedBox(width: 12),
-          
+
           // Content
           Expanded(
             child: Column(
@@ -128,7 +133,7 @@ class NotificationsPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    
+
                     // Unread Indicator
                     if (notification.isUnread)
                       Container(
@@ -143,7 +148,7 @@ class NotificationsPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 4),
-                
+
                 // Time
                 Text(
                   notification.time,
@@ -153,7 +158,7 @@ class NotificationsPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                
+
                 // Description
                 Text(
                   notification.description,
