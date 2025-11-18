@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:fintrack/features/income/data/datasources/income_data.dart';
+import 'package:fintrack/features/income/domain/entities/income_entity.dart';
 
 abstract class IncomeState extends Equatable {
   const IncomeState();
@@ -13,7 +13,7 @@ class IncomeInitial extends IncomeState {}
 class IncomeLoading extends IncomeState {}
 
 class IncomeLoaded extends IncomeState {
-  final List<IncomeData> incomes;
+  final List<IncomeEntity> incomes;
   final double totalValue;
   final String activeCategory;
   final List<String> categories;

@@ -9,6 +9,7 @@ import 'package:fintrack/features/add_transaction/domain/usecases/save_transacti
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_bloc.dart';
 import 'package:fintrack/features/budget/budget_injection.dart';
 import 'package:fintrack/features/chart/chart_injection.dart';
+import 'package:fintrack/features/income/income_injection.dart';
 
 import 'package:get_it/get_it.dart';
 
@@ -20,4 +21,6 @@ Future<void> init() async {
   await initChartFeature();
   // await injectChart();
   // await initBudget();
+
+  await initIncome();
 }
