@@ -8,7 +8,6 @@ import 'package:fintrack/features/budget/bloc/budget_bloc.dart';
 import 'package:fintrack/features/budget/bloc/budget_event.dart';
 import 'package:fintrack/features/budget/bloc/budget_state.dart';
 import 'package:fintrack/features/budget/pages/detail_budget.dart';
-import 'package:fintrack/features/budget/models/budget_model.dart';
 
 class BudgetCard extends StatelessWidget {
   const BudgetCard({super.key});

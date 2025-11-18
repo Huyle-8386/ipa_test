@@ -7,12 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:986531762965:android:f8ee8dfaefac5f95c40f1c",
+        "mobilesdk_app_id": "1:986531762965:android:825818252800fc4ac40f1c",
         "android_client_info": {
           "package_name": "com.example.fintrack"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "986531762965-5aliao6d0u7bjmbr8fh2ukc8hqcv3ld3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAWxKyd13g75f6HUbFOatGcUIEMaCGksB4"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "986531762965-5aliao6d0u7bjmbr8fh2ukc8hqcv3ld3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "986531762965-02l559987dc13141mqbpmcgqjt6g1d3q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.fintrack"
+              }
+            }
+          ]
         }
       }
     }

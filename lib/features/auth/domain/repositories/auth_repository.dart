@@ -15,6 +15,8 @@ abstract class AuthRepository {
     String? phone,
   });
 
+  Future<Either<String, User>> signInWithGoogle();
+
   Future<Either<String, void>> signOut();
   
   Future<Either<String, String?>> validateEmail(String email);

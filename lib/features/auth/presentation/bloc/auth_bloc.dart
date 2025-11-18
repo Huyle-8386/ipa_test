@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fintrack/features/auth/domain/usecases/sign_in.dart';
 import 'package:fintrack/features/auth/domain/usecases/sign_up.dart';
+import 'package:fintrack/features/auth/domain/usecases/sign_in_with_google.dart';
 import 'package:fintrack/features/auth/domain/usecases/validate_email.dart';
 import 'package:fintrack/features/auth/domain/usecases/validate_password.dart';
 
@@ -11,12 +12,14 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignIn signIn;
   final SignUp signUp;
+  final SignInWithGoogle signInWithGoogle;
   final ValidateEmail validateEmail;
   final ValidatePassword validatePassword;
 
   AuthBloc({
     required this.signIn,
     required this.signUp,
+    required this.signInWithGoogle,
     required this.validateEmail,
     required this.validatePassword,
   }) : super(AuthState.initial()) {
@@ -27,6 +30,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<ToggleRememberMe>(_onToggleRememberMe);
     on<SignInSubmitted>(_onSignInSubmitted);
     on<SignUpSubmitted>(_onSignUpSubmitted);
+    on<GoogleSignInSubmitted>(_onGoogleSignInSubmitted);
   }
 
   Future<void> _onEmailChanged(EmailChanged event, Emitter<AuthState> emit) async {
@@ -148,6 +152,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       fullName: state.fullName,
       phone: state.phone.isNotEmpty ? state.phone : null,
     );
+
+    result.fold(
+      (error) => emit(state.copyWith(
+        isLoading: false,
+        errorMessage: error,
+      )),
+      (user) => emit(state.copyWith(
+        isLoading: false,
+        isAuthenticated: true,
+      )),
+    );
+  }
+
+  Future<void> _onGoogleSignInSubmitted(
+    GoogleSignInSubmitted event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(state.copyWith(isLoading: true, errorMessage: null));
+
+    final result = await signInWithGoogle();
 
     result.fold(
       (error) => emit(state.copyWith(

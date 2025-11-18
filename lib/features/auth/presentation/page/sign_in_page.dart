@@ -1,21 +1,22 @@
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
-import 'package:fintrack/features/auth/pages/sign_in_page.dart';
-import 'package:fintrack/features/auth/widgets/auth_widgets.dart';
-import 'package:fintrack/features/auth/bloc/auth_bloc.dart';
-import 'package:fintrack/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:fintrack/features/auth/presentation/page/sign_up_page.dart';
+import 'package:fintrack/features/auth/presentation/widget/auth_widgets.dart';
+import 'package:fintrack/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:fintrack/features/auth/data/datasource/auth_remote_data_source.dart';
 import 'package:fintrack/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:fintrack/features/auth/domain/usecases/sign_in.dart';
 import 'package:fintrack/features/auth/domain/usecases/sign_up.dart';
+import 'package:fintrack/features/auth/domain/usecases/sign_in_with_google.dart';
 import 'package:fintrack/features/auth/domain/usecases/validate_email.dart';
 import 'package:fintrack/features/auth/domain/usecases/validate_password.dart';
-import 'package:fintrack/features/home/pages/home_page.dart';
+import 'package:fintrack/features/navigation/pages/bottombar_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SignUpPage extends StatelessWidget {
-  const SignUpPage({super.key});
+class SignInPage extends StatelessWidget {
+  const SignInPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,7 @@ class SignUpPage extends StatelessWidget {
     final repository = AuthRepositoryImpl(remoteDataSource: remoteDataSource);
     final signInUseCase = SignIn(repository);
     final signUpUseCase = SignUp(repository);
+    final signInWithGoogleUseCase = SignInWithGoogle(repository);
     final validateEmailUseCase = ValidateEmail(repository);
     final validatePasswordUseCase = ValidatePassword(repository);
 
@@ -31,33 +33,30 @@ class SignUpPage extends StatelessWidget {
       create: (context) => AuthBloc(
         signIn: signInUseCase,
         signUp: signUpUseCase,
+        signInWithGoogle: signInWithGoogleUseCase,
         validateEmail: validateEmailUseCase,
         validatePassword: validatePasswordUseCase,
       ),
-      child: const _SignUpView(),
+      child: const _SignInView(),
     );
   }
 }
 
-class _SignUpView extends StatefulWidget {
-  const _SignUpView();
+class _SignInView extends StatefulWidget {
+  const _SignInView();
 
   @override
-  State<_SignUpView> createState() => _SignUpViewState();
+  State<_SignInView> createState() => _SignInViewState();
 }
 
-class _SignUpViewState extends State<_SignUpView> {
-  final _fullNameController = TextEditingController();
+class _SignInViewState extends State<_SignInView> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _phoneController = TextEditingController();
 
   @override
   void dispose() {
-    _fullNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _phoneController.dispose();
     super.dispose();
   }
 
@@ -68,7 +67,7 @@ class _SignUpViewState extends State<_SignUpView> {
         if (state.isAuthenticated) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomePage()),
+            MaterialPageRoute(builder: (context) => BottombarPage()),
           );
         }
         if (state.errorMessage != null) {
@@ -114,29 +113,17 @@ class _SignUpViewState extends State<_SignUpView> {
                   ),
                 ),
                 SizedBox(height: SizeUtils.height(context) * 0.08),
-                // Sign up title
-                Text(
-                  'Sign up!',
-                  style: AppTextStyles.heading1.copyWith(
-                    color: AppColors.white,
-                    fontSize: 28,
+                // Welcome back title
+                Center(
+                  child: Text(
+                    'Welcome back!',
+                    style: AppTextStyles.heading1.copyWith(
+                      color: AppColors.white,
+                      fontSize: 28,
+                    ),
                   ),
                 ),
                 SizedBox(height: SizeUtils.height(context) * 0.04),
-                // Full name field
-                BlocBuilder<AuthBloc, AuthState>(
-                  builder: (context, state) {
-                    return CustomTextField(
-                      label: 'Full name',
-                      hintText: 'Enter your full name',
-                      controller: _fullNameController,
-                      onChanged: (value) {
-                        context.read<AuthBloc>().add(FullNameChanged(value));
-                      },
-                    );
-                  },
-                ),
-                SizedBox(height: SizeUtils.height(context) * 0.02),
                 // Email field
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
@@ -169,42 +156,129 @@ class _SignUpViewState extends State<_SignUpView> {
                   },
                 ),
                 SizedBox(height: SizeUtils.height(context) * 0.02),
-                // Phone number field
+                // Remember me & Forgot password
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
-                    return CustomTextField(
-                      label: 'Phone number',
-                      hintText: 'Enter your phone number',
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
-                      onChanged: (value) {
-                        context.read<AuthBloc>().add(PhoneChanged(value));
-                      },
-                    );
-                  },
-                ),
-                SizedBox(height: SizeUtils.height(context) * 0.04),
-                // Create account button
-                BlocBuilder<AuthBloc, AuthState>(
-                  builder: (context, state) {
-                    return CustomButton(
-                      label: state.isLoading ? 'Creating account...' : 'Create account',
-                      onPressed: state.isLoading
-                          ? null
-                          : () {
-                              context.read<AuthBloc>().add(SignUpSubmitted());
-                            },
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: state.rememberMe,
+                              onChanged: (value) {
+                                context.read<AuthBloc>().add(ToggleRememberMe());
+                              },
+                              fillColor: WidgetStateProperty.resolveWith((states) {
+                                if (states.contains(WidgetState.selected)) {
+                                  return AppColors.main;
+                                }
+                                return AppColors.widget;
+                              }),
+                              checkColor: Colors.black,
+                            ),
+                            Text(
+                              'Remember Me',
+                              style: AppTextStyles.body2.copyWith(
+                                color: AppColors.white,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ],
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            // TODO: Implement forgot password
+                          },
+                          child: Text(
+                            'Forgot Password?',
+                            style: AppTextStyles.body2.copyWith(
+                              color: AppColors.main,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                      ],
                     );
                   },
                 ),
                 SizedBox(height: SizeUtils.height(context) * 0.03),
-                // Sign in link
+                // Sign in button
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    return CustomButton(
+                      label: 'Sign in',
+                      onPressed: state.isLoading
+                          ? null
+                          : () {
+                              context.read<AuthBloc>().add(SignInSubmitted());
+                            },
+                      isEnabled: !state.isLoading,
+                    );
+                  },
+                ),
+                SizedBox(height: SizeUtils.height(context) * 0.03),
+                // Or continue with
+                Row(
+                  children: [
+                    Expanded(
+                      child: Divider(color: AppColors.grey.withOpacity(0.3)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'or continue with',
+                        style: AppTextStyles.body2.copyWith(
+                          color: AppColors.grey,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(color: AppColors.grey.withOpacity(0.3)),
+                    ),
+                  ],
+                ),
+                SizedBox(height: SizeUtils.height(context) * 0.03),
+                // Social login buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SocialLoginButton(
+                      iconPath: 'assets/icons/facebook_logo.png',
+                      label: 'Facebook',
+                      onPressed: () {
+                        // TODO: Implement social login
+                        // Chỗ này sẽ là chỗ làm thêm cho trang đăng nhập bằng fb
+                      },
+                    ),
+                    const SizedBox(width: 16),
+                    SocialLoginButton(
+                      iconPath: 'assets/icons/google_logo.png',
+                      label: 'Google',
+                      onPressed: () {
+                        context.read<AuthBloc>().add(GoogleSignInSubmitted());
+                      },
+                    ),
+                    const SizedBox(width: 16),
+                    SocialLoginButton(
+                      iconPath: 'assets/icons/linkedin_logo.png',
+                      label: 'LinkedIn',
+                      onPressed: () {
+                        // TODO: Implement social login
+                        // Chỗ này sẽ là chỗ làm thêm cho trang đăng nhập bằng linked in
+                      },
+                    ),
+                  ],
+                ),
+                SizedBox(height: SizeUtils.height(context) * 0.03),
+                // Create account link
                 Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Already have an account? ',
+                        'or ',
                         style: AppTextStyles.body2.copyWith(
                           color: AppColors.grey,
                           fontWeight: FontWeight.normal,
@@ -212,15 +286,15 @@ class _SignUpViewState extends State<_SignUpView> {
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const SignInPage(),
+                              builder: (context) => const SignUpPage(),
                             ),
                           );
                         },
                         child: Text(
-                          'Sign in',
+                          'Create account',
                           style: AppTextStyles.body2.copyWith(
                             color: AppColors.main,
                             fontWeight: FontWeight.bold,
@@ -230,7 +304,7 @@ class _SignUpViewState extends State<_SignUpView> {
                     ],
                   ),
                 ),
-                SizedBox(height: SizeUtils.height(context) * 0.04),
+                SizedBox(height: SizeUtils.height(context) * 0.05),
               ],
             ),
           ),

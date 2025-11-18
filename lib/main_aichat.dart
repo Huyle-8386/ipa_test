@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
-import 'package:fintrack/features/ai_chat/ai_chat_screen.dart';
+import 'package:fintrack/features/ai_chat/presentation/page/ai_chat_page.dart';
 
 void main() {
   runApp(const MyApp2());
@@ -37,7 +37,7 @@ class MyApp2 extends StatelessWidget {
           background: AppColors.background,
         ),
       ),
-      home: const AIChatScreen(),
+      home: const AIChatPage(),
     );
   }
 }

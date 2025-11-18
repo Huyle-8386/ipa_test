@@ -1,5 +1,5 @@
-import 'package:fintrack/features/ai_chat/data/models/chat_session_model.dart';
-import 'package:fintrack/features/ai_chat/data/models/chat_message_model.dart';
+import 'package:fintrack/features/ai_chat/data/model/chat_session_model.dart';
+import 'package:fintrack/features/ai_chat/data/model/chat_message_model.dart';
 
 abstract class ChatRemoteDataSource {
   Future<List<ChatSessionModel>> getChatSessions();

@@ -1,4 +1,4 @@
-import 'package:fintrack/features/notifications/data/models/notification_item_model.dart';
+import 'package:fintrack/features/notifications/data/model/notification_item_model.dart';
 
 abstract class NotificationRemoteDataSource {
   Future<List<NotificationItemModel>> getNotifications();

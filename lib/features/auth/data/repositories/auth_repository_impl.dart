@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:fintrack/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:fintrack/features/auth/data/datasource/auth_remote_data_source.dart';
 import 'package:fintrack/features/auth/domain/entities/user.dart';
 import 'package:fintrack/features/auth/domain/repositories/auth_repository.dart';
 
@@ -43,6 +43,16 @@ class AuthRepositoryImpl implements AuthRepository {
       return Right(user);
     } catch (e) {
       return Left('Sign up failed: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<Either<String, User>> signInWithGoogle() async {
+    try {
+      final user = await remoteDataSource.signInWithGoogle();
+      return Right(user);
+    } catch (e) {
+      return Left(e.toString().replaceAll('Exception: ', ''));
     }
   }
 

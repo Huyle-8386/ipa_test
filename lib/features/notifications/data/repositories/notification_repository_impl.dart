@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:fintrack/features/notifications/data/datasources/notification_remote_data_source.dart';
+import 'package:fintrack/features/notifications/data/datasource/notification_remote_data_source.dart';
 import 'package:fintrack/features/notifications/domain/entities/notification_item.dart';
 import 'package:fintrack/features/notifications/domain/repositories/notification_repository.dart';
 

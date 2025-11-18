@@ -48,3 +48,5 @@ class ToggleRememberMe extends AuthEvent {}
 class SignInSubmitted extends AuthEvent {}
 
 class SignUpSubmitted extends AuthEvent {}
+
+class GoogleSignInSubmitted extends AuthEvent {}

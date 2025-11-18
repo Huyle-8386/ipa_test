@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:fintrack/features/ai_chat/data/datasources/chat_remote_data_source.dart';
+import 'package:fintrack/features/ai_chat/data/datasource/chat_remote_data_source.dart';
 import 'package:fintrack/features/ai_chat/domain/entities/chat_session.dart';
 import 'package:fintrack/features/ai_chat/domain/entities/chat_message.dart';
 import 'package:fintrack/features/ai_chat/domain/repositories/chat_repository.dart';

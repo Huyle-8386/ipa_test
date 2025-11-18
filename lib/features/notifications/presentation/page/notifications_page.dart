@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
-import 'package:fintrack/features/notifications/bloc/notifications_bloc.dart';
-import 'package:fintrack/features/notifications/data/datasources/notification_remote_data_source.dart';
+import 'package:fintrack/features/notifications/presentation/bloc/notifications_bloc.dart';
+import 'package:fintrack/features/notifications/data/datasource/notification_remote_data_source.dart';
 import 'package:fintrack/features/notifications/data/repositories/notification_repository_impl.dart';
 import 'package:fintrack/features/notifications/domain/usecases/get_notifications.dart';
 import 'package:fintrack/features/notifications/domain/usecases/mark_as_read.dart';
 import 'package:fintrack/features/notifications/domain/usecases/mark_all_as_read.dart';
 import 'package:fintrack/features/notifications/domain/entities/notification_item.dart';
 
-class NotificationsScreen extends StatelessWidget {
-  const NotificationsScreen({super.key});
+class NotificationsPage extends StatelessWidget {
+  const NotificationsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
