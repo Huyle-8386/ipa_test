@@ -11,10 +11,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Khởi tạo Firebase
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  
 
   await di.init();
   runApp(const MyApp());
@@ -31,6 +28,8 @@ void main() async {
   });
 }
 
+
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -39,7 +38,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       scrollBehavior: DesktopScrollBehavior(),
       debugShowCheckedModeBanner: false,
-      home: SignInPage(),
+      home: AddTransactionPage(),
       
     );
   }

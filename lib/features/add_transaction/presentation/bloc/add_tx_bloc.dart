@@ -10,16 +10,7 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
   final GetMoneySourcesUsecase getMoneySources;
   final SaveTransactionUsecase saveTx;
 
-  // AddTxBloc() : super(AddTxInitial()) {
-  //   on<AddTxInitEvent>(_onInit);
-  //   on<AddTxTabChangedEvent>(_onTabChanged);
-  //   on<AddTxTypeChangedEvent>(_onTypeChanged);
-  //   on<AddTxCategorySelectedEvent>(_onCategorySelected);
-  //   on<AddTxAmountChangedEvent>(_onAmountChanged);
-  //   on<AddTxDateChangedEvent>(_onDateChanged);
-  //   on<AddTxMoneySourceChangedEvent>(_onMoneySourceChanged);
-  //   on<AddTxNoteChangedEvent>(_onNoteChanged);
-  // }
+
 
   AddTxBloc({
     required this.getCategories,
