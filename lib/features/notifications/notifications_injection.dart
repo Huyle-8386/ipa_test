@@ -17,7 +17,7 @@ Future<void> initNotifications() async {
 
   // repository
   sl.registerLazySingleton<NotificationRepository>(
-    () => NotificationRepositoryImpl(remoteDataSource: sl()),
+    () => NotificationRepositoryImpl(sl()),
   );
 
   // usecases

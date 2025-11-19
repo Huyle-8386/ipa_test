@@ -1,10 +1,10 @@
 // Widget cho biểu đồ và chú giải
 import 'dart:math' as math;
 import 'package:fintrack/core/theme/app_colors.dart';
-import 'package:fintrack/features/expenses/data/datasources/expenses_data.dart';
+import 'package:fintrack/features/expenses/domain/entities/expense_entity.dart';
 import 'package:flutter/material.dart';
 
-Widget buildChartSection(double? totalValue) {
+Widget buildChartSection(double? totalValue, List<ExpenseEntity> expenses) {
   return Row(
     crossAxisAlignment: CrossAxisAlignment.end,
     mainAxisAlignment: MainAxisAlignment.end,
@@ -72,7 +72,7 @@ Widget buildChartSection(double? totalValue) {
 
 // Lớp Painter để vẽ biểu đồ tròn
 class PieChartPainter extends CustomPainter {
-  final List<ExpenseData> expenses;
+  final List<ExpenseEntity> expenses;
 
   PieChartPainter({required this.expenses});
 

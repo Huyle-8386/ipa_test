@@ -6,7 +6,7 @@ import 'package:fintrack/features/notifications/domain/repositories/notification
 class NotificationRepositoryImpl implements NotificationRepository {
   final NotificationRemoteDataSource remoteDataSource;
 
-  NotificationRepositoryImpl({required this.remoteDataSource});
+  NotificationRepositoryImpl(this.remoteDataSource);
 
   @override
   Future<Either<String, List<NotificationItem>>> getNotifications() async {

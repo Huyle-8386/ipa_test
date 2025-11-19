@@ -1,10 +1,20 @@
-import 'package:fintrack/features/income/data/datasources/income_data.dart';
+import 'package:fintrack/features/income/domain/usecases/get_income_categories_usecase.dart';
+import 'package:fintrack/features/income/domain/usecases/get_income_usecase.dart';
+import 'package:fintrack/features/income/domain/usecases/search_income_usecase.dart';
 import 'package:fintrack/features/income/presentation/bloc/income_event.dart';
 import 'package:fintrack/features/income/presentation/bloc/income_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class IncomeBloc extends Bloc<IncomeEvent, IncomeState> {
-  IncomeBloc() : super(IncomeInitial()) {
+  final GetIncomeUsecase getIncome;
+  final GetIncomeCategoriesUsecase getCategories;
+  final SearchIncomeUsecase searchIncome;
+
+  IncomeBloc({
+    required this.getIncome,
+    required this.getCategories,
+    required this.searchIncome,
+  }) : super(IncomeInitial()) {
     on<LoadIncomeData>(_onLoadIncomeData);
     on<FilterIncomeByCategory>(_onFilterIncomeByCategory);
     on<SearchIncome>(_onSearchIncome);
@@ -17,20 +27,16 @@ class IncomeBloc extends Bloc<IncomeEvent, IncomeState> {
     emit(IncomeLoading());
 
     try {
-      // Trong trường hợp thực tế, bạn có thể gọi API hoặc repository ở đây
-      // Giả lập việc tải dữ liệu
-      // await Future.delayed(const Duration(milliseconds: 500));
-      await Future.delayed(const Duration(milliseconds: 100));
-
-      final allIncomes = incomes; // Lấy từ incomes_data.dart
-      final total = totalValue; // Lấy từ incomes_data.dart
-      final allCategories = categories; // Lấy từ incomes_data.dart
+      final allCategories = await getCategories();
+      final defaultCategory = allCategories.first;
+      final allIncomes = await getIncome(category: defaultCategory);
+      final total = allIncomes.fold(0.0, (sum, item) => sum + item.value);
 
       emit(
         IncomeLoaded(
           incomes: allIncomes,
           totalValue: total,
-          activeCategory: allCategories[0], // Default là Daily
+          activeCategory: defaultCategory, // Default là phần tử đầu
           categories: allCategories,
         ),
       );
@@ -49,30 +55,7 @@ class IncomeBloc extends Bloc<IncomeEvent, IncomeState> {
       emit(IncomeLoading());
 
       try {
-        // Trong thực tế, bạn sẽ lọc dữ liệu theo category từ repository hoặc API
-        // Giả lập việc lọc dữ liệu
-        await Future.delayed(const Duration(milliseconds: 100));
-
-        // Giả sử các loại chi tiêu khác nhau theo category
-        List<IncomeData> filteredIncomes;
-
-        switch (event.category) {
-          case 'Daily':
-            filteredIncomes = incomes.take(3).toList();
-            break;
-          case 'Weekly':
-            filteredIncomes = incomes.take(4).toList();
-            break;
-          case 'Monthly':
-            filteredIncomes = incomes.take(5).toList();
-            break;
-          case 'Yearly':
-            filteredIncomes = incomes;
-            break;
-          default:
-            filteredIncomes = incomes;
-        }
-
+        final filteredIncomes = await getIncome(category: event.category);
         final total = filteredIncomes.fold(
           0.0,
           (sum, item) => sum + item.value,
@@ -83,8 +66,7 @@ class IncomeBloc extends Bloc<IncomeEvent, IncomeState> {
             incomes: filteredIncomes,
             totalValue: total,
             activeCategory: event.category,
-            categories:
-                currentState.categories, // Giữ nguyên danh sách categories
+            categories: currentState.categories,
           ),
         );
       } catch (e) {
@@ -105,16 +87,7 @@ class IncomeBloc extends Bloc<IncomeEvent, IncomeState> {
       emit(IncomeLoading());
 
       try {
-        // Giả lập tìm kiếm
-        await Future.delayed(const Duration(milliseconds: 300));
-
-        final searchResults = incomes
-            .where(
-              (income) =>
-                  income.name.toLowerCase().contains(event.query.toLowerCase()),
-            )
-            .toList();
-
+        final searchResults = await searchIncome(query: event.query);
         final total = searchResults.fold(0.0, (sum, item) => sum + item.value);
 
         emit(
@@ -122,8 +95,7 @@ class IncomeBloc extends Bloc<IncomeEvent, IncomeState> {
             incomes: searchResults,
             totalValue: total,
             activeCategory: currentState.activeCategory,
-            categories:
-                currentState.categories, // Giữ nguyên danh sách categories
+            categories: currentState.categories,
           ),
         );
       } catch (e) {

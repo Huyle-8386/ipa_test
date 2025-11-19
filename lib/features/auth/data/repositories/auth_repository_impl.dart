@@ -6,7 +6,7 @@ import 'package:fintrack/features/auth/domain/repositories/auth_repository.dart'
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
 
-  AuthRepositoryImpl({required this.remoteDataSource});
+  AuthRepositoryImpl(this.remoteDataSource);
 
   @override
   Future<Either<String, User>> signIn({
