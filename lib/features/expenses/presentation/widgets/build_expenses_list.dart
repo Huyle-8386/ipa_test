@@ -1,9 +1,9 @@
 // Widget cho danh sách chi tiêu
-import 'package:fintrack/features/expenses/data/datasources/expenses_data.dart';
+import 'package:fintrack/features/expenses/domain/entities/expense_entity.dart';
 import 'package:flutter/material.dart';
 
 // Chấp nhận danh sách chi tiêu từ bên ngoài thay vì sử dụng danh sách tĩnh
-Widget buildExpenseList(List<ExpenseData> expenseItems) {
+Widget buildExpenseList(List<ExpenseEntity> expenseItems) {
   return Column(
     children: expenseItems
         .map((expense) => buildExpenseListItem(expense))
@@ -13,7 +13,7 @@ Widget buildExpenseList(List<ExpenseData> expenseItems) {
 
 // Widget cho một mục trong danh sách
 // Đổi thành public để có thể gọi từ bên ngoài
-Widget buildExpenseListItem(ExpenseData expense) {
+Widget buildExpenseListItem(ExpenseEntity expense) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 12.0),
     child: Container(

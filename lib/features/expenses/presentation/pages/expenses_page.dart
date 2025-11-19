@@ -1,3 +1,4 @@
+import 'package:fintrack/core/di/injector.dart';
 import 'package:fintrack/features/expenses/presentation/bloc/expenses_bloc.dart';
 import 'package:fintrack/features/expenses/presentation/bloc/expenses_event.dart';
 import 'package:fintrack/features/expenses/presentation/bloc/expenses_state.dart';
@@ -8,14 +9,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
 
-class ExpensesPage extends StatefulWidget {
+class ExpensesPage extends StatelessWidget {
   const ExpensesPage({super.key});
 
   @override
-  State<ExpensesPage> createState() => _ExpensesPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => sl<ExpensesBloc>()..add(LoadExpensesData()),
+      child: const _ExpensesPageContent(),
+    );
+  }
 }
 
-class _ExpensesPageState extends State<ExpensesPage> {
+class _ExpensesPageContent extends StatefulWidget {
+  const _ExpensesPageContent();
+
+  @override
+  State<_ExpensesPageContent> createState() => _ExpensesPageContentState();
+}
+
+class _ExpensesPageContentState extends State<_ExpensesPageContent> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -219,7 +232,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
             child: Column(
               children: [
                 // Biểu đồ và chú giải với dữ liệu từ BLoC
-                buildChartSection(state.totalValue),
+                buildChartSection(state.totalValue, state.expenses),
                 const SizedBox(height: 20),
                 // Custom widget để hiển thị danh sách chi tiêu từ BLoC
                 state.expenses.isEmpty
