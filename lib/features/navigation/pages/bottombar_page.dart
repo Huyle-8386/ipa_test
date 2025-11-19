@@ -53,7 +53,7 @@ class _BottombarPageState extends State<BottombarPage> {
       //   child: const ChartPage(),
       // ),
       SignUpPage(),
-      BlocProvider(create: (context) => HomeBloc(), child: HomePage()),
+      // BlocProvider(create: (context) => HomeBloc(), child: HomePage()),
       BlocProvider(
         create: (_) => sl<SettingBloc>()..add(LoadSettingCardsEvent()),
         child: const SettingPage(),
