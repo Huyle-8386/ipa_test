@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:fintrack/features/transaction_%20history/data/datasources/transaction_%20history_data.dart';
+import 'package:fintrack/features/transaction_%20history/domain/entities/transaction_entity.dart';
 
 abstract class TransactionHistoryState extends Equatable {
   const TransactionHistoryState();
@@ -13,8 +13,8 @@ class TransactionHistoryInitial extends TransactionHistoryState {}
 class TransactionHistoryLoading extends TransactionHistoryState {}
 
 class TransactionHistoryLoaded extends TransactionHistoryState {
-  final List<TransactionData> transactions;
-  final Map<String, List<TransactionData>> groupedTransactions;
+  final List<TransactionEntity> transactions;
+  final Map<String, List<TransactionEntity>> groupedTransactions;
   final TransactionType activeFilter;
   final double totalIncome;
   final double totalSpending;

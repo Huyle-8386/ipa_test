@@ -1,22 +1,38 @@
+import 'package:fintrack/core/di/injector.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
-import 'package:fintrack/features/transaction_%20history/data/datasources/transaction_%20history_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
+import 'package:fintrack/features/transaction_%20history/domain/entities/transaction_entity.dart';
 import 'package:fintrack/features/transaction_%20history/presentation/bloc/transaction_%20history_bloc.dart';
 import 'package:fintrack/features/transaction_%20history/presentation/bloc/transaction_%20history_event.dart';
 import 'package:fintrack/features/transaction_%20history/presentation/bloc/transaction_%20history_state.dart';
 import 'package:fintrack/features/transaction_%20history/presentation/widgets/build_transaction_%20history_list.dart';
 
-class TransactionHistoryPage extends StatefulWidget {
+class TransactionHistoryPage extends StatelessWidget {
   const TransactionHistoryPage({super.key});
 
   @override
-  State<TransactionHistoryPage> createState() => _TransactionHistoryPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) =>
+          sl<TransactionHistoryBloc>()..add(LoadTransactionHistory()),
+      child: const _TransactionHistoryPageContent(),
+    );
+  }
 }
 
-class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
+class _TransactionHistoryPageContent extends StatefulWidget {
+  const _TransactionHistoryPageContent();
+
+  @override
+  State<_TransactionHistoryPageContent> createState() =>
+      _TransactionHistoryPageContentState();
+}
+
+class _TransactionHistoryPageContentState
+    extends State<_TransactionHistoryPageContent> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
