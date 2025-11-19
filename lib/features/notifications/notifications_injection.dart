@@ -16,7 +16,9 @@ Future<void> initNotifications() async {
   );
 
   // repository
-  sl.registerLazySingleton<NotificationRepository>(() => NotificationRepositoryImpl(sl()));
+  sl.registerLazySingleton<NotificationRepository>(
+    () => NotificationRepositoryImpl(sl()),
+  );
 
   // usecases
   sl.registerLazySingleton(() => GetNotifications(sl()));
