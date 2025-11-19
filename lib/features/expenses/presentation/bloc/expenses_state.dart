@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:fintrack/features/expenses/data/datasources/expenses_data.dart';
+import 'package:fintrack/features/expenses/domain/entities/expense_entity.dart';
 
 abstract class ExpensesState extends Equatable {
   const ExpensesState();
@@ -13,7 +13,7 @@ class ExpensesInitial extends ExpensesState {}
 class ExpensesLoading extends ExpensesState {}
 
 class ExpensesLoaded extends ExpensesState {
-  final List<ExpenseData> expenses;
+  final List<ExpenseEntity> expenses;
   final double totalValue;
   final String activeCategory;
   final List<String> categories;

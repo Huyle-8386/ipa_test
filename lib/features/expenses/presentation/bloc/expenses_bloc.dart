@@ -1,10 +1,20 @@
+import 'package:fintrack/features/expenses/domain/usecases/get_categories_usecase.dart';
+import 'package:fintrack/features/expenses/domain/usecases/get_expenses_usecase.dart';
+import 'package:fintrack/features/expenses/domain/usecases/search_expenses_usecase.dart';
 import 'package:fintrack/features/expenses/presentation/bloc/expenses_event.dart';
 import 'package:fintrack/features/expenses/presentation/bloc/expenses_state.dart';
-import 'package:fintrack/features/expenses/data/datasources/expenses_data.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ExpensesBloc extends Bloc<ExpensesEvent, ExpensesState> {
-  ExpensesBloc() : super(ExpensesInitial()) {
+  final GetExpensesUsecase getExpenses;
+  final GetCategoriesUsecase getCategories;
+  final SearchExpensesUsecase searchExpenses;
+
+  ExpensesBloc({
+    required this.getExpenses,
+    required this.getCategories,
+    required this.searchExpenses,
+  }) : super(ExpensesInitial()) {
     on<LoadExpensesData>(_onLoadExpensesData);
     on<FilterExpensesByCategory>(_onFilterExpensesByCategory);
     on<SearchExpenses>(_onSearchExpenses);
@@ -17,20 +27,16 @@ class ExpensesBloc extends Bloc<ExpensesEvent, ExpensesState> {
     emit(ExpensesLoading());
 
     try {
-      // Trong trường hợp thực tế, bạn có thể gọi API hoặc repository ở đây
-      // Giả lập việc tải dữ liệu
-      // await Future.delayed(const Duration(milliseconds: 500));
-      await Future.delayed(const Duration(milliseconds: 100));
-
-      final allExpenses = expenses; // Lấy từ expenses_data.dart
-      final total = totalValue; // Lấy từ expenses_data.dart
-      final allCategories = categories; // Lấy từ expenses_data.dart
+      final allCategories = await getCategories();
+      final defaultCategory = allCategories.first;
+      final allExpenses = await getExpenses(category: defaultCategory);
+      final total = allExpenses.fold(0.0, (sum, item) => sum + item.value);
 
       emit(
         ExpensesLoaded(
           expenses: allExpenses,
           totalValue: total,
-          activeCategory: allCategories[0], // Default là Daily
+          activeCategory: defaultCategory,
           categories: allCategories,
         ),
       );
@@ -49,30 +55,7 @@ class ExpensesBloc extends Bloc<ExpensesEvent, ExpensesState> {
       emit(ExpensesLoading());
 
       try {
-        // Trong thực tế, bạn sẽ lọc dữ liệu theo category từ repository hoặc API
-        // Giả lập việc lọc dữ liệu
-        await Future.delayed(const Duration(milliseconds: 100));
-
-        // Giả sử các loại chi tiêu khác nhau theo category
-        List<ExpenseData> filteredExpenses;
-
-        switch (event.category) {
-          case 'Daily':
-            filteredExpenses = expenses.take(3).toList();
-            break;
-          case 'Weekly':
-            filteredExpenses = expenses.take(4).toList();
-            break;
-          case 'Monthly':
-            filteredExpenses = expenses.take(5).toList();
-            break;
-          case 'Yearly':
-            filteredExpenses = expenses;
-            break;
-          default:
-            filteredExpenses = expenses;
-        }
-
+        final filteredExpenses = await getExpenses(category: event.category);
         final total = filteredExpenses.fold(
           0.0,
           (sum, item) => sum + item.value,
@@ -83,8 +66,7 @@ class ExpensesBloc extends Bloc<ExpensesEvent, ExpensesState> {
             expenses: filteredExpenses,
             totalValue: total,
             activeCategory: event.category,
-            categories:
-                currentState.categories, // Giữ nguyên danh sách categories
+            categories: currentState.categories,
           ),
         );
       } catch (e) {
@@ -109,17 +91,7 @@ class ExpensesBloc extends Bloc<ExpensesEvent, ExpensesState> {
       emit(ExpensesLoading());
 
       try {
-        // Giả lập tìm kiếm
-        await Future.delayed(const Duration(milliseconds: 300));
-
-        final searchResults = expenses
-            .where(
-              (expense) => expense.name.toLowerCase().contains(
-                event.query.toLowerCase(),
-              ),
-            )
-            .toList();
-
+        final searchResults = await searchExpenses(query: event.query);
         final total = searchResults.fold(0.0, (sum, item) => sum + item.value);
 
         emit(
@@ -127,8 +99,7 @@ class ExpensesBloc extends Bloc<ExpensesEvent, ExpensesState> {
             expenses: searchResults,
             totalValue: total,
             activeCategory: currentState.activeCategory,
-            categories:
-                currentState.categories, // Giữ nguyên danh sách categories
+            categories: currentState.categories,
           ),
         );
       } catch (e) {
