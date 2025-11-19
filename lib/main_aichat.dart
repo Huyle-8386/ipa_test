@@ -5,6 +5,7 @@ import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/features/ai_chat/presentation/page/ai_chat_page.dart';
 
 void main() {
+  
   runApp(const MyApp2());
 
   // Setup cửa sổ khi app khởi động
