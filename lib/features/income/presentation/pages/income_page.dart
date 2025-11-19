@@ -1,3 +1,4 @@
+import 'package:fintrack/core/di/injector.dart';
 import 'package:fintrack/features/income/presentation/bloc/income_bloc.dart';
 import 'package:fintrack/features/income/presentation/bloc/income_event.dart';
 import 'package:fintrack/features/income/presentation/bloc/income_state.dart';
@@ -8,14 +9,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
 
-class IncomePage extends StatefulWidget {
+class IncomePage extends StatelessWidget {
   const IncomePage({super.key});
 
   @override
-  State<IncomePage> createState() => _IncomePageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => sl<IncomeBloc>()..add(LoadIncomeData()),
+      child: const _IncomePageContent(),
+    );
+  }
 }
 
-class _IncomePageState extends State<IncomePage> {
+class _IncomePageContent extends StatefulWidget {
+  const _IncomePageContent();
+
+  @override
+  State<_IncomePageContent> createState() => _IncomePageContentState();
+}
+
+class _IncomePageContentState extends State<_IncomePageContent> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -219,7 +232,7 @@ class _IncomePageState extends State<IncomePage> {
             child: Column(
               children: [
                 // Biểu đồ và chú giải với dữ liệu từ BLoC
-                buildChartSection(state.totalValue),
+                buildChartSection(state.totalValue, state.incomes),
                 const SizedBox(height: 20),
                 // Custom widget để hiển thị danh sách chi tiêu từ BLoC
                 state.incomes.isEmpty
