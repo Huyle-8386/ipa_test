@@ -1,12 +1,17 @@
 import 'dart:ui';
 
-import 'package:fintrack/features/income/presentation/bloc/income_bloc.dart';
 import 'package:fintrack/features/income/presentation/pages/income_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 
-void main() {
+import 'core/di/injector.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize dependency injection
+  await init();
+
   runApp(const MyApp());
 
   // Setup cửa sổ khi app khởi động
@@ -27,10 +32,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       scrollBehavior: DesktopScrollBehavior(),
-      home: BlocProvider(
-        create: (context) => IncomeBloc(),
-        child: IncomePage(),
-      ),
+      home: const IncomePage(),
     );
   }
 }

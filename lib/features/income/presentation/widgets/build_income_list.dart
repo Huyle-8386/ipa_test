@@ -1,9 +1,9 @@
-// Widget cho danh sách chi tiêu
-import 'package:fintrack/features/income/data/datasources/income_data.dart';
+// Widget cho danh sách thu nhập
+import 'package:fintrack/features/income/domain/entities/income_entity.dart';
 import 'package:flutter/material.dart';
 
-// Chấp nhận danh sách chi tiêu từ bên ngoài thay vì sử dụng danh sách tĩnh
-Widget buildIncomeList(List<IncomeData> incomeItems) {
+// Chấp nhận danh sách từ bên ngoài thay vì sử dụng danh sách tĩnh
+Widget buildIncomeList(List<IncomeEntity> incomeItems) {
   return Column(
     children: incomeItems.map((income) => buildIncomeListItem(income)).toList(),
   );
@@ -11,7 +11,7 @@ Widget buildIncomeList(List<IncomeData> incomeItems) {
 
 // Widget cho một mục trong danh sách
 // Đổi thành public để có thể gọi từ bên ngoài
-Widget buildIncomeListItem(IncomeData income) {
+Widget buildIncomeListItem(IncomeEntity income) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 12.0),
     child: Container(
