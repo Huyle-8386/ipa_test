@@ -22,7 +22,7 @@ class SignInPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Setup dependencies
     final remoteDataSource = AuthRemoteDataSourceImpl();
-    final repository = AuthRepositoryImpl(remoteDataSource: remoteDataSource);
+    final repository = AuthRepositoryImpl(remoteDataSource);
     final signInUseCase = SignIn(repository);
     final signUpUseCase = SignUp(repository);
     final signInWithGoogleUseCase = SignInWithGoogle(repository);

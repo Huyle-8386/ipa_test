@@ -17,9 +17,7 @@ class NotificationsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Setup dependencies
     final remoteDataSource = NotificationRemoteDataSourceImpl();
-    final repository = NotificationRepositoryImpl(
-      remoteDataSource: remoteDataSource,
-    );
+    final repository = NotificationRepositoryImpl(remoteDataSource);
     final getNotifications = GetNotifications(repository);
     final markAsRead = MarkAsRead(repository);
     final markAllAsRead = MarkAllAsRead(repository);

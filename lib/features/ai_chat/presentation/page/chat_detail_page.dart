@@ -19,7 +19,7 @@ class ChatDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Setup dependencies
     final remoteDataSource = ChatRemoteDataSourceImpl();
-    final repository = ChatRepositoryImpl(remoteDataSource: remoteDataSource);
+    final repository = ChatRepositoryImpl(remoteDataSource);
     final getMessages = GetMessages(repository);
     final sendMessage = SendMessage(repository);
     final regenerateMessage = RegenerateMessage(repository);

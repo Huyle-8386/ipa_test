@@ -18,9 +18,7 @@ Future<void> initAuth() async {
   );
 
   // repository
-  sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(remoteDataSource: sl()),
-  );
+  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));
 
   // usecases
   sl.registerLazySingleton(() => SignIn(sl()));

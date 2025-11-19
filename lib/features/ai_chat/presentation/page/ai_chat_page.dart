@@ -16,7 +16,7 @@ class AIChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Setup dependencies
     final remoteDataSource = ChatRemoteDataSourceImpl();
-    final repository = ChatRepositoryImpl(remoteDataSource: remoteDataSource);
+    final repository = ChatRepositoryImpl(remoteDataSource);
     final getChatSessions = GetChatSessions(repository);
     final createNewChatSession = CreateNewChatSession(repository);
 
