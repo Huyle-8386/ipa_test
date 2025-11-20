@@ -40,7 +40,6 @@ class MyApp extends StatelessWidget {
       scrollBehavior: DesktopScrollBehavior(),
       debugShowCheckedModeBanner: false,
       home: SignInPage(),
-      
     );
   }
 }

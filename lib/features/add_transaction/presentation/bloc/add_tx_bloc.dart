@@ -10,8 +10,6 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
   final GetMoneySourcesUsecase getMoneySources;
   final SaveTransactionUsecase saveTx;
 
-
-
   AddTxBloc({
     required this.getCategories,
     required this.getMoneySources,

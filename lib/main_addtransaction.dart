@@ -11,8 +11,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 void main() async {
-  
-
   await di.init();
   runApp(const MyApp());
 
@@ -28,8 +26,6 @@ void main() async {
   });
 }
 
-
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -39,7 +35,6 @@ class MyApp extends StatelessWidget {
       scrollBehavior: DesktopScrollBehavior(),
       debugShowCheckedModeBanner: false,
       home: AddTransactionPage(),
-      
     );
   }
 }

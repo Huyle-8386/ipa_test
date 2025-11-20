@@ -256,14 +256,12 @@ class _HomePageState extends State<HomePage> {
                               GestureDetector(
                                 onTap: () {
                                   Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const TransactionHistoryPage(),
-                              ),
-                            );
-
-                                  
-
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const TransactionHistoryPage(),
+                                    ),
+                                  );
                                 },
                                 child: Text(
                                   "See All",
