@@ -30,6 +30,19 @@ void main() async {
   //   appWindow.title = "Fintrack App";
   //   appWindow.show();
   // });
+  await di.init();
+  runApp(const MyApp());
+
+  // Setup cửa sổ khi app khởi động
+  doWhenWindowReady(() {
+    const initialSize = Size(412, 892);
+    // const initialSize = Size(412, 592); // Kích thước iPhone 12
+    appWindow.minSize = initialSize;
+    appWindow.size = initialSize;
+    appWindow.alignment = Alignment.center; // Cửa sổ mở giữa màn hình
+    appWindow.title = "Fintrack App";
+    appWindow.show();
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -41,6 +54,7 @@ class MyApp extends StatelessWidget {
       scrollBehavior: DesktopScrollBehavior(),
       debugShowCheckedModeBanner: false,
       home: SignInPage(),
+      home: AddTransactionPage(),
     );
   }
 }

@@ -16,6 +16,8 @@ import 'package:fintrack/features/home/pages/transaction_history.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../transaction_ history/presentation/pages/transaction_ history_page.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -251,10 +253,21 @@ class _HomePageState extends State<HomePage> {
                                   color: AppColors.white,
                                 ),
                               ),
-                              Text(
-                                "See All",
-                                style: AppTextStyles.caption.copyWith(
-                                  color: AppColors.grey,
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const TransactionHistoryPage(),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  "See All",
+                                  style: AppTextStyles.caption.copyWith(
+                                    color: AppColors.grey,
+                                  ),
                                 ),
                               ),
                             ],

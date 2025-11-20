@@ -1,12 +1,12 @@
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
-import 'package:fintrack/features/transaction_%20history/data/datasources/transaction_%20history_data.dart';
+import 'package:fintrack/features/transaction_%20history/domain/entities/transaction_entity.dart';
 import 'package:flutter/material.dart';
 
 Widget buildTransactionHistoryList(
   BuildContext context,
 
-  Map<String, List<TransactionData>> groupedTransactions,
+  Map<String, List<TransactionEntity>> groupedTransactions,
 ) {
   final h = SizeUtils.height(context);
   final w = SizeUtils.width(context);
@@ -64,7 +64,7 @@ Widget buildTransactionHistoryList(
 }
 
 Widget _buildTransactionItem(
-  TransactionData transaction,
+  TransactionEntity transaction,
   double h,
   double w,
   bool isLast,
