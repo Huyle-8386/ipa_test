@@ -7,6 +7,8 @@ class LabeledTextField extends StatelessWidget {
   final String label;
   final String? hint;
   final bool readOnly;
+  final bool required; // <--- thêm field này
+  final String? errorText;
   final TextInputType keyboardType;
   final Widget? suffixIcon;
   final VoidCallback? onTap;
@@ -22,6 +24,8 @@ class LabeledTextField extends StatelessWidget {
     this.suffixIcon,
     this.onTap,
     this.onChanged,
+    this.required = false, // <--- mặc định không bắt buộc
+    this.errorText,
   });
 
   @override
@@ -36,7 +40,7 @@ class LabeledTextField extends StatelessWidget {
       style: TextStyle(color: AppColors.white),
       decoration: InputDecoration(
         hintText: hint,
-        labelText: label,
+        labelText: required ? "$label *" : label,
         floatingLabelBehavior: FloatingLabelBehavior.always,
         labelStyle: AppTextStyles.caption.copyWith(color: AppColors.main),
         floatingLabelStyle: AppTextStyles.caption.copyWith(

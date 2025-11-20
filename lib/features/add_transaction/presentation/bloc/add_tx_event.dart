@@ -41,3 +41,5 @@ class AddTxNoteChangedEvent extends AddTxEvent {
   final String note;
   AddTxNoteChangedEvent(this.note);
 }
+
+class AddTxSubmitEvent extends AddTxEvent {}

@@ -60,7 +60,19 @@ class AddTxLoaded extends AddTxState {
 
 class AddTxSubmitting extends AddTxState {}
 
-class AddTxSubmitSuccess extends AddTxState {}
+class AddTxSubmitSuccess extends AddTxLoaded {
+  AddTxSubmitSuccess({
+    required super.tab,
+    required super.type,
+    required super.categories,
+    required super.moneySources,
+    super.selectedCategoryIndex,
+    super.amount,
+    super.date,
+    super.moneySource,
+    super.note,
+  });
+}
 
 class AddTxError extends AddTxState {
   final String error;

@@ -31,6 +31,15 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   }
 
   @override
+  void dispose() {
+    amountCtrl.dispose();
+    dateCtrl.dispose();
+    moneyCtrl.dispose();
+    noteCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final h = SizeUtils.height(context);
     final w = SizeUtils.width(context);
@@ -121,28 +130,79 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
             );
           },
         ),
-        bottomNavigationBar: BlocBuilder<AddTxBloc, AddTxState>(
-          builder: (context, state) {
-            if (state is! AddTxLoaded) return const SizedBox.shrink();
-            final s = state;
 
+        // bottomNavigationBar: BlocBuilder<AddTxBloc, AddTxState>(
+        //   builder: (context, state) {
+        //     if (state is! AddTxLoaded) return const SizedBox.shrink();
+        //     final s = state;
+
+        //     return BottomAppBar(
+        //       color: AppColors.widget,
+        //       child: Container(
+        //         height: h * 0.1,
+        //         decoration: BoxDecoration(
+        //           color: AppColors.main,
+        //           borderRadius: BorderRadius.circular(10),
+        //         ),
+        //         child: Center(
+        //           child: Text(
+        //             s.tab == EntryTab.manual
+        //                 ? (s.type == TransactionType.expense
+        //                       ? "Add Expense Transaction"
+        //                       : "Add Income Transaction")
+        //                 : "Select Image Now",
+        //             style: AppTextStyles.body2.copyWith(fontSize: 18),
+        //           ),
+        //         ),
+        //       ),
+        //     );
+        //   },
+        // ),
+        bottomNavigationBar: BlocConsumer<AddTxBloc, AddTxState>(
+          listener: (context, state) {
+            if (state is AddTxSubmitSuccess) {
+              // đóng màn / show snackbar
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Saved transaction')),
+              );
+              // Navigator.pop(context);
+            }
+            if (state is AddTxError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.error)), //
+              );
+            }
+          },
+          builder: (context, state) {
+            final h = SizeUtils.height(context);
+
+            final isLoading = state is AddTxLoading;
             return BottomAppBar(
               color: AppColors.widget,
-              child: Container(
+              child: SizedBox(
                 height: h * 0.1,
-                decoration: BoxDecoration(
-                  color: AppColors.main,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Center(
-                  child: Text(
-                    s.tab == EntryTab.manual
-                        ? (s.type == TransactionType.expense
-                              ? "Add Expense Transaction"
-                              : "Add Income Transaction")
-                        : "Select Image Now",
-                    style: AppTextStyles.body2.copyWith(fontSize: 18),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.main,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          context.read<AddTxBloc>().add(AddTxSubmitEvent());
+                        },
+                  child: isLoading
+                      ? const CircularProgressIndicator()
+                      : Text(
+                          state is AddTxLoaded && state.tab == EntryTab.manual
+                              ? (state.type == TransactionType.expense
+                                    ? 'Add Expense Transaction'
+                                    : 'Add Income Transaction')
+                              : 'Select Image Now',
+                          style: AppTextStyles.body2,
+                        ),
                 ),
               ),
             );

@@ -1,5 +1,8 @@
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
+import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_bloc.dart';
+import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_event.dart';
+import 'package:fintrack/features/add_transaction/presentation/page/add_transaction_page.dart';
 import 'package:fintrack/features/auth/presentation/page/sign_up_page.dart';
 import 'package:fintrack/features/chart/chart_injection.dart';
 // import 'package:fintrack/features/chart/bloc/chart_bloc.dart';
@@ -69,7 +72,12 @@ class _BottombarPageState extends State<BottombarPage> {
               shape: CircleBorder(),
 
               backgroundColor: AppColors.main,
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AddTransactionPage()),
+                );
+              },
 
               child: ImageIcon(
                 AssetImage("assets/icons/add_bottombar.png"),
