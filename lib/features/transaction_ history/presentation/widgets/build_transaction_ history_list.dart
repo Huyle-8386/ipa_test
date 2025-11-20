@@ -1,4 +1,5 @@
 import 'package:fintrack/core/theme/app_colors.dart';
+import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
 import 'package:fintrack/features/transaction_%20history/domain/entities/transaction_entity.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ Widget buildTransactionHistoryList(
       final transactionsForDate = groupedTransactions[dateKey]!;
 
       return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
         decoration: BoxDecoration(
           color: AppColors.widget,
           borderRadius: BorderRadius.circular(12),
@@ -34,8 +35,8 @@ Widget buildTransactionHistoryList(
                     dateKey,
                     style: TextStyle(
                       color: AppColors.grey,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
+                      fontSize: AppTextStyles.caption.fontSize,
+                      fontWeight: AppTextStyles.body2.fontWeight,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -69,6 +70,10 @@ Widget _buildTransactionItem(
   double w,
   bool isLast,
 ) {
+  // Lấy icon và màu dựa vào categoryName (fallback nếu không có categoryIcon)
+  final categoryIcon = _getCategoryIcon(transaction.categoryIcon ?? '');
+  final categoryColor = _getCategoryColor(transaction.categoryName);
+
   return Container(
     decoration: BoxDecoration(
       border: !isLast
@@ -84,21 +89,23 @@ Widget _buildTransactionItem(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       child: Row(
         children: [
-          // Icon
+          // Icon with dynamic color
           Container(
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: Colors.white,
+              // color: categoryColor.withOpacity(0.2),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Image.asset(
-              transaction.icon,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                return Icon(Icons.receipt, color: Colors.grey, size: 48);
-              },
-            ),
+            child: transaction.categoryIcon != null
+                ? Image.asset(
+                    transaction.categoryIcon!,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(categoryIcon, color: categoryColor, size: 28);
+                    },
+                  )
+                : Icon(categoryIcon, color: categoryColor, size: 28),
           ),
           SizedBox(width: w * 0.03),
 
@@ -108,17 +115,20 @@ Widget _buildTransactionItem(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  transaction.category,
-                  style: const TextStyle(
+                  transaction.categoryName,
+                  style: TextStyle(
                     color: AppColors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                    fontSize: AppTextStyles.body2.fontSize,
+                    fontWeight: AppTextStyles.body2.fontWeight,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   transaction.note,
-                  style: TextStyle(color: AppColors.grey, fontSize: 13),
+                  style: TextStyle(
+                    color: AppColors.grey,
+                    fontSize: AppTextStyles.caption.fontSize,
+                  ),
                 ),
               ],
             ),
@@ -129,16 +139,16 @@ Widget _buildTransactionItem(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                transaction.amount,
+                transaction.formattedAmount,
                 style: TextStyle(
-                  color: AppColors.white,
+                  color: transaction.isIncome ? AppColors.green : AppColors.red,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
-                transaction.time,
+                transaction.formattedTime,
                 style: TextStyle(color: AppColors.grey, fontSize: 12),
               ),
             ],
@@ -147,4 +157,34 @@ Widget _buildTransactionItem(
       ),
     ),
   );
+}
+
+// Helper để lấy icon dựa vào category
+IconData _getCategoryIcon(String categoryName) {
+  final category = categoryName.toLowerCase();
+  if (category.contains('food')) return Icons.restaurant;
+  if (category.contains('taxi') || category.contains('transport'))
+    return Icons.local_taxi;
+  if (category.contains('shopping')) return Icons.shopping_bag;
+  if (category.contains('transfer')) return Icons.swap_horiz;
+  if (category.contains('salary')) return Icons.attach_money;
+  if (category.contains('entertainment')) return Icons.movie;
+  if (category.contains('health')) return Icons.local_hospital;
+  if (category.contains('education')) return Icons.school;
+  return Icons.receipt; // default
+}
+
+// Helper để lấy màu dựa vào category
+Color _getCategoryColor(String categoryName) {
+  final category = categoryName.toLowerCase();
+  if (category.contains('food')) return Colors.red;
+  if (category.contains('taxi') || category.contains('transport'))
+    return Colors.blue;
+  if (category.contains('shopping')) return Colors.orange;
+  if (category.contains('transfer') || category.contains('salary'))
+    return Colors.green;
+  if (category.contains('entertainment')) return Colors.purple;
+  if (category.contains('health')) return Colors.pink;
+  if (category.contains('education')) return Colors.teal;
+  return AppColors.grey; // default
 }
