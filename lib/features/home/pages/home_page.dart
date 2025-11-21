@@ -13,7 +13,11 @@ import 'package:fintrack/features/home/bloc/home_bloc.dart';
 import 'package:fintrack/features/home/pages/account_item.dart';
 import 'package:fintrack/features/home/pages/my_pie_chart.dart';
 import 'package:fintrack/features/home/pages/transaction_history.dart';
+<<<<<<< HEAD
 import 'package:firebase_auth/firebase_auth.dart';
+=======
+import 'package:fintrack/features/notifications/presentation/page/notifications_page.dart';
+>>>>>>> origin/main
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -71,10 +75,20 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ],
                       ),
-                      Row(
-                        children: [
-                          Image.asset("assets/icons/notification.png"),
-                        ],
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const NotificationsPage(),
+                            ),
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            Image.asset("assets/icons/notification.png"),
+                          ],
+                        ),
                       ),
                     ],
                   ),

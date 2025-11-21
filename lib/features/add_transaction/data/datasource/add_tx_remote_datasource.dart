@@ -22,7 +22,8 @@ class AddTxRemoteDataSourceImpl implements AddTxRemoteDataSource {
     final uid = user.uid;
 
     // 2. Chuẩn bị json
-    final data = model.toJson(uid: uid);
+    // final data = model.toJson(uid: uid);
+    final data = model.toJson();
 
     // 3. Lưu đúng path users/{uid}/transactions/{autoId}
     await firestore
