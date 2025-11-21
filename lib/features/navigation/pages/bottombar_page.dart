@@ -3,6 +3,7 @@ import 'package:fintrack/core/utils/size_utils.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_bloc.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_event.dart';
 import 'package:fintrack/features/add_transaction/presentation/page/add_transaction_page.dart';
+import 'package:fintrack/features/ai_chat/presentation/page/ai_chat_page.dart';
 import 'package:fintrack/features/auth/presentation/page/sign_up_page.dart';
 import 'package:fintrack/features/chart/chart_injection.dart';
 // import 'package:fintrack/features/chart/bloc/chart_bloc.dart';
@@ -52,7 +53,8 @@ class _BottombarPageState extends State<BottombarPage> {
       //   create: (_) => sl<ChartBloc>()..add(LoadChartDataEvent()),
       //   child: const ChartPage(),
       // ),
-      SignUpPage(),
+      AIChatPage(),
+
       // BlocProvider(create: (context) => HomeBloc(), child: HomePage()),
       BlocProvider(
         create: (_) => sl<SettingBloc>()..add(LoadSettingCardsEvent()),

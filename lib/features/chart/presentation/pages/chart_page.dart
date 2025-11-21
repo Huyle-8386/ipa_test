@@ -2,7 +2,9 @@ import 'package:fintrack/features/chart/presentation/widgets/account_item.dart';
 import 'package:fintrack/features/chart/presentation/widgets/chart_view.dart';
 import 'package:fintrack/features/chart/presentation/widgets/filter_button.dart';
 import 'package:fintrack/features/chart/presentation/widgets/summary_card.dart';
+import 'package:fintrack/features/expenses/presentation/pages/expenses_page.dart';
 import 'package:fintrack/features/home/bloc/home_bloc.dart';
+import 'package:fintrack/features/income/presentation/pages/income_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
@@ -130,29 +132,51 @@ class _ChartPageState extends State<ChartPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            SummaryCard(
-                              icon: "assets/icons/icon_huong_len.png",
-                              title: 'Income',
-                              value: state.chartData.fold(
-                                0,
-                                (sum, e) => sum + e.income,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const IncomePage(),
+                                  ),
+                                );
+                              },
+                              child: SummaryCard(
+                                icon: "assets/icons/icon_huong_len.png",
+                                title: 'Income',
+                                value: state.chartData.fold(
+                                  0,
+                                  (sum, e) => sum + e.income,
+                                ),
+                                change: SummaryCard.calculateChangePercent(
+                                  state.chartData.map((e) => e.income).toList(),
+                                ),
+                                color: AppColors.main,
                               ),
-                              change: SummaryCard.calculateChangePercent(
-                                state.chartData.map((e) => e.income).toList(),
-                              ),
-                              color: AppColors.main,
                             ),
-                            SummaryCard(
-                              icon: "assets/icons/icon_huong_xuong.png",
-                              title: 'Expense',
-                              value: state.chartData.fold(
-                                0,
-                                (sum, e) => sum + e.expense,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const ExpensesPage(),
+                                  ),
+                                );
+                              },
+                              child: SummaryCard(
+                                icon: "assets/icons/icon_huong_xuong.png",
+                                title: 'Expense',
+                                value: state.chartData.fold(
+                                  0,
+                                  (sum, e) => sum + e.expense,
+                                ),
+                                change: SummaryCard.calculateChangePercent(
+                                  state.chartData
+                                      .map((e) => e.expense)
+                                      .toList(),
+                                ),
+                                color: AppColors.brightOrange,
                               ),
-                              change: SummaryCard.calculateChangePercent(
-                                state.chartData.map((e) => e.expense).toList(),
-                              ),
-                              color: AppColors.brightOrange,
                             ),
                           ],
                         ),

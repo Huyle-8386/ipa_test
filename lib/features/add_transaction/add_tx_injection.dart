@@ -42,7 +42,10 @@ Future<void> initAddTransaction() async {
   );
 
   sl.registerLazySingleton<MoneySourceRemoteDataSource>(
-    () => MoneySourceRemoteDataSourceImpl(FirebaseFirestore.instance),
+    () => MoneySourceRemoteDataSourceImpl(
+      firestore: FirebaseFirestore.instance,
+      auth: FirebaseAuth.instance,
+    ),
   );
 
   // Đăng ký MoneySourceRepository

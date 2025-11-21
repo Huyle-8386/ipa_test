@@ -47,7 +47,7 @@ class TransactionModel {
       'categoryName': categoryName,
       'moneySourceId': moneySourceId,
       'moneySourceName': moneySourceName,
-      if (uid != null) 'uid': uid,
+      // if (uid != null) 'uid': uid,
     };
   }
 }
