@@ -11,7 +11,7 @@ class MoneySourceRemoteDataSourceImpl implements MoneySourceRemoteDataSource {
   final FirebaseFirestore firestore;
   final FirebaseAuth auth;
 
-    MoneySourceRemoteDataSourceImpl({
+  MoneySourceRemoteDataSourceImpl({
     required this.firestore,
     required this.auth,
   });
@@ -19,13 +19,16 @@ class MoneySourceRemoteDataSourceImpl implements MoneySourceRemoteDataSource {
   @override
   Future<List<MoneySourceEntity>> getMoneySources() async {
     final user = auth.currentUser;
-    if(user == null){
+    if (user == null) {
       throw Exception("User not logged in");
     }
     final uid = user.uid;
 
-
-    final snap = await firestore.collection("users").doc(uid).collection('money_sources').get();
+    final snap = await firestore
+        .collection("users")
+        .doc(uid)
+        .collection('money_sources')
+        .get();
 
     return snap.docs
         .map(

@@ -135,13 +135,11 @@ class _ChartPageState extends State<ChartPage> {
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const IncomePage(),
-                                    ),
-                                  );
-                                
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const IncomePage(),
+                                  ),
+                                );
                               },
                               child: SummaryCard(
                                 icon: "assets/icons/icon_huong_len.png",
@@ -159,13 +157,11 @@ class _ChartPageState extends State<ChartPage> {
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const ExpensesPage(),
-                                    ),
-                                  );
-                                
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const ExpensesPage(),
+                                  ),
+                                );
                               },
                               child: SummaryCard(
                                 icon: "assets/icons/icon_huong_xuong.png",
@@ -175,7 +171,9 @@ class _ChartPageState extends State<ChartPage> {
                                   (sum, e) => sum + e.expense,
                                 ),
                                 change: SummaryCard.calculateChangePercent(
-                                  state.chartData.map((e) => e.expense).toList(),
+                                  state.chartData
+                                      .map((e) => e.expense)
+                                      .toList(),
                                 ),
                                 color: AppColors.brightOrange,
                               ),
