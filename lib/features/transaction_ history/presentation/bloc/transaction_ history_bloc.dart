@@ -135,7 +135,7 @@ Map<String, List<TransactionEntity>> _groupTransactionsByDate(
   final Map<String, List<TransactionEntity>> grouped = {};
 
   for (var transaction in transactions) {
-    final dateKey = _formatDate(transaction.date);
+    final dateKey = _formatDate(transaction.dateTime);
     grouped.putIfAbsent(dateKey, () => []);
     grouped[dateKey]!.add(transaction);
   }
@@ -163,14 +163,14 @@ String _formatDate(DateTime date) {
 
 double _getTotalIncome(List<TransactionEntity> transactions) {
   return transactions
-      .where((t) => t.type == TransactionType.income)
-      .fold(0.0, (sum, item) => sum + item.value);
+      .where((t) => t.isIncome)
+      .fold(0.0, (sum, item) => sum + item.amount);
 }
 
 double _getTotalSpending(List<TransactionEntity> transactions) {
   return transactions
-      .where((t) => t.type == TransactionType.spending)
-      .fold(0.0, (sum, item) => sum + item.value.abs());
+      .where((t) => !t.isIncome)
+      .fold(0.0, (sum, item) => sum + item.amount);
 }
 
 double _getBalance(List<TransactionEntity> transactions) {

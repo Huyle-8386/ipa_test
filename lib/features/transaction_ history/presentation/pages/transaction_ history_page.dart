@@ -71,7 +71,7 @@ class _TransactionHistoryPageContentState
                 state.transactions.isEmpty) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Không tìm thấy giao dịch nào'),
+                  content: Text('No transactions found.'),
                   backgroundColor: AppColors.orange,
                 ),
               );
@@ -139,12 +139,12 @@ class _TransactionHistoryPageContentState
               ),
             ),
             const SizedBox(width: 16),
-            const Text(
+            Text(
               "Transaction History",
               style: TextStyle(
-                fontWeight: FontWeight.bold,
+                fontWeight: AppTextStyles.body1.fontWeight,
                 color: AppColors.white,
-                fontSize: 20,
+                fontSize: AppTextStyles.body1.fontSize,
               ),
             ),
           ],
@@ -239,8 +239,8 @@ class _TransactionHistoryPageContentState
             title,
             style: TextStyle(
               color: isActive ? AppColors.main : AppColors.grey,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
+              fontSize: AppTextStyles.body1.fontSize,
+              fontWeight: AppTextStyles.body1.fontWeight,
             ),
           ),
           const SizedBox(height: 4),
@@ -262,7 +262,7 @@ class _TransactionHistoryPageContentState
           Icon(Icons.receipt_long_outlined, color: AppColors.grey, size: 64),
           const SizedBox(height: 16),
           Text(
-            'Không có giao dịch nào',
+            'No transactions found',
             style: TextStyle(color: AppColors.grey, fontSize: 16),
           ),
         ],

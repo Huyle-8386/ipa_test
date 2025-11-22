@@ -1,27 +1,40 @@
-import 'package:flutter/material.dart';
-
 enum TransactionType { spending, income, all }
 
 class TransactionEntity {
-  final String icon;
-  final Color color;
-  final String category;
+  final String? id;
+  final String categoryId;
+  final String categoryName;
+  final String? categoryIcon; // Icon path from category
+  final String moneySourceName;
   final String note;
-  final double value;
-  final String amount;
-  final DateTime date;
-  final String time;
-  final TransactionType type;
+  final double amount;
+  final DateTime dateTime;
+  final bool isIncome;
 
   const TransactionEntity({
-    required this.icon,
-    required this.color,
-    required this.category,
+    this.id,
+    required this.categoryId,
+    required this.categoryName,
+    this.categoryIcon,
+    required this.moneySourceName,
     required this.note,
-    required this.value,
     required this.amount,
-    required this.date,
-    required this.time,
-    required this.type,
+    required this.dateTime,
+    required this.isIncome,
   });
+
+  // Helper getters
+  TransactionType get type =>
+      isIncome ? TransactionType.income : TransactionType.spending;
+
+  String get formattedAmount => isIncome
+      ? '+\$${amount.toStringAsFixed(2)}'
+      : '-\$${amount.toStringAsFixed(2)}';
+
+  String get formattedTime {
+    final hour = dateTime.hour > 12 ? dateTime.hour - 12 : dateTime.hour;
+    final minute = dateTime.minute.toString().padLeft(2, '0');
+    final period = dateTime.hour >= 12 ? 'pm' : 'am';
+    return '$hour:$minute $period';
+  }
 }

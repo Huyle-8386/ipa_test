@@ -1,23 +1,23 @@
-import 'package:fintrack/features/transaction_%20history/data/datasources/transaction_history_local_ds.dart';
+import 'package:fintrack/features/transaction_%20history/data/datasources/transaction_history_remote_ds.dart';
 import 'package:fintrack/features/transaction_%20history/data/models/transaction_model.dart';
 import 'package:fintrack/features/transaction_%20history/domain/entities/transaction_entity.dart';
 import 'package:fintrack/features/transaction_%20history/domain/repositories/transaction_history_repository.dart';
 
 class TransactionHistoryRepositoryImpl implements TransactionHistoryRepository {
-  final TransactionHistoryLocalDataSource localDataSource;
+  final TransactionHistoryRemoteDataSource remoteDataSource;
 
-  TransactionHistoryRepositoryImpl({required this.localDataSource});
+  TransactionHistoryRepositoryImpl({required this.remoteDataSource});
 
   List<TransactionEntity> _map(List<TransactionModel> models) => models;
 
   @override
-  Future<List<String>> getFilterTypes() => localDataSource.getFilterTypes();
+  Future<List<String>> getFilterTypes() => remoteDataSource.getFilterTypes();
 
   @override
   Future<List<TransactionEntity>> getTransactions({
     TransactionType type = TransactionType.all,
   }) async {
-    final models = await localDataSource.getTransactionsByType(type);
+    final models = await remoteDataSource.getTransactionsByType(type);
     return _map(models);
   }
 
@@ -26,7 +26,7 @@ class TransactionHistoryRepositoryImpl implements TransactionHistoryRepository {
     String query, {
     TransactionType type = TransactionType.all,
   }) async {
-    final models = await localDataSource.searchTransactions(query, type: type);
+    final models = await remoteDataSource.searchTransactions(query, type: type);
     return _map(models);
   }
 }

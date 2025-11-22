@@ -1,41 +1,62 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fintrack/features/transaction_%20history/domain/entities/transaction_entity.dart';
-import 'package:flutter/material.dart';
 
 class TransactionModel extends TransactionEntity {
   const TransactionModel({
-    required super.icon,
-    required super.color,
-    required super.category,
+    super.id,
+    required super.categoryId,
+    required super.categoryName,
+    super.categoryIcon,
+    required super.moneySourceName,
     required super.note,
-    required super.value,
     required super.amount,
-    required super.date,
-    required super.time,
-    required super.type,
+    required super.dateTime,
+    required super.isIncome,
   });
 
-  factory TransactionModel.fromJson(Map<String, dynamic> json) =>
-      TransactionModel(
-        icon: json['icon'] as String,
-        color: Color(json['color'] as int),
-        category: json['category'] as String,
-        note: json['note'] as String,
-        value: (json['value'] as num).toDouble(),
-        amount: json['amount'] as String,
-        date: DateTime.parse(json['date'] as String),
-        time: json['time'] as String,
-        type: TransactionType.values[json['type'] as int],
-      );
+  // Factory từ Firestore document
+  factory TransactionModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+
+    return TransactionModel(
+      id: doc.id,
+      categoryId: data['categoryId'] as String? ?? '',
+      categoryName: data['categoryName'] as String? ?? '',
+      categoryIcon: data['categoryIcon'] as String?, // Có thể null
+      moneySourceName: data['moneySourceName'] as String? ?? '',
+      note: data['note'] as String? ?? '',
+      amount: (data['amount'] as num?)?.toDouble() ?? 0.0,
+      dateTime: (data['dateTime'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      isIncome: data['isIncome'] as bool? ?? false,
+    );
+  }
+
+  // Factory với categoryIcon từ JOIN
+  factory TransactionModel.fromFirestoreWithIcon(
+    DocumentSnapshot doc,
+    String? categoryIcon,
+  ) {
+    final data = doc.data() as Map<String, dynamic>;
+
+    return TransactionModel(
+      id: doc.id,
+      categoryId: data['categoryId'] as String? ?? '',
+      categoryName: data['categoryName'] as String? ?? '',
+      categoryIcon: categoryIcon, // Icon từ categories collection
+      moneySourceName: data['moneySourceName'] as String? ?? '',
+      note: data['note'] as String? ?? '',
+      amount: (data['amount'] as num?)?.toDouble() ?? 0.0,
+      dateTime: (data['dateTime'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      isIncome: data['isIncome'] as bool? ?? false,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-    'icon': icon,
-    'color': color.value,
-    'category': category,
+    'categoryName': categoryName,
+    'moneySourceName': moneySourceName,
     'note': note,
-    'value': value,
     'amount': amount,
-    'date': date.toIso8601String(),
-    'time': time,
-    'type': type.index,
+    'dateTime': Timestamp.fromDate(dateTime),
+    'isIncome': isIncome,
   };
 }
