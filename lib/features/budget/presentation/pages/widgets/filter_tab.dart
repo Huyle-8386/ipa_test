@@ -1,4 +1,5 @@
 // lib/features/budget/presentation/pages/widgets/filter_tab.dart
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
@@ -40,10 +41,12 @@ class FilterTab extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
+        final uid = FirebaseAuth.instance.currentUser!.uid;
+
         context.read<BudgetBloc>().add(BudgetTabChanged(label));
-        // Also trigger load to refresh list
-        context.read<BudgetBloc>().add(const LoadBudgets());
+        context.read<BudgetBloc>().add(LoadBudgets(uid));
       },
+
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

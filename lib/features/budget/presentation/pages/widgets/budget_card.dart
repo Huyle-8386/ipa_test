@@ -1,4 +1,5 @@
 // lib/features/budget/presentation/pages/widgets/budget_card.dart
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -8,7 +9,7 @@ import 'package:fintrack/core/utils/size_utils.dart';
 import '../../bloc/budget_bloc.dart';
 import '../../bloc/budget_event.dart';
 import '../../bloc/budget_state.dart';
-import '../detail_budget_page.dart';
+// import '../detail_budget_page.dart';
 
 class BudgetCard extends StatelessWidget {
   const BudgetCard({super.key});
@@ -20,7 +21,7 @@ class BudgetCard extends StatelessWidget {
 
     return BlocBuilder<BudgetBloc, BudgetState>(
       builder: (context, state) {
-        if (state.isLoading) {
+        if (state.loading) {
           return const Center(
             child: CircularProgressIndicator(color: AppColors.main),
           );
@@ -38,9 +39,9 @@ class BudgetCard extends StatelessWidget {
 
         return Column(
           children: budgets.map((budget) {
-            final spentPercent = (budget.total == 0)
+            final spentPercent = (budget.amount == 0)
                 ? 0
-                : (budget.spent / budget.total) * 100;
+                : (budget.spent / budget.amount) * 100;
             final remainingPercent = 100 - spentPercent;
             final status = budget.status;
 
@@ -67,31 +68,69 @@ class BudgetCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Builder(
-                        builder: (innerContext) {
-                          return GestureDetector(
+                      // Builder(
+                      //   builder: (innerContext) {
+                      //     return GestureDetector(
+                      //       onTap: () {
+                      //         final bloc = innerContext.read<BudgetBloc>();
+                      //         bloc.add(SelectBudgetEvent(budget));
+                      //         Navigator.push(
+                      //           innerContext,
+                      //           MaterialPageRoute(
+                      //             builder: (_) => BlocProvider.value(
+                      //               value: bloc,
+                      //               child: const DetailBudgetPage(),
+                      //             ),
+                      //           ),
+                      //         );
+                      //       },
+                      //       child: Text(
+                      //         "See All",
+                      //         style: AppTextStyles.caption.copyWith(
+                      //           color: AppColors.grey,
+                      //           fontSize: 14,
+                      //         ),
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
+                      Row(
+                        children: [
+                          // UPDATE BUTTON
+                          GestureDetector(
                             onTap: () {
-                              final bloc = innerContext.read<BudgetBloc>();
-                              bloc.add(SelectBudgetEvent(budget));
-                              Navigator.push(
-                                innerContext,
-                                MaterialPageRoute(
-                                  builder: (_) => BlocProvider.value(
-                                    value: bloc,
-                                    child: const DetailBudgetPage(),
-                                  ),
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("UI Update chưa được tạo"),
                                 ),
                               );
                             },
                             child: Text(
-                              "See All",
+                              "Update",
                               style: AppTextStyles.caption.copyWith(
-                                color: AppColors.grey,
+                                color: Colors.blueAccent,
                                 fontSize: 14,
                               ),
                             ),
-                          );
-                        },
+                          ),
+                          SizedBox(width: 12),
+
+                          // DELETE BUTTON
+                          GestureDetector(
+                            onTap: () {
+                              final uid =
+                                  FirebaseAuth.instance.currentUser!.uid;
+                              context.read<BudgetBloc>().add(
+                                DeleteBudgetRequested(budget.id, uid),
+                              );
+                            },
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                              size: 20,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -114,7 +153,7 @@ class BudgetCard extends StatelessWidget {
                             ),
                             SizedBox(height: h * 0.01),
                             Text(
-                              "Spend: \$${budget.spent.toStringAsFixed(0)} / \$${budget.total.toStringAsFixed(0)}",
+                              "Spend: \$${budget.spent.toStringAsFixed(0)} / \$${budget.amount.toStringAsFixed(0)}",
                               style: AppTextStyles.caption.copyWith(
                                 color: AppColors.grey,
                               ),
