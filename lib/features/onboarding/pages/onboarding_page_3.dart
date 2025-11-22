@@ -1,7 +1,7 @@
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
-import 'package:fintrack/features/auth/pages/sign_in_page.dart';
+import 'package:fintrack/features/auth/presentation/page/sign_in_page.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingPage3 extends StatelessWidget {
@@ -102,9 +102,7 @@ class OnboardingPage3 extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const SignInPage(),
-                    ),
+                    MaterialPageRoute(builder: (context) => const SignInPage()),
                   );
                 },
                 child: Text(

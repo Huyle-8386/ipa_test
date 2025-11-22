@@ -1,0 +1,121 @@
+# name: Flutter CI
+
+# on:
+#   push:
+#     branches: [ main ]
+#   pull_request:
+#     branches: [ main ]
+
+# concurrency:
+#   group: ${{ github.workflow }}-${{ github.ref }}
+#   cancel-in-progress: true
+
+# jobs:
+#   ci:
+#     runs-on: ubuntu-latest
+#     timeout-minutes: 30
+
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+
+#       - name: Setup Java
+#         uses: actions/setup-java@v4
+#         with:
+#           distribution: temurin
+#           java-version: 17
+
+#       - name: Setup Flutter
+#         uses: subosito/flutter-action@v2
+#         with:
+#           channel: stable
+#           # flutter-version: '3.24.0'
+
+#       - name: Cache pub
+#         uses: actions/cache@v4
+#         with:
+#           path: ~/.pub-cache
+#           key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+#           restore-keys: ${{ runner.os }}-pub-
+
+#       - name: Cache Gradle
+#         uses: actions/cache@v4
+#         with:
+#           path: |
+#             ~/.gradle/caches
+#             ~/.gradle/wrapper
+#           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+#           restore-keys: ${{ runner.os }}-gradle-
+
+#       - name: Flutter pub get
+#         run: flutter pub get
+
+#       - name: Check format
+#         run: dart format --output=none --set-exit-if-changed .
+
+#       # ✅ Chỉ fail khi có ERROR
+#       - name: Analyze (errors only)
+#         run: flutter analyze --no-fatal-warnings --no-fatal-infos
+
+#       # - name: Test
+#       #   run: flutter test --no-pub
+
+#       # - name: Build Android (APK)
+#       #   run: flutter build apk --release
+
+#       # - name: Upload APK artifact
+#       #   uses: actions/upload-artifact@v4
+#       #   with:
+#       #     name: app-release-apk
+#       #     path: build/app/outputs/flutter-apk/app-release.apk
+
+
+
+name: Flutter CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Cache pub
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      # 1️⃣ Kiểm tra format — FAIL nếu chưa format
+      - name: Check format
+        run: dart format --output=none --set-exit-if-changed .
+
+      # 2️⃣ Phân tích code — FAIL nếu có ERROR
+      - name: Analyze (errors only)
+        run: flutter analyze --no-fatal-warnings --no-fatal-infos
+
+      # 3️⃣ (Tuỳ chọn) Chạy unit test
+      # Bật lên nếu bạn muốn enforce test
+      # - name: Test
+      #   run: flutter test --no-pub

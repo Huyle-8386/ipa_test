@@ -8,12 +8,10 @@ class TransactionHistory extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final h = SizeUtils.height(context);
     final w = SizeUtils.width(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        
         Row(
           children: [
             Image.asset("assets/icons/food.png"),
@@ -51,7 +49,6 @@ class TransactionHistory extends StatelessWidget {
             ),
           ],
         ),
-        
       ],
     );
   }

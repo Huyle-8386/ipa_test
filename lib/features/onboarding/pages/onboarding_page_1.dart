@@ -2,7 +2,7 @@ import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
 import 'package:fintrack/features/onboarding/pages/onboarding_page_2.dart';
-import 'package:fintrack/features/auth/pages/sign_in_page.dart';
+import 'package:fintrack/features/auth/presentation/page/sign_in_page.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingPage1 extends StatelessWidget {
@@ -16,7 +16,7 @@ class OnboardingPage1 extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: SizeUtils.width(context) * 0.06,
-          ), 
+          ),
           child: Column(
             children: [
               SizedBox(height: SizeUtils.height(context) * 0.08),
@@ -85,9 +85,7 @@ class OnboardingPage1 extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const SignInPage(),
-                    ),
+                    MaterialPageRoute(builder: (context) => const SignInPage()),
                   );
                 },
                 child: Text(
