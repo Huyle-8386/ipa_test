@@ -1,58 +1,161 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import '../models/chart_data_model.dart';
 
+/// ChartDataSource fetches transactions and aggregates them into ChartDataModel
 class ChartDataSource {
-  static final List<ChartDataModel> dailyData = [
-    ChartDataModel(day: "Mon", income: 500, expense: 300),
-    ChartDataModel(day: "Tue", income: 600, expense: 250),
-    ChartDataModel(day: "Wed", income: 100, expense: 600),
-    ChartDataModel(day: "Thu", income: 700, expense: 400),
-    ChartDataModel(day: "Fri", income: 650, expense: 350),
-    ChartDataModel(day: "Sat", income: 200, expense: 500),
-    ChartDataModel(day: "Sun", income: 750, expense: 450),
-  ];
+  final FirebaseFirestore firestore;
+  final FirebaseAuth auth;
 
-  static final List<ChartDataModel> weeklyData = [
-    ChartDataModel(day: "W1", income: 1000, expense: 2500),
-    ChartDataModel(day: "W2", income: 2500, expense: 1500),
-    ChartDataModel(day: "W3", income: 1500, expense: 2800),
-    ChartDataModel(day: "W4", income: 3300, expense: 1600),
-  ];
+  ChartDataSource({required this.firestore, required this.auth});
 
-  static final List<ChartDataModel> monthlyData = [
-    ChartDataModel(day: "1", income: 4500, expense: 3200),
-    ChartDataModel(day: "2", income: 4800, expense: 3100),
-    ChartDataModel(day: "3", income: 6200, expense: 4500),
-    ChartDataModel(day: "4", income: 5100, expense: 3300),
-    ChartDataModel(day: "5", income: 2600, expense: 4700),
-    ChartDataModel(day: "6", income: 6000, expense: 4000),
-    ChartDataModel(day: "7", income: 5800, expense: 4900),
-    ChartDataModel(day: "8", income: 3200, expense: 6200),
-    ChartDataModel(day: "9", income: 5900, expense: 3800),
-    ChartDataModel(day: "10", income: 6400, expense: 4300),
-    ChartDataModel(day: "11", income: 6300, expense: 4100),
-    ChartDataModel(day: "12", income: 6500, expense: 4400),
-  ];
+  /// Get chart data aggregated by the filter: "Weekly" | "Monthly" | "Yearly"
+  Future<List<ChartDataModel>> getChartData(String filter) async {
+    final user = auth.currentUser;
+    if (user == null) throw Exception('User not logged in');
+    final uid = user.uid;
 
-  static final List<ChartDataModel> yearlyData = [
-    ChartDataModel(day: "2020", income: 58000, expense: 42000),
-    ChartDataModel(day: "2021", income: 60000, expense: 43000),
-    ChartDataModel(day: "2022", income: 64000, expense: 46000),
-    ChartDataModel(day: "2023", income: 68000, expense: 49000),
-    ChartDataModel(day: "2024", income: 72000, expense: 51000),
-  ];
+    final snap = await firestore
+        .collection('users')
+        .doc(uid)
+        .collection('transactions')
+        .get();
 
-  List<ChartDataModel> getDataByFilter(String filter) {
-    switch (filter) {
-      case "Daily":
-        return dailyData;
-      case "Weekly":
-        return weeklyData;
-      case "Monthly":
-        return monthlyData;
-      case "Yearly":
-        return yearlyData;
-      default:
-        return weeklyData;
+    final docs = snap.docs;
+
+    // Convert to simple list of maps for processing
+    final transactions = docs.map((d) {
+      final data = d.data();
+      final ts = data['dateTime'];
+      DateTime dt;
+      if (ts is Timestamp)
+        dt = ts.toDate();
+      else if (ts is DateTime)
+        dt = ts;
+      else
+        dt = DateTime.now();
+
+      final amount = (data['amount'] ?? 0).toDouble();
+      final isIncome = (data['isIncome'] ?? false) as bool;
+
+      return {'date': dt, 'amount': amount, 'isIncome': isIncome};
+    }).toList();
+
+    if (filter == 'Weekly') {
+      return _aggregateWeekly(transactions);
+    } else if (filter == 'Monthly') {
+      return _aggregateMonthly(transactions);
+    } else if (filter == 'Yearly') {
+      return _aggregateYearly(transactions);
     }
+
+    // default weekly
+    return _aggregateWeekly(transactions);
+  }
+
+  List<ChartDataModel> _aggregateWeekly(List<Map<String, dynamic>> txs) {
+    // Produce 4-week buckets: current week (Mon-Sun) and 3 previous weeks
+    final now = DateTime.now();
+
+    // Find current week Monday start
+    DateTime startOfCurrentWeek = now.subtract(Duration(days: now.weekday - 1));
+    // For display ensure week covers Monday..Sunday
+
+    final weeks = List.generate(4, (i) {
+      final weekStart = startOfCurrentWeek.subtract(
+        Duration(days: 7 * (3 - i)),
+      );
+      final weekEnd = weekStart.add(Duration(days: 6));
+      return {'start': weekStart, 'end': weekEnd};
+    });
+
+    final result = <ChartDataModel>[];
+    for (final w in weeks) {
+      double income = 0.0;
+      double expense = 0.0;
+      for (final t in txs) {
+        final d = t['date'] as DateTime;
+        if (!d.isBefore(_startOfDay(w['start'] as DateTime)) &&
+            !d.isAfter(_endOfDay(w['end'] as DateTime))) {
+          final amt = (t['amount'] as double);
+          if (t['isIncome'] as bool)
+            income += amt;
+          else
+            expense += amt;
+        }
+      }
+      final label =
+          '${_formatDate(w['start'] as DateTime)} - ${_formatDateShort(w['end'] as DateTime)}';
+      result.add(ChartDataModel(day: label, income: income, expense: expense));
+    }
+
+    return result;
+  }
+
+  List<ChartDataModel> _aggregateMonthly(List<Map<String, dynamic>> txs) {
+    // Produce columns from Jan..currentMonth (1..now.month) for the current year
+    final now = DateTime.now();
+    final year = now.year;
+    final result = <ChartDataModel>[];
+
+    for (int m = 1; m <= now.month; m++) {
+      double income = 0.0;
+      double expense = 0.0;
+      for (final t in txs) {
+        final d = t['date'] as DateTime;
+        if (d.year == year && d.month == m) {
+          final amt = (t['amount'] as double);
+          if (t['isIncome'] as bool)
+            income += amt;
+          else
+            expense += amt;
+        }
+      }
+      result.add(
+        ChartDataModel(day: m.toString(), income: income, expense: expense),
+      );
+    }
+
+    return result;
+  }
+
+  List<ChartDataModel> _aggregateYearly(List<Map<String, dynamic>> txs) {
+    // Last 4 years including current
+    final now = DateTime.now();
+    final years = List.generate(4, (i) => now.year - (3 - i));
+    final result = <ChartDataModel>[];
+
+    for (final y in years) {
+      double income = 0.0;
+      double expense = 0.0;
+      for (final t in txs) {
+        final d = t['date'] as DateTime;
+        if (d.year == y) {
+          final amt = (t['amount'] as double);
+          if (t['isIncome'] as bool)
+            income += amt;
+          else
+            expense += amt;
+        }
+      }
+      result.add(
+        ChartDataModel(day: y.toString(), income: income, expense: expense),
+      );
+    }
+
+    return result;
+  }
+
+  DateTime _startOfDay(DateTime d) => DateTime(d.year, d.month, d.day);
+  DateTime _endOfDay(DateTime d) =>
+      DateTime(d.year, d.month, d.day, 23, 59, 59);
+
+  String _formatDate(DateTime d) {
+    return '${d.day}/${d.month}';
+  }
+
+  String _formatDateShort(DateTime d) {
+    return '${d.day}/${d.month}';
   }
 }

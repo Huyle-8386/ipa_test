@@ -9,7 +9,7 @@ class ChartRepositoryImpl implements ChartRepository {
 
   @override
   Future<List<Chart>> getChartData(String filter) async {
-    final dataModels = dataSource.getDataByFilter(filter);
-    return dataModels.map((e) => e.toEntity()).toList();
+    final models = await dataSource.getChartData(filter);
+    return models.map((m) => m.toEntity()).toList();
   }
 }

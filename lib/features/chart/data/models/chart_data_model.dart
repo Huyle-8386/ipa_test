@@ -19,7 +19,5 @@ class ChartDataModel {
     );
   }
 
-  Chart toEntity() {
-    return Chart(day: day, income: income, expense: expense);
-  }
+  Chart toEntity() => Chart(day: day, income: income, expense: expense);
 }

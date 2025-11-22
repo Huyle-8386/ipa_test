@@ -1,23 +1,36 @@
 part of 'chart_bloc.dart';
-// import '../../domain/entities/chart.dart';
 
-class ChartState extends Equatable {
+class ChartState {
   final String selectedFilter;
   final List<Chart> chartData;
+  final double incomeChangePercent;
+  final double expenseChangePercent;
 
-  const ChartState({required this.selectedFilter, required this.chartData});
+  ChartState({
+    required this.selectedFilter,
+    required this.chartData,
+    required this.incomeChangePercent,
+    required this.expenseChangePercent,
+  });
 
-  factory ChartState.initial() {
-    return const ChartState(selectedFilter: "Daily", chartData: []);
-  }
+  factory ChartState.initial() => ChartState(
+    selectedFilter: 'Weekly',
+    chartData: [],
+    incomeChangePercent: 0.0,
+    expenseChangePercent: 0.0,
+  );
 
-  ChartState copyWith({String? selectedFilter, List<Chart>? chartData}) {
+  ChartState copyWith({
+    String? selectedFilter,
+    List<Chart>? chartData,
+    double? incomeChangePercent,
+    double? expenseChangePercent,
+  }) {
     return ChartState(
       selectedFilter: selectedFilter ?? this.selectedFilter,
       chartData: chartData ?? this.chartData,
+      incomeChangePercent: incomeChangePercent ?? this.incomeChangePercent,
+      expenseChangePercent: expenseChangePercent ?? this.expenseChangePercent,
     );
   }
-
-  @override
-  List<Object?> get props => [selectedFilter, chartData];
 }
