@@ -123,3 +123,5 @@ class ResetAddBudgetForm extends BudgetEvent {
   @override
   List<Object?> get props => [];
 }
+
+class ResetUpdateSuccess extends BudgetEvent {}

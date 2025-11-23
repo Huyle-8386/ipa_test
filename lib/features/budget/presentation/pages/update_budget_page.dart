@@ -53,9 +53,18 @@ class _UpdateBudgetPageState extends State<UpdateBudgetPage> {
     final w = SizeUtils.width(context);
 
     return BlocListener<BudgetBloc, BudgetState>(
-      listenWhen: (_, curr) => curr.updateSuccess == true,
-      listener: (_, state) {
-        Navigator.pop(context);
+      listenWhen: (prev, curr) => prev.updateSuccess != curr.updateSuccess,
+      listener: (context, state) {
+        if (state.updateSuccess == true) {
+          Future.microtask(() {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+
+            // RESET lại để lần sau còn pop tiếp
+            context.read<BudgetBloc>().add(ResetUpdateSuccess());
+          });
+        }
       },
       child: Scaffold(
         backgroundColor: AppColors.background,
@@ -141,6 +150,8 @@ class _UpdateBudgetPageState extends State<UpdateBudgetPage> {
                     onChanged: (v) {
                       context.read<BudgetBloc>().add(AddIsActiveChanged(v));
                     },
+                    activeColor: AppColors.white,
+                    activeTrackColor: AppColors.main,
                   ),
                 ],
               ),

@@ -83,6 +83,10 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
       emit(state.copyWith(addSpent: e.spent));
     });
 
+    on<ResetUpdateSuccess>((event, emit) {
+      emit(state.copyWith(updateSuccess: false));
+    });
+
     // Tab
     on<BudgetTabChanged>((e, emit) {
       emit(state.copyWith(selectedTab: e.tab));
