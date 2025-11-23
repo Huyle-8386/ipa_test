@@ -263,10 +263,15 @@ class _ExpensesPageContentState extends State<_ExpensesPageContent> {
                 ),
                 buildChartSection(state.totalValue, state.expenses),
                 const SizedBox(height: 20),
+
                 // Custom widget để hiển thị danh sách chi tiêu từ BLoC
                 state.expenses.isEmpty
                     ? buildEmptyExpenseList()
-                    : buildExpenseList(state.expenses),
+                    : buildExpenseList(
+                        state.expenses,
+                        state.totalValue,
+                        state.previousSums,
+                      ),
               ],
             ),
           ),

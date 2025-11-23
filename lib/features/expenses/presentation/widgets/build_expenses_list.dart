@@ -4,17 +4,27 @@ import 'package:flutter/material.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 
 // Chấp nhận danh sách chi tiêu từ bên ngoài thay vì sử dụng danh sách tĩnh
-Widget buildExpenseList(List<ExpenseEntity> expenseItems) {
+Widget buildExpenseList(
+  List<ExpenseEntity> expenseItems,
+  double totalValue,
+  Map<String, double> previousSums,
+) {
   return Column(
     children: expenseItems
-        .map((expense) => buildExpenseListItem(expense))
+        .map(
+          (expense) => buildExpenseListItem(expense, totalValue, previousSums),
+        )
         .toList(),
   );
 }
 
 // Widget cho một mục trong danh sách
 // Đổi thành public để có thể gọi từ bên ngoài
-Widget buildExpenseListItem(ExpenseEntity expense) {
+Widget buildExpenseListItem(
+  ExpenseEntity expense,
+  double totalValue,
+  Map<String, double> previousSums,
+) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 12.0),
     child: Container(
@@ -84,8 +94,61 @@ Widget buildExpenseListItem(ExpenseEntity expense) {
                   ),
                 ),
                 const SizedBox(height: 4),
-                // We no longer show percentage/isUp. If you want an indicator, derive from previous totals at the page level.
-                const SizedBox.shrink(),
+                // Show only percentage change vs previous period
+                Builder(
+                  builder: (context) {
+                    // previous amount for this category
+                    final prevAmount = previousSums[expense.categoryId] ?? 0.0;
+
+                    // If previous missing or zero, display 100% and up arrow
+                    if (prevAmount <= 0) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Text(
+                            '100%',
+                            style: TextStyle(
+                              color: Colors.greenAccent,
+                              fontSize: 13,
+                            ),
+                          ),
+                          SizedBox(width: 6),
+                          Icon(
+                            Icons.arrow_upward,
+                            color: Colors.greenAccent,
+                            size: 14,
+                          ),
+                        ],
+                      );
+                    }
+
+                    final changePercent =
+                        ((expense.amount - prevAmount) / prevAmount) * 100;
+                    final isUp = changePercent >= 0;
+                    final display = (changePercent.abs() >= 1)
+                        ? '${changePercent.abs().toStringAsFixed(0)}%'
+                        : '${changePercent.abs().toStringAsFixed(1)}%';
+
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          display,
+                          style: TextStyle(
+                            color: isUp ? Colors.greenAccent : Colors.redAccent,
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Icon(
+                          isUp ? Icons.arrow_upward : Icons.arrow_downward,
+                          color: isUp ? Colors.greenAccent : Colors.redAccent,
+                          size: 14,
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ],
             ),
           ),

@@ -23,8 +23,8 @@ class ExpenseEntity {
   });
 
   String get formattedAmount => isIncome
-      ? '+\$${amount.toStringAsFixed(2)}'
-      : '-\$${amount.toStringAsFixed(2)}';
+      ? ' ${amount.toStringAsFixed(2)}'
+      : ' ${amount.toStringAsFixed(2)}';
 
   /// Reuse helpers from TransactionEntity where appropriate
   String get formattedTime => TransactionEntity(
