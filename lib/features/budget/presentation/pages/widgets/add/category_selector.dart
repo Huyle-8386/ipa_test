@@ -19,9 +19,11 @@ class CategorySelector extends StatelessWidget {
     final state = context.watch<BudgetBloc>().state;
 
     return SizedBox(
-      height: h * 0.15,
+      height: h * 0.16, // tăng nhẹ để icon + text không bị chạm mép
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(), // 🔥 fix không kéo được
+        padding: EdgeInsets.symmetric(horizontal: w * 0.02),
         itemCount: categories.length,
         separatorBuilder: (_, __) => SizedBox(width: w * 0.03),
         itemBuilder: (context, index) {
@@ -29,38 +31,41 @@ class CategorySelector extends StatelessWidget {
           final isSelected = state.addCategory == category.id;
 
           return GestureDetector(
-            behavior: HitTestBehavior.opaque, // <<<<<< BẮT BUỘC
+            behavior: HitTestBehavior.translucent,
             onTap: () {
-              // print(">> TAP category.id=${category.id}, name=${category.name}");
               context.read<BudgetBloc>().add(AddCategoryChanged(category.id));
             },
             child: Container(
-              width: w * 0.22, // <<<<<< BẮT BUỘC
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              width: w * 0.24, // responsive width
+              padding: EdgeInsets.symmetric(
+                horizontal: w * 0.03,
+                vertical: h * 0.015,
+              ),
               decoration: BoxDecoration(
                 color: AppColors.widget,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: isSelected ? AppColors.main : AppColors.grey,
-                  width: 1,
+                  width: 1.2,
                 ),
               ),
               child: Column(
-                mainAxisSize: MainAxisSize.min, // <<<<<< BẮT BUỘC
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    height: 36, // << fixed size icon
+                    height: h * 0.05, // icon responsive
                     child: Image.asset(category.icon, fit: BoxFit.contain),
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: h * 0.01),
+
+                  // tên category
                   Text(
                     category.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: AppTextStyles.body2.copyWith(
+                      fontSize: w * 0.035,
                       color: isSelected ? AppColors.main : AppColors.white,
-                      fontSize: 14,
                       fontWeight: isSelected
                           ? FontWeight.bold
                           : FontWeight.normal,

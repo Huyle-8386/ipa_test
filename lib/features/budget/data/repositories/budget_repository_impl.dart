@@ -72,7 +72,7 @@ class BudgetRepositoryImpl implements BudgetRepository {
       sourceId: budget.sourceId,
       startDate: budget.startDate,
       endDate: budget.endDate,
-      isActive: true,
+      isActive: budget.isActive,
     );
     await remote.updateBudget(uid, model);
   }

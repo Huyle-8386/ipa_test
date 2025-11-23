@@ -7,8 +7,8 @@ import 'package:fintrack/core/utils/size_utils.dart';
 import '../../../bloc/budget_bloc.dart';
 import '../../../bloc/budget_event.dart';
 
-class AmountInputField extends StatelessWidget {
-  const AmountInputField({super.key});
+class SpentInputField extends StatelessWidget {
+  const SpentInputField({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class AmountInputField extends StatelessWidget {
 
     final state = context.watch<BudgetBloc>().state;
 
-    final controller = TextEditingController(text: state.addAmount);
+    final controller = TextEditingController(text: state.addSpent);
 
     return TextFormField(
       controller: controller,
@@ -26,7 +26,7 @@ class AmountInputField extends StatelessWidget {
       style: const TextStyle(color: AppColors.white),
 
       decoration: InputDecoration(
-        labelText: "Amount",
+        labelText: "Spent",
         hintText: "\$0",
         hintStyle: const TextStyle(color: AppColors.grey),
         labelStyle: const TextStyle(color: AppColors.grey),
@@ -47,7 +47,7 @@ class AmountInputField extends StatelessWidget {
       ),
 
       onChanged: (value) {
-        context.read<BudgetBloc>().add(AddAmountChanged(value));
+        context.read<BudgetBloc>().add(AddSpentChanged(value));
       },
     );
   }

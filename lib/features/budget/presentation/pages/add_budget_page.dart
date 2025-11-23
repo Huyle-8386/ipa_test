@@ -25,16 +25,6 @@ import '../bloc/money_sources/money_source_state.dart';
 class AddBudgetPage extends StatelessWidget {
   AddBudgetPage({super.key});
 
-  // final categories = [
-  //   "Groceries",
-  //   "Food",
-  //   "Shopping",
-  //   "Health",
-  //   "Transport",
-  //   "Bills",
-  //   "Entertainment",
-  // ];
-
   @override
   Widget build(BuildContext context) {
     final h = SizeUtils.height(context);
@@ -92,17 +82,7 @@ class AddBudgetPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: h * 0.01),
-              // BlocProvider(
-              //   create: (_) =>
-              //       sl<CategoryBloc>()..add(const LoadCategories(false)),
-              //   child: BlocBuilder<CategoryBloc, CategoryState>(
-              //     builder: (context, state) {
-              //       if (state.loading) return CircularProgressIndicator();
 
-              //       return CategorySelector(categories: state.categories);
-              //     },
-              //   ),
-              // ),
               BlocBuilder<CategoryBloc, CategoryState>(
                 builder: (context, state) {
                   if (state.loading) return CircularProgressIndicator();
@@ -165,15 +145,6 @@ class AddBudgetPage extends StatelessWidget {
         onPressed: () async {
           //  Lấy UID
           final uid = FirebaseAuth.instance.currentUser!.uid;
-
-          print("👉 ADD pressed");
-          print("name: ${context.read<BudgetBloc>().state.addName}");
-          print("amount: ${context.read<BudgetBloc>().state.addAmount}");
-          print("category: ${context.read<BudgetBloc>().state.addCategory}");
-          print("source: ${context.read<BudgetBloc>().state.addSource}");
-          print("start: ${context.read<BudgetBloc>().state.addStartDate}");
-          print("end: ${context.read<BudgetBloc>().state.addEndDate}");
-          print("uid: $uid");
 
           //  Gửi event add
           context.read<BudgetBloc>().add(AddBudgetRequested(uid));
