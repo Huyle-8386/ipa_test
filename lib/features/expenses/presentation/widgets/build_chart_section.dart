@@ -4,6 +4,21 @@ import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/features/expenses/domain/entities/expense_entity.dart';
 import 'package:flutter/material.dart';
 
+// Helper color mapping for categories
+Color _getCategoryColor(String categoryName) {
+  final category = categoryName.toLowerCase();
+  if (category.contains('food')) return Colors.red;
+  if (category.contains('taxi') || category.contains('transport'))
+    return Colors.blue;
+  if (category.contains('shopping')) return Colors.orange;
+  if (category.contains('transfer') || category.contains('salary'))
+    return Colors.green;
+  if (category.contains('entertainment')) return Colors.purple;
+  if (category.contains('health')) return Colors.pink;
+  if (category.contains('education')) return Colors.teal;
+  return AppColors.grey;
+}
+
 Widget buildChartSection(double? totalValue, List<ExpenseEntity> expenses) {
   return Row(
     crossAxisAlignment: CrossAxisAlignment.end,
@@ -47,13 +62,13 @@ Widget buildChartSection(double? totalValue, List<ExpenseEntity> expenses) {
                         width: 10,
                         height: 10,
                         decoration: BoxDecoration(
-                          color: e.color,
+                          color: _getCategoryColor(e.categoryName),
                           shape: BoxShape.circle,
                         ),
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        e.name,
+                        e.categoryName,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -78,7 +93,7 @@ class PieChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    double total = expenses.fold(0, (sum, item) => sum + item.value);
+    double total = expenses.fold(0, (sum, item) => sum + item.amount);
     if (total == 0) return; // Tránh chia cho 0
     double startAngle = -math.pi / 2;
 
@@ -87,10 +102,10 @@ class PieChartPainter extends CustomPainter {
     final rect = Rect.fromCircle(center: center, radius: radius);
 
     for (var expense in expenses) {
-      final sweepAngle = (expense.value / total) * 2 * math.pi;
+      final sweepAngle = (expense.amount / total) * 2 * math.pi;
       final paint = Paint()
         ..style = PaintingStyle.fill
-        ..color = expense.color;
+        ..color = _getCategoryColor(expense.categoryName);
       canvas.drawArc(rect, startAngle, sweepAngle, true, paint);
       startAngle += sweepAngle;
     }

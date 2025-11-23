@@ -1,21 +1,39 @@
-import 'package:flutter/material.dart';
+import 'package:fintrack/features/transaction_%20history/domain/entities/transaction_entity.dart';
 
+/// ExpenseEntity now mirrors a summarized category item.
+/// Fields:
+/// - categoryId, categoryName, optional categoryIcon (mapped from categories)
+/// - amount: total amount (double)
+/// - isIncome: whether this item represents income (usually false for expenses)
 class ExpenseEntity {
-  final String icon;
-  final Color color;
-  final String name;
-  final double value;
-  final String amount;
-  final String percentage;
-  final bool isUp;
+  final String? id;
+  final String categoryId;
+  final String categoryName;
+  final String? categoryIcon;
+  final double amount;
+  final bool isIncome;
 
   const ExpenseEntity({
-    required this.icon,
-    required this.color,
-    required this.name,
-    required this.value,
+    this.id,
+    required this.categoryId,
+    required this.categoryName,
+    this.categoryIcon,
     required this.amount,
-    required this.percentage,
-    required this.isUp,
+    required this.isIncome,
   });
+
+  String get formattedAmount => isIncome
+      ? '+\$${amount.toStringAsFixed(2)}'
+      : '-\$${amount.toStringAsFixed(2)}';
+
+  /// Reuse helpers from TransactionEntity where appropriate
+  String get formattedTime => TransactionEntity(
+    categoryId: categoryId,
+    categoryName: categoryName,
+    moneySourceName: '',
+    note: '',
+    amount: amount,
+    dateTime: DateTime.now(),
+    isIncome: isIncome,
+  ).formattedTime;
 }

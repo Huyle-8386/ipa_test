@@ -232,6 +232,35 @@ class _ExpensesPageContentState extends State<_ExpensesPageContent> {
             child: Column(
               children: [
                 // Biểu đồ và chú giải với dữ liệu từ BLoC
+                // Comparison line: show increase/decrease compared to previous period
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        state.isIncrease
+                            ? Icons.arrow_upward
+                            : Icons.arrow_downward,
+                        color: state.isIncrease
+                            ? Colors.greenAccent
+                            : Colors.redAccent,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        state.isIncrease
+                            ? 'Increased by \$${state.diff.abs().toStringAsFixed(2)} vs previous'
+                            : 'Decreased by \$${state.diff.abs().toStringAsFixed(2)} vs previous',
+                        style: TextStyle(
+                          color: state.isIncrease
+                              ? Colors.greenAccent
+                              : Colors.redAccent,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 buildChartSection(state.totalValue, state.expenses),
                 const SizedBox(height: 20),
                 // Custom widget để hiển thị danh sách chi tiêu từ BLoC

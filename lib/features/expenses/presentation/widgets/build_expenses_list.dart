@@ -1,6 +1,7 @@
 // Widget cho danh sách chi tiêu
 import 'package:fintrack/features/expenses/domain/entities/expense_entity.dart';
 import 'package:flutter/material.dart';
+import 'package:fintrack/core/theme/app_colors.dart';
 
 // Chấp nhận danh sách chi tiêu từ bên ngoài thay vì sử dụng danh sách tĩnh
 Widget buildExpenseList(List<ExpenseEntity> expenseItems) {
@@ -37,17 +38,29 @@ Widget buildExpenseListItem(ExpenseEntity expense) {
             width: 35,
             height: 35,
             decoration: BoxDecoration(
-              color: expense.color,
+              color: _getCategoryColor(expense.categoryName).withOpacity(0.15),
               shape: BoxShape.circle,
             ),
-            child: Image.asset(expense.icon),
+            child: expense.categoryIcon != null
+                ? Image.asset(
+                    expense.categoryIcon!,
+                    fit: BoxFit.contain,
+                    errorBuilder: (c, e, s) => Icon(
+                      _getCategoryIcon(expense.categoryName),
+                      color: _getCategoryColor(expense.categoryName),
+                    ),
+                  )
+                : Icon(
+                    _getCategoryIcon(expense.categoryName),
+                    color: _getCategoryColor(expense.categoryName),
+                  ),
           ),
           const SizedBox(width: 12),
           Expanded(
             // Sử dụng Expanded để tránh overflow text
             flex: 2,
             child: Text(
-              expense.name,
+              expense.categoryName,
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -63,37 +76,16 @@ Widget buildExpenseListItem(ExpenseEntity expense) {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  expense.amount,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  expense.formattedAmount,
+                  style: TextStyle(
+                    color: expense.isIncome ? AppColors.main : Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 4),
-                Row(
-                  mainAxisSize:
-                      MainAxisSize.min, // Row chỉ chiếm không gian cần thiết
-                  children: [
-                    Text(
-                      expense.percentage,
-                      style: TextStyle(
-                        color: expense.isUp
-                            ? Colors.greenAccent
-                            : Colors.redAccent,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(width: 2),
-                    Icon(
-                      expense.isUp ? Icons.arrow_upward : Icons.arrow_downward,
-                      color: expense.isUp
-                          ? Colors.greenAccent
-                          : Colors.redAccent,
-                      size: 16,
-                    ),
-                  ],
-                ),
+                // We no longer show percentage/isUp. If you want an indicator, derive from previous totals at the page level.
+                const SizedBox.shrink(),
               ],
             ),
           ),
@@ -101,6 +93,35 @@ Widget buildExpenseListItem(ExpenseEntity expense) {
       ),
     ),
   );
+}
+
+// Icon mapping similar to transaction history
+IconData _getCategoryIcon(String categoryName) {
+  final category = categoryName.toLowerCase();
+  if (category.contains('food')) return Icons.restaurant;
+  if (category.contains('taxi') || category.contains('transport'))
+    return Icons.local_taxi;
+  if (category.contains('shopping')) return Icons.shopping_bag;
+  if (category.contains('transfer')) return Icons.swap_horiz;
+  if (category.contains('salary')) return Icons.attach_money;
+  if (category.contains('entertainment')) return Icons.movie;
+  if (category.contains('health')) return Icons.local_hospital;
+  if (category.contains('education')) return Icons.school;
+  return Icons.receipt;
+}
+
+Color _getCategoryColor(String categoryName) {
+  final category = categoryName.toLowerCase();
+  if (category.contains('food')) return Colors.red;
+  if (category.contains('taxi') || category.contains('transport'))
+    return Colors.blue;
+  if (category.contains('shopping')) return Colors.orange;
+  if (category.contains('transfer') || category.contains('salary'))
+    return Colors.green;
+  if (category.contains('entertainment')) return Colors.purple;
+  if (category.contains('health')) return Colors.pink;
+  if (category.contains('education')) return Colors.teal;
+  return AppColors.grey;
 }
 
 // Thêm widget mới để hiển thị khi danh sách trống
