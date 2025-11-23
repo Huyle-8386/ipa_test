@@ -1,86 +1,3 @@
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import '../../domain/repositories/budget_repository.dart';
-// import '../../domain/usecases/get_budgets.dart';
-// import '../../domain/entities/budget_entity.dart';
-// import '../../domain/usecases/get_categories.dart';
-// import 'budget_event.dart';
-// import 'budget_state.dart';
-
-// class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
-//   final GetBudgets getBudgets;
-//   // final GetBudgetCategories getBudgetCategories;
-
-//   BudgetBloc({required this.getBudgets}) : super(BudgetState.initial()) {
-//     on<LoadBudgets>(_onLoadBudgets);
-//     on<BudgetTabChanged>(_onTabChanged);
-//     on<SelectBudgetEvent>(_onSelectBudget);
-
-//     // on<LoadCategories>((event, emit) async {
-//     //   final list = await getBudgetCategories(event.isIncome);
-//     //   emit(state.copyWith(categories: list));
-//     // });
-
-//     on<AddAmountChanged>(
-//       (e, emit) => emit(state.copyWith(addAmount: e.amount)),
-//     );
-
-//     on<AddNameChanged>((e, emit) => emit(state.copyWith(addName: e.name)));
-
-//     on<AddCategoryChanged>(
-//       (e, emit) => emit(state.copyWith(addCategory: e.category)),
-//     );
-
-//     on<AddSourceChanged>(
-//       (e, emit) => emit(state.copyWith(addSource: e.source)),
-//     );
-
-//     on<AddStartDateChanged>(
-//       (e, emit) => emit(state.copyWith(addStartDate: e.date)),
-//     );
-
-//     on<AddEndDateChanged>(
-//       (e, emit) => emit(state.copyWith(addEndDate: e.date)),
-//     );
-//   }
-
-//   Future<void> _onLoadBudgets(
-//     LoadBudgets event,
-//     Emitter<BudgetState> emit,
-//   ) async {
-//     emit(state.copyWith(isLoading: true));
-//     final all = await getBudgets();
-//     final filtered = _filterByTab(all, state.selectedTab);
-//     emit(state.copyWith(budgets: filtered, isLoading: false));
-//   }
-
-//   void _onTabChanged(BudgetTabChanged event, Emitter<BudgetState> emit) {
-//     final filtered = _filterByTab(
-//       state.budgets.isEmpty ? [] : state.budgets,
-//       event.selectedTab,
-//     );
-//     // If budgets not loaded yet, try to load all then filter (we'll be conservative)
-//     emit(
-//       state.copyWith(
-//         selectedTab: event.selectedTab,
-//         budgets: state.budgets.isEmpty ? [] : filtered,
-//       ),
-//     );
-//   }
-
-//   void _onSelectBudget(SelectBudgetEvent event, Emitter<BudgetState> emit) {
-//     emit(state.copyWith(selectedBudget: event.budget));
-//   }
-
-//   List<BudgetEntity> _filterByTab(List<BudgetEntity> items, String tab) {
-//     if (items.isEmpty) return items;
-//     if (tab == "Active") {
-//       return items.where((b) => b.isActive).toList();
-//     } else {
-//       return items.where((b) => !b.isActive).toList();
-//     }
-//   }
-// }
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/budget_entity.dart';
 import '../../domain/usecases/add_budget.dart';
@@ -108,6 +25,31 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
     on<UpdateBudgetRequested>(_onUpdateBudget);
     on<DeleteBudgetRequested>(_onDeleteBudget);
 
+    on<ResetAddBudgetForm>((event, emit) {
+      final now = DateTime.now();
+      final endOfMonth = DateTime(
+        now.year,
+        now.month + 1,
+        0,
+      ); // last day of current month
+
+      emit(
+        state.copyWith(
+          addAmount: "",
+          addName: "",
+          addCategory: null,
+          addSource: null,
+          addSpent: "",
+          addStartDate: now,
+          addEndDate: endOfMonth,
+          addIsActive: true,
+          addSuccess: false,
+          updateSuccess: false,
+          error: null,
+        ),
+      );
+    });
+
     // UI Form handlers
     on<AddAmountChanged>((e, emit) {
       emit(state.copyWith(addAmount: e.amount));
@@ -131,6 +73,18 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
 
     on<AddEndDateChanged>((e, emit) {
       emit(state.copyWith(addEndDate: e.date));
+    });
+
+    on<AddIsActiveChanged>((e, emit) {
+      emit(state.copyWith(addIsActive: e.isActive));
+    });
+
+    on<AddSpentChanged>((e, emit) {
+      emit(state.copyWith(addSpent: e.spent));
+    });
+
+    on<ResetUpdateSuccess>((event, emit) {
+      emit(state.copyWith(updateSuccess: false));
     });
 
     // Tab
@@ -199,10 +153,24 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
     emit(state.copyWith(loading: true, error: null));
 
     try {
-      await updateBudgetUsecase(event.budget, event.uid);
+      final updated = event.budget.copyWith(
+        name: state.addName.isNotEmpty ? state.addName : event.budget.name,
+        amount: state.addAmount.isNotEmpty
+            ? double.tryParse(state.addAmount)
+            : event.budget.amount,
+        categoryId: state.addCategory ?? event.budget.categoryId,
+        sourceId: state.addSource ?? event.budget.sourceId,
+        startDate: state.addStartDate,
+        endDate: state.addEndDate,
+        isActive: state.addIsActive,
+        spent: state.addSpent.isNotEmpty
+            ? double.tryParse(state.addSpent) ?? event.budget.spent
+            : event.budget.spent,
+      );
+      await updateBudgetUsecase(updated, event.uid);
 
       final items = await getBudgetsUsecase(event.uid);
-      emit(state.copyWith(budgets: items, loading: false));
+      emit(state.copyWith(budgets: items, loading: false, updateSuccess: true));
     } catch (e) {
       emit(state.copyWith(loading: false, error: e.toString()));
     }

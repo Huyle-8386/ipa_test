@@ -64,6 +64,30 @@ class BudgetEntity {
     required this.isActive,
   });
 
+  BudgetEntity copyWith({
+    String? id,
+    String? name,
+    double? amount,
+    double? spent,
+    String? categoryId,
+    String? sourceId,
+    DateTime? startDate,
+    DateTime? endDate,
+    bool? isActive,
+  }) {
+    return BudgetEntity(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      amount: amount ?? this.amount,
+      spent: spent ?? this.spent,
+      categoryId: categoryId ?? this.categoryId,
+      sourceId: sourceId ?? this.sourceId,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      isActive: isActive ?? this.isActive,
+    );
+  }
+
   double get percent => amount == 0 ? 0 : (spent / amount) * 100;
 
   String get status {

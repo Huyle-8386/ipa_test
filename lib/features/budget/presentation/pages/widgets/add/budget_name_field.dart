@@ -14,7 +14,12 @@ class BudgetNameField extends StatelessWidget {
     final h = SizeUtils.height(context);
     final w = SizeUtils.width(context);
 
+    final state = context.watch<BudgetBloc>().state;
+
+    final controller = TextEditingController(text: state.addName);
+
     return TextFormField(
+      controller: controller,
       style: const TextStyle(color: AppColors.white),
 
       decoration: InputDecoration(

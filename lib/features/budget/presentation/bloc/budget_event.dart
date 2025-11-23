@@ -1,81 +1,3 @@
-// import 'package:equatable/equatable.dart';
-// import '../../domain/entities/budget_entity.dart';
-
-// abstract class BudgetEvent extends Equatable {
-//   const BudgetEvent();
-
-//   @override
-//   List<Object?> get props => [];
-// }
-
-// class LoadBudgets extends BudgetEvent {
-//   const LoadBudgets();
-// }
-
-// class BudgetTabChanged extends BudgetEvent {
-//   final String selectedTab;
-//   const BudgetTabChanged(this.selectedTab);
-
-//   @override
-//   List<Object?> get props => [selectedTab];
-// }
-
-// class SelectBudgetEvent extends BudgetEvent {
-//   final BudgetEntity budget;
-//   const SelectBudgetEvent(this.budget);
-
-//   @override
-//   List<Object?> get props => [budget];
-// }
-
-// class AddAmountChanged extends BudgetEvent {
-//   final String amount;
-//   const AddAmountChanged(this.amount);
-
-//   @override
-//   List<Object?> get props => [amount];
-// }
-
-// class AddNameChanged extends BudgetEvent {
-//   final String name;
-//   const AddNameChanged(this.name);
-
-//   @override
-//   List<Object?> get props => [name];
-// }
-
-// class AddCategoryChanged extends BudgetEvent {
-//   final String category;
-//   const AddCategoryChanged(this.category);
-
-//   @override
-//   List<Object?> get props => [category];
-// }
-
-// class AddSourceChanged extends BudgetEvent {
-//   final String source;
-//   const AddSourceChanged(this.source);
-
-//   @override
-//   List<Object?> get props => [source];
-// }
-
-// class AddStartDateChanged extends BudgetEvent {
-//   final DateTime date;
-//   const AddStartDateChanged(this.date);
-
-//   @override
-//   List<Object?> get props => [date];
-// }
-
-// class AddEndDateChanged extends BudgetEvent {
-//   final DateTime date;
-//   const AddEndDateChanged(this.date);
-
-//   @override
-//   List<Object?> get props => [date];
-// }
-
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/budget_entity.dart';
 
@@ -178,3 +100,28 @@ class AddEndDateChanged extends BudgetEvent {
   @override
   List<Object?> get props => [date];
 }
+
+class AddIsActiveChanged extends BudgetEvent {
+  final bool isActive;
+  const AddIsActiveChanged(this.isActive);
+
+  @override
+  List<Object?> get props => [isActive];
+}
+
+class AddSpentChanged extends BudgetEvent {
+  final String spent;
+  const AddSpentChanged(this.spent);
+
+  @override
+  List<Object?> get props => [spent];
+}
+
+class ResetAddBudgetForm extends BudgetEvent {
+  const ResetAddBudgetForm();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class ResetUpdateSuccess extends BudgetEvent {}

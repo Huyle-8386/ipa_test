@@ -6,9 +6,15 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
+import '../../../../../core/di/injector.dart';
 import '../../bloc/budget_bloc.dart';
 import '../../bloc/budget_event.dart';
 import '../../bloc/budget_state.dart';
+import '../../bloc/category/category_bloc.dart';
+import '../../bloc/category/category_event.dart';
+import '../../bloc/money_sources/money_source_bloc.dart';
+import '../../bloc/money_sources/money_source_event.dart';
+import '../update_budget_page.dart';
 // import '../detail_budget_page.dart';
 
 class BudgetCard extends StatelessWidget {
@@ -27,7 +33,14 @@ class BudgetCard extends StatelessWidget {
           );
         }
 
-        final budgets = state.budgets;
+        final budgets = state.budgets.where((b) {
+          if (state.selectedTab == "Active") {
+            return b.isActive == true;
+          } else {
+            return b.isActive == false;
+          }
+        }).toList();
+
         if (budgets.isEmpty) {
           return Center(
             child: Text(
@@ -97,38 +110,60 @@ class BudgetCard extends StatelessWidget {
                       Row(
                         children: [
                           // UPDATE BUTTON
-                          GestureDetector(
-                            onTap: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("UI Update chưa được tạo"),
+                          // GestureDetector(
+                          //   onTap: () {
+                          //     ScaffoldMessenger.of(context).showSnackBar(
+                          //       const SnackBar(
+                          //         content: Text("UI Update chưa được tạo"),
+                          //       ),
+                          //     );
+                          //   },
+                          //   child: Text(
+                          //     "Update",
+                          //     style: AppTextStyles.caption.copyWith(
+                          //       color: Colors.blueAccent,
+                          //       fontSize: 14,
+                          //     ),
+                          //   ),
+                          // ),
+                          IconButton(
+                            icon: Icon(Icons.edit, color: AppColors.main),
+                            onPressed: () {
+                              final uid =
+                                  FirebaseAuth.instance.currentUser!.uid;
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => MultiBlocProvider(
+                                    providers: [
+                                      BlocProvider.value(
+                                        value: context.read<BudgetBloc>(),
+                                      ),
+                                      BlocProvider(
+                                        create: (_) => sl<CategoryBloc>()
+                                          ..add(const LoadCategories(false)),
+                                      ),
+                                      BlocProvider(
+                                        create: (_) =>
+                                            sl<MoneySourceBloc>()
+                                              ..add(LoadMoneySources(uid)),
+                                      ),
+                                    ],
+                                    child: UpdateBudgetPage(budget: budget),
+                                  ),
                                 ),
                               );
                             },
-                            child: Text(
-                              "Update",
-                              style: AppTextStyles.caption.copyWith(
-                                color: Colors.blueAccent,
-                                fontSize: 14,
-                              ),
-                            ),
                           ),
+
                           SizedBox(width: 12),
 
                           // DELETE BUTTON
-                          GestureDetector(
-                            onTap: () {
-                              final uid =
-                                  FirebaseAuth.instance.currentUser!.uid;
-                              context.read<BudgetBloc>().add(
-                                DeleteBudgetRequested(budget.id, uid),
-                              );
-                            },
-                            child: Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                              size: 20,
-                            ),
+                          IconButton(
+                            icon: Icon(Icons.delete, color: Colors.redAccent),
+                            onPressed: () =>
+                                showDeleteBudgetDialog(context, budget.id),
                           ),
                         ],
                       ),
@@ -237,6 +272,44 @@ class BudgetCard extends StatelessWidget {
         ),
       ];
     }
+  }
+
+  //================================================
+  //                DELETE BUDGET
+  //=================================================
+  void showDeleteBudgetDialog(BuildContext context, String budgetId) {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: AppColors.widget,
+          title: Text(
+            "Delete budget",
+            style: AppTextStyles.body1.copyWith(color: AppColors.white),
+          ),
+          content: Text(
+            "Are you sure you want to delete this budget?",
+            style: AppTextStyles.body2.copyWith(color: AppColors.grey),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("Cancel", style: TextStyle(color: AppColors.grey)),
+            ),
+            TextButton(
+              onPressed: () {
+                final uid = FirebaseAuth.instance.currentUser!.uid;
+                context.read<BudgetBloc>().add(
+                  DeleteBudgetRequested(budgetId, uid),
+                );
+                Navigator.pop(context);
+              },
+              child: Text("Delete", style: TextStyle(color: Colors.redAccent)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Color _getColorForStatus(String status) {
