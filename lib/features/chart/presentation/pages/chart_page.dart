@@ -410,25 +410,45 @@ class _ChartPageState extends State<ChartPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            SummaryCard(
-                              icon: "assets/icons/icon_huong_len.png",
-                              title: 'Income',
-                              value: state.chartData.fold(
-                                0,
-                                (sum, e) => sum + e.income,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const IncomePage(),
+                                  ),
+                                );
+                              },
+                              child: SummaryCard(
+                                icon: "assets/icons/icon_huong_len.png",
+                                title: 'Income',
+                                value: state.chartData.fold(
+                                  0,
+                                  (sum, e) => sum + e.income,
+                                ),
+                                change: state.incomeChangePercent,
+                                color: AppColors.main,
                               ),
-                              change: state.incomeChangePercent,
-                              color: AppColors.main,
                             ),
-                            SummaryCard(
-                              icon: "assets/icons/icon_huong_xuong.png",
-                              title: 'Expense',
-                              value: state.chartData.fold(
-                                0,
-                                (sum, e) => sum + e.expense,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const ExpensesPage(),
+                                  ),
+                                );
+                              },
+                              child: SummaryCard(
+                                icon: "assets/icons/icon_huong_xuong.png",
+                                title: 'Expense',
+                                value: state.chartData.fold(
+                                  0,
+                                  (sum, e) => sum + e.expense,
+                                ),
+                                change: state.expenseChangePercent,
+                                color: AppColors.brightOrange,
                               ),
-                              change: state.expenseChangePercent,
-                              color: AppColors.brightOrange,
                             ),
                           ],
                         ),
