@@ -23,13 +23,14 @@ class AddTxLoaded extends AddTxState {
   final String amount;
   final String date;
   final String? moneySource;
-  final String note;
+  final String merchant;
   final bool isEdit;
   final TransactionEntity? originalTx;
   final String? amountError;
   final String? categoryError;
   final String? dateError;
   final String? moneySourceError;
+  final String? merchantError;
 
   AddTxLoaded({
     required this.tab,
@@ -40,13 +41,14 @@ class AddTxLoaded extends AddTxState {
     this.amount = '',
     this.date = '',
     this.moneySource = '',
-    this.note = '',
+    this.merchant = '',
     this.isEdit = false,
     this.originalTx,
     this.amountError,
     this.categoryError,
     this.dateError,
     this.moneySourceError,
+    this.merchantError,
   });
 
   AddTxLoaded copyWith({
@@ -58,7 +60,7 @@ class AddTxLoaded extends AddTxState {
     String? amount,
     String? date,
     String? moneySource,
-    String? note,
+    String? merchant,
     bool updateCategory = false,
     bool? isEdit,
     TransactionEntity? originalTx,
@@ -66,6 +68,7 @@ class AddTxLoaded extends AddTxState {
     Object? categoryError = _unset,
     Object? dateError = _unset,
     Object? moneySourceError = _unset,
+    Object? merchantError = _unset,
   }) => AddTxLoaded(
     tab: tab ?? this.tab,
     type: type ?? this.type,
@@ -76,7 +79,7 @@ class AddTxLoaded extends AddTxState {
     amount: amount ?? this.amount,
     date: date ?? this.date,
     moneySource: moneySource ?? this.moneySource,
-    note: note ?? this.note,
+    merchant: merchant ?? this.merchant,
     isEdit: isEdit ?? this.isEdit,
     originalTx: originalTx ?? this.originalTx,
     amountError: amountError == _unset
@@ -89,6 +92,9 @@ class AddTxLoaded extends AddTxState {
     moneySourceError: moneySourceError == _unset
         ? this.moneySourceError
         : moneySourceError as String?,
+    merchantError: merchantError == _unset
+        ? this.merchantError
+        : merchantError as String?,
   );
 }
 
@@ -106,7 +112,7 @@ class AddTxSubmitSuccess extends AddTxLoaded {
     super.amount,
     super.date,
     super.moneySource,
-    super.note,
+    super.merchant,
     super.isEdit,
     super.originalTx,
   });

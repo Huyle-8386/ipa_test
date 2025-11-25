@@ -1,4 +1,3 @@
-// import 'package:fintrack/features/add_transaction/data/datasource/category.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_state.dart';
 import 'package:fintrack/features/add_transaction/domain/entities/transaction_entity.dart';
 import 'package:fintrack/features/add_transaction/domain/entities/category_entity.dart';
@@ -44,9 +43,9 @@ class AddTxMoneySourceChangedEvent extends AddTxEvent {
   AddTxMoneySourceChangedEvent(this.moneySource);
 }
 
-class AddTxNoteChangedEvent extends AddTxEvent {
-  final String note;
-  AddTxNoteChangedEvent(this.note);
+class AddTxMerchantChangedEvent extends AddTxEvent {
+  final String merchant;
+  AddTxMerchantChangedEvent(this.merchant);
 }
 
 class AddTxSubmitEvent extends AddTxEvent {}

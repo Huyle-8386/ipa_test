@@ -16,6 +16,8 @@ class ExpensesLoaded extends ExpensesState {
   final List<ExpenseEntity> expenses;
   final double totalValue;
   final double previousTotal;
+  final Map<String, double>
+  previousSums; // categoryId -> amount in previous period
   final double diff; // totalValue - previousTotal
   final bool isIncrease;
   final String activeCategory;
@@ -25,6 +27,7 @@ class ExpensesLoaded extends ExpensesState {
     required this.expenses,
     required this.totalValue,
     required this.previousTotal,
+    required this.previousSums,
     required this.diff,
     required this.isIncrease,
     required this.activeCategory,
@@ -36,6 +39,7 @@ class ExpensesLoaded extends ExpensesState {
     expenses,
     totalValue,
     previousTotal,
+    previousSums,
     diff,
     isIncrease,
     activeCategory,

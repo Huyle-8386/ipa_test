@@ -5,7 +5,7 @@ class TransactionEntity {
   final String? id;
   final double amount;
   final DateTime dateTime;
-  final String note;
+  final String merchant;
   final CategoryEntity category;
   final MoneySourceEntity moneySource;
   final bool isIncome;
@@ -14,7 +14,7 @@ class TransactionEntity {
     this.id,
     required this.amount,
     required this.dateTime,
-    required this.note,
+    required this.merchant,
     required this.category,
     required this.moneySource,
     required this.isIncome,

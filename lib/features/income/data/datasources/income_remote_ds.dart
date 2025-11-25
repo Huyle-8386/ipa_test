@@ -1,17 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fintrack/features/expenses/data/datasources/expenses_datasource.dart';
-import 'package:fintrack/features/expenses/data/models/expense_model.dart';
+import 'package:fintrack/features/income/data/datasources/income_data.dart';
+import 'package:fintrack/features/income/data/models/income_model.dart';
 
-/// Remote data source that aggregates transactions from Firestore per category
-class ExpensesRemoteDataSourceImpl implements ExpensesLocalDataSource {
+/// Remote data source that aggregates income transactions from Firestore per category
+class IncomeRemoteDataSourceImpl implements IncomeLocalDataSource {
   final FirebaseFirestore firestore;
   final FirebaseAuth auth;
 
-  ExpensesRemoteDataSourceImpl({required this.firestore, required this.auth});
+  IncomeRemoteDataSourceImpl({required this.firestore, required this.auth});
 
   @override
-  Future<List<ExpenseModel>> getExpenses({required String category}) async {
+  Future<List<IncomeModel>> getIncome({required String category}) async {
     final now = DateTime.now();
     final start = _startOfCurrentPeriod(category, now);
     final end = now;
@@ -19,7 +19,7 @@ class ExpensesRemoteDataSourceImpl implements ExpensesLocalDataSource {
   }
 
   @override
-  Future<List<ExpenseModel>> getPreviousExpenses({
+  Future<List<IncomeModel>> getPreviousIncome({
     required String category,
   }) async {
     final now = DateTime.now();
@@ -29,14 +29,12 @@ class ExpensesRemoteDataSourceImpl implements ExpensesLocalDataSource {
 
   @override
   Future<List<String>> getCategories() async {
-    // Keep same categories used in UI
     return const ['Weekly', 'Monthly', 'Yearly'];
   }
 
   @override
-  Future<List<ExpenseModel>> searchExpenses({required String query}) async {
-    // For search, aggregate current weekly period and filter by category name
-    final results = await getExpenses(category: 'Weekly');
+  Future<List<IncomeModel>> searchIncome({required String query}) async {
+    final results = await getIncome(category: 'Weekly');
     if (query.isEmpty) return results;
     final q = query.toLowerCase();
     return results
@@ -44,7 +42,7 @@ class ExpensesRemoteDataSourceImpl implements ExpensesLocalDataSource {
         .toList();
   }
 
-  Future<List<ExpenseModel>> _aggregateTransactions(
+  Future<List<IncomeModel>> _aggregateTransactions(
     DateTime start,
     DateTime end,
   ) async {
@@ -66,8 +64,8 @@ class ExpensesRemoteDataSourceImpl implements ExpensesLocalDataSource {
     for (var doc in snapshot.docs) {
       final data = doc.data();
       final isIncome = data['isIncome'] as bool? ?? false;
-      // we only count expenses here
-      if (isIncome) continue;
+      // only include incomes
+      if (!isIncome) continue;
 
       final catId = data['categoryId'] as String? ?? '';
       final catName = data['categoryName'] as String? ?? 'Unknown';
@@ -91,22 +89,21 @@ class ExpensesRemoteDataSourceImpl implements ExpensesLocalDataSource {
       }
     }
 
-    final List<ExpenseModel> result = [];
+    final List<IncomeModel> result = [];
     for (var entry in sums.entries) {
       final catId = entry.key;
       result.add(
-        ExpenseModel(
+        IncomeModel(
           id: null,
           categoryId: catId,
           categoryName: names[catId] ?? 'Unknown',
           categoryIcon: icons[catId],
           amount: entry.value,
-          isIncome: false,
+          isIncome: true,
         ),
       );
     }
 
-    // Sort by amount desc
     result.sort((a, b) => b.amount.compareTo(a.amount));
     return result;
   }
@@ -131,7 +128,6 @@ class ExpensesRemoteDataSourceImpl implements ExpensesLocalDataSource {
 
   /// Returns the previous period range as a tuple (prevStart, prevEnd).
   /// prevEnd is the instant right before the start of current period.
-  /// Using calendar-based periods so months/years are handled correctly.
   _PeriodRange _previousPeriodRange(String category, DateTime now) {
     final start = _startOfCurrentPeriod(category, now);
     switch (category) {
@@ -140,7 +136,6 @@ class ExpensesRemoteDataSourceImpl implements ExpensesLocalDataSource {
         final prevEnd = start.subtract(const Duration(seconds: 1));
         return _PeriodRange(prevStart, prevEnd);
       case 'Monthly':
-        // prevStart = first day of previous month
         final prevStart = DateTime(start.year, start.month - 1, 1);
         final prevEnd = start.subtract(const Duration(seconds: 1));
         return _PeriodRange(prevStart, prevEnd);

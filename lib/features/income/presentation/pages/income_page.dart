@@ -1,4 +1,5 @@
 import 'package:fintrack/core/di/injector.dart';
+import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/features/income/presentation/bloc/income_bloc.dart';
 import 'package:fintrack/features/income/presentation/bloc/income_event.dart';
 import 'package:fintrack/features/income/presentation/bloc/income_state.dart';
@@ -58,8 +59,8 @@ class _IncomePageContentState extends State<_IncomePageContent> {
             if (state is IncomeError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Lỗi: ${state.message}'),
-                  backgroundColor: Colors.red,
+                  content: Text('Error: ${state.message}'),
+                  backgroundColor: AppColors.red,
                 ),
               );
             }
@@ -67,8 +68,8 @@ class _IncomePageContentState extends State<_IncomePageContent> {
             if (state is IncomeLoaded && state.incomes.isEmpty) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Không tìm thấy khoản thu nhập nào'),
-                  backgroundColor: Colors.orange,
+                  content: Text('No income entries found'),
+                  backgroundColor: AppColors.orange,
                 ),
               );
             }
@@ -85,20 +86,20 @@ class _IncomePageContentState extends State<_IncomePageContent> {
                   children: [
                     const Icon(
                       Icons.error_outline,
-                      color: Colors.red,
+                      color: AppColors.red,
                       size: 48,
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Đã xảy ra lỗi: ${state.message}',
-                      style: const TextStyle(color: Colors.red),
+                      'Error: ${state.message}',
+                      style: const TextStyle(color: AppColors.red),
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
                         context.read<IncomeBloc>().add(LoadIncomeData());
                       },
-                      child: const Text('Thử lại'),
+                      child: const Text('Retry'),
                     ),
                   ],
                 ),
@@ -134,19 +135,19 @@ class _IncomePageContentState extends State<_IncomePageContent> {
               onTap: () {
                 Navigator.pop(context);
               },
-              child: const Icon(
+              child: Icon(
                 Icons.arrow_back,
-                color: Colors.white,
-                size: 18,
+                color: AppColors.white,
+                size: AppTextStyles.heading2.fontSize,
               ),
             ),
             const SizedBox(width: 16),
-            const Text(
+            Text(
               "Income",
               style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontSize: 18,
+                fontWeight: AppTextStyles.heading2.fontWeight,
+                color: AppColors.white,
+                fontSize: AppTextStyles.heading2.fontSize,
               ),
             ),
           ],
@@ -208,16 +209,16 @@ class _IncomePageContentState extends State<_IncomePageContent> {
                     Text(
                       category,
                       style: TextStyle(
-                        color: isSelected ? AppColors.main : Colors.white70,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                        color: isSelected ? AppColors.main : AppColors.white,
+                        fontSize: AppTextStyles.heading2.fontSize,
+                        fontWeight: AppTextStyles.heading2.fontWeight,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Container(
                       height: 1,
                       width: 40,
-                      color: isSelected ? AppColors.main : Colors.transparent,
+                      color: isSelected ? AppColors.main : AppColors.background,
                     ),
                   ],
                 ),
@@ -232,12 +233,52 @@ class _IncomePageContentState extends State<_IncomePageContent> {
             child: Column(
               children: [
                 // Biểu đồ và chú giải với dữ liệu từ BLoC
-                buildChartSection(state.totalValue, state.incomes),
+                // Comparison line: show increase/decrease compared to previous period
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    // children: [
+                    // Icon(
+                    //   state.isIncrease
+                    //       ? Icons.arrow_upward
+                    //       : Icons.arrow_downward,
+                    //   color: state.isIncrease
+                    //       ? Colors.greenAccent
+                    //       : Colors.redAccent,
+                    // ),
+                    // const SizedBox(width: 8),
+                    // Text(
+                    //   state.isIncrease
+                    //       ? 'Increased by \$${state.diff.abs().toStringAsFixed(2)} vs previous'
+                    //       : 'Decreased by \$${state.diff.abs().toStringAsFixed(2)} vs previous',
+                    //   style: TextStyle(
+                    //     color: state.isIncrease
+                    //         ? Colors.greenAccent
+                    //         : Colors.redAccent,
+                    //     fontWeight: FontWeight.w600,
+                    //   ),
+                    // ),
+                    // ],
+                  ),
+                ),
+
+                Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 600),
+                    child: buildChartSection(state.totalValue, state.incomes),
+                  ),
+                ),
+
                 const SizedBox(height: 20),
-                // Custom widget để hiển thị danh sách chi tiêu từ BLoC
+                // Custom widget để hiển thị danh sách thu nhập từ BLoC
                 state.incomes.isEmpty
                     ? buildEmptyIncomeList()
-                    : buildIncomeList(state.incomes),
+                    : buildIncomeList(
+                        state.incomes,
+                        state.totalValue,
+                        state.previousSums,
+                      ),
               ],
             ),
           ),

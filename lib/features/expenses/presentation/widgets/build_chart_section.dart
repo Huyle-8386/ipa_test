@@ -1,87 +1,76 @@
 // Widget cho biểu đồ và chú giải
 import 'dart:math' as math;
 import 'package:fintrack/core/theme/app_colors.dart';
+import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/features/expenses/domain/entities/expense_entity.dart';
 import 'package:flutter/material.dart';
 
-// Helper color mapping for categories
-Color _getCategoryColor(String categoryName) {
-  final category = categoryName.toLowerCase();
-  if (category.contains('food')) return Colors.red;
-  if (category.contains('taxi') || category.contains('transport'))
-    return Colors.blue;
-  if (category.contains('shopping')) return Colors.orange;
-  if (category.contains('transfer') || category.contains('salary'))
-    return Colors.green;
-  if (category.contains('entertainment')) return Colors.purple;
-  if (category.contains('health')) return Colors.pink;
-  if (category.contains('education')) return Colors.teal;
-  return AppColors.grey;
-}
-
 Widget buildChartSection(double? totalValue, List<ExpenseEntity> expenses) {
-  return Row(
-    crossAxisAlignment: CrossAxisAlignment.end,
-    mainAxisAlignment: MainAxisAlignment.end,
-    children: [
-      SizedBox(
-        width: 150,
-        height: 150,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            CustomPaint(
-              size: const Size(150, 150),
-              painter: PieChartPainter(expenses: expenses),
-            ),
-            // Hiển thị tổng giá trị đã được tính toán
-            Text(
-              "\$${(totalValue ?? 0.0).toStringAsFixed(2)}\nTotal",
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+  return Padding(
+    padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: 150,
+          height: 150,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              CustomPaint(
+                size: const Size(150, 150),
+                painter: PieChartPainter(expenses: expenses),
               ),
-            ),
-          ],
-        ),
-      ),
-      const SizedBox(width: 40),
-      // Chú giải
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: expenses
-              .map(
-                (e) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 10,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          color: _getCategoryColor(e.categoryName),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        e.categoryName,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
+              // Hiển thị tổng giá trị đã được tính toán
+              Text(
+                "\$${(totalValue ?? 0.0).toStringAsFixed(2)}\nTotal",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.white,
+                  fontWeight: AppTextStyles.body1.fontWeight,
+                  fontSize: AppTextStyles.heading2.fontSize,
                 ),
-              )
-              .toList(),
+              ),
+            ],
+          ),
         ),
-      ),
-    ],
+        const SizedBox(width: 40),
+        // Chú giải
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: expenses
+                .map(
+                  (e) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: _getCategoryColor(e.categoryName),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          e.categoryName,
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontSize: AppTextStyles.body1.fontSize,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+      ],
+    ),
   );
 }
 
@@ -121,4 +110,16 @@ class PieChartPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true; // Vẽ lại khi dữ liệu thay đổi
   }
+}
+
+// Helper color mapping for categories
+Color _getCategoryColor(String categoryName) {
+  final category = categoryName.toLowerCase();
+  if (category.contains('food')) return AppColors.orange;
+  if (category.contains('taxi')) return AppColors.blue;
+  if (category.contains('shopping')) return AppColors.red;
+  if (category.contains('health')) return AppColors.turquoise;
+  if (category.contains('travel')) return AppColors.purple;
+  if (category.contains('groceries')) return AppColors.green;
+  return AppColors.grey;
 }
