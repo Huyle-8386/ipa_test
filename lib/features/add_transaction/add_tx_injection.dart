@@ -24,6 +24,7 @@ import 'domain/usecases/save_transaction_usecase.dart';
 import 'domain/usecases/delete_transaction_usecase.dart';
 import 'domain/usecases/update_transaction_usecase.dart';
 import 'presentation/bloc/add_tx_bloc.dart';
+import 'presentation/bloc/image_entry_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -104,7 +105,12 @@ Future<void> initAddTransaction() async {
       saveTx: sl(),
       updateTx: sl(),
       changeBalance: sl(), // 👈 thêm dòng này
-      uploadImage: sl(),
+    ),
+  );
+  sl.registerFactory<ImageEntryBloc>(
+    () => ImageEntryBloc(
+      uploadImageUsecase: sl(),
+      auth: FirebaseAuth.instance,
     ),
   );
 

@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:fintrack/features/add_transaction/domain/entities/upload_image_result.dart';
+import 'package:fintrack/features/add_transaction/data/model/transaction_model.dart';
 import 'package:path/path.dart';
 
 abstract class ImageEntryRemoteDataSource {
-  Future<UploadImageResult> uploadImage({
+  Future<TransactionModel> uploadImage({
     required File image,
     required String userId,
     required List<Map<String, String>> moneySources,
@@ -20,7 +20,7 @@ class ImageEntryRemoteDataSourceImpl implements ImageEntryRemoteDataSource {
   ImageEntryRemoteDataSourceImpl({required this.dio, required this.webhookUrl});
 
   @override
-  Future<UploadImageResult> uploadImage({
+  Future<TransactionModel> uploadImage({
     required File image,
     required String userId,
     required List<Map<String, String>> moneySources,
@@ -41,15 +41,32 @@ class ImageEntryRemoteDataSourceImpl implements ImageEntryRemoteDataSource {
         options: Options(validateStatus: (status) => true),
       );
 
-      return UploadImageResult(
-        statusCode: response.statusCode ?? 0,
-        data: response.data,
+      if (response.statusCode != null &&
+          response.statusCode! >= 200 &&
+          response.statusCode! < 300) {
+        final data = response.data;
+        if (data is Map<String, dynamic>) {
+          return TransactionModel.fromN8nJson(data);
+        } else if (data is List && data.isNotEmpty) {
+          final first = data.first;
+          if (first is Map<String, dynamic>) {
+            return TransactionModel.fromN8nJson(
+              Map<String, dynamic>.from(first),
+            );
+          }
+        }
+        throw Exception(
+          'Unexpected response format: ${data.runtimeType}',
+        );
+      }
+
+      throw Exception(
+        'Upload failed (${response.statusCode ?? 'no status'}): ${response.data}',
       );
     } on DioException catch (e) {
-      return UploadImageResult(
-        statusCode: e.response?.statusCode ?? -1,
-        data: e.response?.data ?? e.message,
-      );
+      final status = e.response?.statusCode ?? -1;
+      final data = e.response?.data ?? e.message ?? 'Unknown Dio error';
+      throw Exception('Upload failed ($status): $data');
     }
   }
 }

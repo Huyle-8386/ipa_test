@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:dartz/dartz.dart';
+import 'package:fintrack/core/error/failure.dart';
 import 'package:fintrack/features/add_transaction/data/datasource/image_entry_remote_datasource.dart';
 import 'package:fintrack/features/add_transaction/domain/entities/money_source_entity.dart';
-import 'package:fintrack/features/add_transaction/domain/entities/upload_image_result.dart';
+import 'package:fintrack/features/add_transaction/domain/entities/transaction_entity.dart';
 import 'package:fintrack/features/add_transaction/domain/repositories/image_entry_repository.dart';
 
 class ImageEntryRepositoryImpl implements ImageEntryRepository {
@@ -11,19 +13,25 @@ class ImageEntryRepositoryImpl implements ImageEntryRepository {
   ImageEntryRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<UploadImageResult> uploadImage(
+  Future<Either<Failure, TransactionEntity>> uploadImage(
     File file,
     String userId,
     List<MoneySourceEntity> moneySources,
-  ) {
+  ) async {
     final serializedSources = moneySources
         .map((e) => {'id': e.id, 'name': e.name})
         .toList();
 
-    return remoteDataSource.uploadImage(
-      image: file,
-      userId: userId,
-      moneySources: serializedSources,
-    );
+    try {
+      final model = await remoteDataSource.uploadImage(
+        image: file,
+        userId: userId,
+        moneySources: serializedSources,
+      );
+
+      return Right(model.toEntity());
+    } catch (e) {
+      return Left(Failure(e.toString()));
+    }
   }
 }

@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fintrack/features/add_transaction/domain/entities/category_entity.dart';
+import 'package:fintrack/features/add_transaction/domain/entities/money_source_entity.dart';
 import 'package:fintrack/features/add_transaction/domain/entities/transaction_entity.dart';
+import 'package:intl/intl.dart';
 
 class TransactionModel {
   final String? id;
@@ -57,6 +60,34 @@ class TransactionModel {
     );
   }
 
+  factory TransactionModel.fromN8nJson(Map<String, dynamic> json) {
+    return TransactionModel(
+      id: (json['_id'] ?? json['id']) as String?,
+      amount: (json['amount'] as num?)?.toDouble() ?? 0,
+      dateTime: _parseN8nDateTime(json['dateTime'] as String?),
+      merchant: json['merchant'] as String? ?? '',
+      categoryId: json['categoryId'] as String? ?? '',
+      categoryName: json['categoryName'] as String? ?? '',
+      categoryIcon: json['categoryIcon'] as String? ?? '',
+      moneySourceId: json['moneySourceId'] as String? ?? '',
+      moneySourceName: json['moneySourceName'] as String? ?? '',
+      isIncome: json['isIncome'] as bool? ?? false,
+    );
+  }
+
+  static DateTime _parseN8nDateTime(String? raw) {
+    if (raw == null || raw.isEmpty) return DateTime.now();
+
+    // Expected: "October 11, 2025 at 07:05:00 PM UTC+7"
+    // Strip the timezone portion since it's not ISO-8601 friendly, then parse.
+    final withoutTz = raw.split('UTC').first.trim().replaceFirst(' at ', ' ');
+    try {
+      return DateFormat("MMMM d, yyyy hh:mm:ss a").parse(withoutTz);
+    } catch (_) {
+      return DateTime.tryParse(raw) ?? DateTime.now();
+    }
+  }
+
   Map<String, dynamic> toJson({String? uid}) {
     return {
       'amount': amount,
@@ -70,5 +101,27 @@ class TransactionModel {
       'moneySourceName': moneySourceName,
       // if (uid != null) 'uid': uid,
     };
+  }
+
+  TransactionEntity toEntity() {
+    return TransactionEntity(
+      id: id,
+      amount: amount,
+      dateTime: dateTime,
+      merchant: merchant,
+      category: CategoryEntity(
+        id: categoryId,
+        name: categoryName,
+        icon: categoryIcon,
+        isIncome: isIncome,
+      ),
+      moneySource: MoneySourceEntity(
+        id: moneySourceId,
+        name: moneySourceName,
+        icon: '',
+        balance: 0.0,
+      ),
+      isIncome: isIncome,
+    );
   }
 }
