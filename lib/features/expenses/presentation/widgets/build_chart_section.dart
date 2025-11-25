@@ -1,6 +1,7 @@
 // Widget cho biểu đồ và chú giải
 import 'dart:math' as math;
 import 'package:fintrack/core/theme/app_colors.dart';
+import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/features/expenses/domain/entities/expense_entity.dart';
 import 'package:flutter/material.dart';
 
@@ -38,10 +39,10 @@ Widget buildChartSection(double? totalValue, List<ExpenseEntity> expenses) {
             Text(
               "\$${(totalValue ?? 0.0).toStringAsFixed(2)}\nTotal",
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+              style: TextStyle(
+                color: AppColors.white,
+                fontWeight: AppTextStyles.body1.fontWeight,
+                fontSize: AppTextStyles.heading2.fontSize,
               ),
             ),
           ],
@@ -69,9 +70,9 @@ Widget buildChartSection(double? totalValue, List<ExpenseEntity> expenses) {
                       const SizedBox(width: 8),
                       Text(
                         e.categoryName,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
+                        style: TextStyle(
+                          color: AppColors.white,
+                          fontSize: AppTextStyles.body1.fontSize,
                         ),
                       ),
                     ],

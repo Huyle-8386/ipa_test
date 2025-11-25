@@ -1,4 +1,5 @@
 import 'package:fintrack/core/di/injector.dart';
+import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/features/expenses/presentation/bloc/expenses_bloc.dart';
 import 'package:fintrack/features/expenses/presentation/bloc/expenses_event.dart';
 import 'package:fintrack/features/expenses/presentation/bloc/expenses_state.dart';
@@ -141,12 +142,12 @@ class _ExpensesPageContentState extends State<_ExpensesPageContent> {
               ),
             ),
             const SizedBox(width: 16),
-            const Text(
+            Text(
               "Expenses",
               style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontSize: 18,
+                fontWeight: AppTextStyles.body1.fontWeight,
+                color: AppColors.white,
+                fontSize: AppTextStyles.heading2.fontSize,
               ),
             ),
           ],
@@ -157,8 +158,8 @@ class _ExpensesPageContentState extends State<_ExpensesPageContent> {
           padding: const EdgeInsets.only(bottom: 20, top: 20),
           child: TextField(
             controller: _searchController,
-            style: const TextStyle(color: Colors.white),
-            cursorColor: Colors.white,
+            style: const TextStyle(color: AppColors.white),
+            cursorColor: AppColors.white,
             // Thêm sự kiện onSubmitted để xử lý khi người dùng nhấn Enter
             onSubmitted: (value) {
               context.read<ExpensesBloc>().add(SearchExpenses(value));
@@ -208,16 +209,16 @@ class _ExpensesPageContentState extends State<_ExpensesPageContent> {
                     Text(
                       category,
                       style: TextStyle(
-                        color: isSelected ? AppColors.main : Colors.white70,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                        color: isSelected ? AppColors.main : AppColors.grey,
+                        fontSize: AppTextStyles.heading2.fontSize,
+                        fontWeight: AppTextStyles.body1.fontWeight,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Container(
                       height: 1,
                       width: 40,
-                      color: isSelected ? AppColors.main : Colors.transparent,
+                      color: isSelected ? AppColors.main : AppColors.background,
                     ),
                   ],
                 ),
@@ -238,26 +239,26 @@ class _ExpensesPageContentState extends State<_ExpensesPageContent> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        state.isIncrease
-                            ? Icons.arrow_upward
-                            : Icons.arrow_downward,
-                        color: state.isIncrease
-                            ? Colors.greenAccent
-                            : Colors.redAccent,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        state.isIncrease
-                            ? 'Increased by \$${state.diff.abs().toStringAsFixed(2)} vs previous'
-                            : 'Decreased by \$${state.diff.abs().toStringAsFixed(2)} vs previous',
-                        style: TextStyle(
-                          color: state.isIncrease
-                              ? Colors.greenAccent
-                              : Colors.redAccent,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      // Icon(
+                      //   state.isIncrease
+                      //       ? Icons.arrow_upward
+                      //       : Icons.arrow_downward,
+                      //   color: state.isIncrease
+                      //       ? Colors.greenAccent
+                      //       : Colors.redAccent,
+                      // ),
+                      // const SizedBox(width: 8),
+                      // Text(
+                      //   state.isIncrease
+                      //       ? 'Increased by \$${state.diff.abs().toStringAsFixed(2)} vs previous'
+                      //       : 'Decreased by \$${state.diff.abs().toStringAsFixed(2)} vs previous',
+                      //   style: TextStyle(
+                      //     color: state.isIncrease
+                      //         ? Colors.greenAccent
+                      //         : Colors.redAccent,
+                      //     fontWeight: FontWeight.w600,
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

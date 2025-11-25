@@ -1,4 +1,5 @@
 // Widget cho danh sách chi tiêu
+import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/features/expenses/domain/entities/expense_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
@@ -30,7 +31,7 @@ Widget buildExpenseListItem(
     child: Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF212121), // Màu nền của toàn bộ item
+        color: AppColors.widget, // Màu nền của toàn bộ item
         borderRadius: BorderRadius.circular(10),
         // Thêm đổ bóng nhẹ để nổi bật item hơn
         boxShadow: [
@@ -71,10 +72,10 @@ Widget buildExpenseListItem(
             flex: 2,
             child: Text(
               expense.categoryName,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
+              style: TextStyle(
+                color: AppColors.white,
+                fontSize: AppTextStyles.body1.fontSize,
+                fontWeight: AppTextStyles.body1.fontWeight,
               ),
               overflow: TextOverflow.ellipsis, // Xử lý tràn text
             ),
@@ -88,9 +89,9 @@ Widget buildExpenseListItem(
                 Text(
                   expense.formattedAmount,
                   style: TextStyle(
-                    color: expense.isIncome ? AppColors.main : Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    color: expense.isIncome ? AppColors.main : AppColors.white,
+                    fontSize: AppTextStyles.body1.fontSize,
+                    fontWeight: AppTextStyles.body1.fontWeight,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -104,19 +105,19 @@ Widget buildExpenseListItem(
                     if (prevAmount <= 0) {
                       return Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: const [
+                        children: [
                           Text(
                             '100%',
                             style: TextStyle(
-                              color: Colors.greenAccent,
-                              fontSize: 13,
+                              color: AppColors.main,
+                              fontSize: AppTextStyles.caption.fontSize,
                             ),
                           ),
                           SizedBox(width: 6),
                           Icon(
                             Icons.arrow_upward,
-                            color: Colors.greenAccent,
-                            size: 14,
+                            color: AppColors.main,
+                            size: AppTextStyles.caption.fontSize,
                           ),
                         ],
                       );
@@ -135,15 +136,17 @@ Widget buildExpenseListItem(
                         Text(
                           display,
                           style: TextStyle(
-                            color: isUp ? Colors.greenAccent : Colors.redAccent,
-                            fontSize: 13,
+                            color: isUp
+                                ? AppColors.main
+                                : AppColors.brightOrange,
+                            fontSize: AppTextStyles.caption.fontSize,
                           ),
                         ),
                         const SizedBox(width: 6),
                         Icon(
                           isUp ? Icons.arrow_upward : Icons.arrow_downward,
-                          color: isUp ? Colors.greenAccent : Colors.redAccent,
-                          size: 14,
+                          color: isUp ? AppColors.main : AppColors.brightOrange,
+                          size: AppTextStyles.caption.fontSize,
                         ),
                       ],
                     );
@@ -175,13 +178,13 @@ IconData _getCategoryIcon(String categoryName) {
 
 Color _getCategoryColor(String categoryName) {
   final category = categoryName.toLowerCase();
-  if (category.contains('food')) return Colors.red;
+  if (category.contains('food')) return AppColors.red;
   if (category.contains('taxi') || category.contains('transport'))
-    return Colors.blue;
-  if (category.contains('shopping')) return Colors.orange;
+    return AppColors.blue;
+  if (category.contains('shopping')) return AppColors.orange;
   if (category.contains('transfer') || category.contains('salary'))
-    return Colors.green;
-  if (category.contains('entertainment')) return Colors.purple;
+    return AppColors.green;
+  if (category.contains('entertainment')) return AppColors.purple;
   if (category.contains('health')) return Colors.pink;
   if (category.contains('education')) return Colors.teal;
   return AppColors.grey;
@@ -193,11 +196,14 @@ Widget buildEmptyExpenseList() {
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Icon(Icons.search_off, color: Colors.grey, size: 50),
+        const Icon(Icons.search_off, color: AppColors.grey, size: 50),
         const SizedBox(height: 16),
         Text(
           "Không tìm thấy khoản chi tiêu nào",
-          style: TextStyle(color: Colors.grey[400], fontSize: 16),
+          style: TextStyle(
+            color: AppColors.grey,
+            fontSize: AppTextStyles.body1.fontSize,
+          ),
         ),
       ],
     ),

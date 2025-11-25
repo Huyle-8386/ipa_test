@@ -23,11 +23,8 @@ class ExpensesRemoteDataSourceImpl implements ExpensesLocalDataSource {
     required String category,
   }) async {
     final now = DateTime.now();
-    final start = _startOfCurrentPeriod(category, now);
-    final duration = _periodDuration(category);
-    final prevStart = start.subtract(duration);
-    final prevEnd = start.subtract(const Duration(seconds: 1));
-    return _aggregateTransactions(prevStart, prevEnd);
+    final prevRange = _previousPeriodRange(category, now);
+    return _aggregateTransactions(prevRange.item1, prevRange.item2);
   }
 
   @override
@@ -114,29 +111,54 @@ class ExpensesRemoteDataSourceImpl implements ExpensesLocalDataSource {
     return result;
   }
 
+  /// Return the start of the current period (calendar-based) for the given
+  /// category. Week starts on Monday.
   DateTime _startOfCurrentPeriod(String category, DateTime now) {
+    final today = DateTime(now.year, now.month, now.day);
     switch (category) {
       case 'Weekly':
-        return now.subtract(const Duration(days: 7));
+        // Start of week (Monday)
+        final startOfWeek = today.subtract(Duration(days: today.weekday - 1));
+        return DateTime(startOfWeek.year, startOfWeek.month, startOfWeek.day);
       case 'Monthly':
-        return now.subtract(const Duration(days: 30));
+        return DateTime(today.year, today.month, 1);
       case 'Yearly':
-        return now.subtract(const Duration(days: 365));
+        return DateTime(today.year, 1, 1);
       default:
-        return now.subtract(const Duration(days: 7));
+        return today.subtract(const Duration(days: 7));
     }
   }
 
-  Duration _periodDuration(String category) {
+  /// Returns the previous period range as a tuple (prevStart, prevEnd).
+  /// prevEnd is the instant right before the start of current period.
+  /// Using calendar-based periods so months/years are handled correctly.
+  _PeriodRange _previousPeriodRange(String category, DateTime now) {
+    final start = _startOfCurrentPeriod(category, now);
     switch (category) {
       case 'Weekly':
-        return const Duration(days: 7);
+        final prevStart = start.subtract(const Duration(days: 7));
+        final prevEnd = start.subtract(const Duration(seconds: 1));
+        return _PeriodRange(prevStart, prevEnd);
       case 'Monthly':
-        return const Duration(days: 30);
+        // prevStart = first day of previous month
+        final prevStart = DateTime(start.year, start.month - 1, 1);
+        final prevEnd = start.subtract(const Duration(seconds: 1));
+        return _PeriodRange(prevStart, prevEnd);
       case 'Yearly':
-        return const Duration(days: 365);
+        final prevStart = DateTime(start.year - 1, 1, 1);
+        final prevEnd = start.subtract(const Duration(seconds: 1));
+        return _PeriodRange(prevStart, prevEnd);
       default:
-        return const Duration(days: 7);
+        final prevStart = start.subtract(const Duration(days: 7));
+        final prevEnd = start.subtract(const Duration(seconds: 1));
+        return _PeriodRange(prevStart, prevEnd);
     }
   }
+}
+
+/// Simple tuple for returning period ranges.
+class _PeriodRange {
+  final DateTime item1;
+  final DateTime item2;
+  _PeriodRange(this.item1, this.item2);
 }
