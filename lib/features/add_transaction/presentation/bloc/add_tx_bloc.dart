@@ -10,6 +10,7 @@ import 'package:fintrack/features/add_transaction/domain/usecases/upload_image_u
 import 'package:fintrack/features/add_transaction/domain/usecases/update_transaction_usecase.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_event.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
@@ -361,7 +362,23 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
 
     emit(ImageUploadInProgress(previousState));
     try {
-      final UploadImageResult result = await uploadImage(event.image);
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) {
+        emit(
+          ImageUploadFailure(
+            statusCode: -1,
+            data: 'User not logged in',
+            base: previousState,
+          ),
+        );
+        return;
+      }
+
+      final UploadImageResult result = await uploadImage(
+        image: event.image,
+        userId: uid,
+        moneySources: previousState.moneySources,
+      );
       if (result.statusCode == 200) {
         emit(
           ImageUploadSuccess(
