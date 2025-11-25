@@ -8,6 +8,9 @@ import 'package:fintrack/core/di/injector.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_bloc.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_event.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_state.dart';
+import 'package:fintrack/features/add_transaction/presentation/bloc/image_entry_bloc.dart';
+import 'package:fintrack/features/add_transaction/presentation/bloc/image_entry_event.dart';
+import 'package:fintrack/features/add_transaction/presentation/bloc/image_entry_state.dart';
 import 'package:fintrack/features/add_transaction/presentation/widget/image_entry.dart';
 import 'package:fintrack/features/add_transaction/presentation/widget/manual_form.dart';
 import 'package:fintrack/features/add_transaction/presentation/widget/manual_entry.dart';
@@ -61,15 +64,28 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       );
       return;
     }
-    context.read<AddTxBloc>().add(UploadImageEvent(_selectedImage!));
+    final state = context.read<AddTxBloc>().state;
+    if (state is! AddTxLoaded) return;
+
+    context.read<ImageEntryBloc>().add(
+      UploadImageRequested(
+        image: _selectedImage!,
+        moneySources: state.moneySources,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final h = SizeUtils.height(context);
     final w = SizeUtils.width(context);
-    return BlocProvider<AddTxBloc>(
-      create: (_) => sl<AddTxBloc>()..add(AddTxInitEvent()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AddTxBloc>(
+          create: (_) => sl<AddTxBloc>()..add(AddTxInitEvent()),
+        ),
+        BlocProvider<ImageEntryBloc>(create: (_) => sl<ImageEntryBloc>()),
+      ],
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
@@ -82,26 +98,28 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         ),
 
         // ========================= BODY =========================
-        body: BlocListener<AddTxBloc, AddTxState>(
-          listenWhen: (previous, current) =>
-              current is ImageUploadSuccess || current is ImageUploadFailure,
-          listener: (context, state) {
-            if (state is ImageUploadSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Image uploaded (code ${state.statusCode})'),
-                ),
-              );
-            } else if (state is ImageUploadFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Upload failed (${state.statusCode}): ${state.data}',
-                  ),
-                ),
-              );
-            }
-          },
+        body: MultiBlocListener(
+          listeners: [
+            BlocListener<ImageEntryBloc, ImageEntryState>(
+              listenWhen: (previous, current) =>
+                  current is ImageEntryUploadSuccess ||
+                  current is ImageEntryFailure,
+              listener: (context, state) {
+                if (state is ImageEntryUploadSuccess) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          TransactionDetailPage(transaction: state.transaction),
+                    ),
+                  );
+                } else if (state is ImageEntryFailure) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(state.message)));
+                }
+              },
+            ),
+          ],
           child: BlocBuilder<AddTxBloc, AddTxState>(
             builder: (context, state) {
               if (state is AddTxLoading || state is AddTxInitial) {
@@ -116,19 +134,12 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 );
               }
 
-              final AddTxLoaded? s = state is AddTxLoaded
-                  ? state
-                  : state is ImageUploadInProgress
-                  ? state.base
-                  : state is ImageUploadSuccess
-                  ? state.base
-                  : state is ImageUploadFailure
-                  ? state.base
-                  : null;
-
-              if (s == null) {
+              if (state is! AddTxLoaded) {
                 return const SizedBox.shrink();
               }
+
+              final imageState = context.watch<ImageEntryBloc>().state;
+              final isUploading = imageState is ImageEntryUploading;
 
               return Column(
                 children: [
@@ -141,7 +152,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                       children: [
                         Expanded(
                           child: ManualEntry(
-                            active: s.tab == EntryTab.manual,
+                            active: state.tab == EntryTab.manual,
                             icon: "assets/icons/manual_entry.png",
                             text: "Manual Entry",
 
@@ -152,7 +163,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                         ),
                         Expanded(
                           child: ManualEntry(
-                            active: s.tab == EntryTab.image,
+                            active: state.tab == EntryTab.image,
                             icon: "assets/icons/image_entry.png",
                             text: "Image Entry",
                             onTap: () => context.read<AddTxBloc>().add(
@@ -173,25 +184,69 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                         horizontal: w * 0.05,
                         vertical: h * 0.03,
                       ),
-                      child: s.tab == EntryTab.manual
+                      child: state.tab == EntryTab.manual
                           ? ManualForm(
                               h: h,
                               w: w,
-                              state: s,
+                              state: state,
                               amountCtrl: amountCtrl,
                               dateCtrl: dateCtrl,
                               moneyCtrl: moneyCtrl,
                               merchantCtrl: merchantCtrl,
                             )
-                          : ImageEntry(
-                              h: h,
-                              w: w,
-                              selectedImage: _selectedImage,
-                              isUploading: state is ImageUploadInProgress,
-                              onSelectImage: _openGallery,
-                              onUpload: _selectedImage == null
-                                  ? null
-                                  : () => _uploadSelectedImage(context),
+                          : Stack(
+                              alignment: Alignment.topCenter,
+                              children: [
+                                AbsorbPointer(
+                                  absorbing: isUploading,
+                                  child: ImageEntry(
+                                    h: h,
+                                    w: w,
+                                    selectedImage: _selectedImage,
+                                    // Keep UI unchanged; block taps instead of altering labels or styles.
+                                    isUploading: false,
+                                    onSelectImage: _openGallery,
+                                    onUpload: _selectedImage == null
+                                        ? null
+                                        : () => _uploadSelectedImage(context),
+                                  ),
+                                ),
+                                if (isUploading && _selectedImage != null) ...[
+                                  Positioned(
+                                    top: 0,
+                                    child: Container(
+                                      height: h * 0.4,
+                                      width: w,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.background.withOpacity(
+                                          0.25,
+                                        ),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 0,
+                                    child: SizedBox(
+                                      height: h * 0.4,
+                                      width: w,
+                                      child: const Center(
+                                        child: SizedBox(
+                                          height: 34,
+                                          width: 34,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 3,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  AppColors.main,
+                                                ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                     ),
                   ),
@@ -260,17 +315,10 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
           builder: (context, state) {
             final h = SizeUtils.height(context);
 
-            final isUploading = state is ImageUploadInProgress;
+            final imageState = context.watch<ImageEntryBloc>().state;
+            final isUploading = imageState is ImageEntryUploading;
             final isLoading = state is AddTxLoading || isUploading;
-            final AddTxLoaded? baseState = state is AddTxLoaded
-                ? state
-                : state is ImageUploadInProgress
-                ? state.base
-                : state is ImageUploadSuccess
-                ? state.base
-                : state is ImageUploadFailure
-                ? state.base
-                : null;
+            final AddTxLoaded? baseState = state is AddTxLoaded ? state : null;
             final isImageTab = baseState?.tab == EntryTab.image;
             final buttonText = baseState?.tab == EntryTab.manual
                 ? (baseState!.isEdit
@@ -280,29 +328,49 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                       : 'Add Income Transaction')
                 : 'Select Image Now';
             final canSubmit = baseState != null && !isUploading;
+            final isButtonBlocked = isLoading || !canSubmit;
             return BottomAppBar(
               color: AppColors.widget,
               child: SizedBox(
                 height: h * 0.1,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.main,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                child: AbsorbPointer(
+                  absorbing: isButtonBlocked,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.main,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () async {
+                      if (isButtonBlocked) return;
+                      if (isImageTab) {
+                        await _openGallery();
+                        return;
+                      }
+                      context.read<AddTxBloc>().add(AddTxSubmitEvent());
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(buttonText, style: AppTextStyles.body2),
+                        if (isLoading) ...[
+                          const SizedBox(width: 10),
+                          const SizedBox(
+                            height: 18,
+                            width: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                AppColors.main,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
-                  onPressed: isLoading || !canSubmit
-                      ? null
-                      : () async {
-                          if (isImageTab) {
-                            await _openGallery();
-                            return;
-                          }
-                          context.read<AddTxBloc>().add(AddTxSubmitEvent());
-                        },
-                  child: isLoading
-                      ? const CircularProgressIndicator()
-                      : Text(buttonText, style: AppTextStyles.body2),
                 ),
               ),
             );

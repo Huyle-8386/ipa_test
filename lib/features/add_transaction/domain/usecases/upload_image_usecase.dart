@@ -1,7 +1,9 @@
 import 'dart:io';
 
-import 'package:fintrack/features/add_transaction/domain/entities/upload_image_result.dart';
+import 'package:dartz/dartz.dart';
+import 'package:fintrack/core/error/failure.dart';
 import 'package:fintrack/features/add_transaction/domain/entities/money_source_entity.dart';
+import 'package:fintrack/features/add_transaction/domain/entities/transaction_entity.dart';
 import 'package:fintrack/features/add_transaction/domain/repositories/image_entry_repository.dart';
 
 class UploadImageUsecase {
@@ -9,7 +11,7 @@ class UploadImageUsecase {
 
   UploadImageUsecase(this.repository);
 
-  Future<UploadImageResult> call({
+  Future<Either<Failure, TransactionEntity>> call({
     required File image,
     required String userId,
     required List<MoneySourceEntity> moneySources,

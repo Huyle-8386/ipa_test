@@ -1,6 +1,3 @@
-// import 'package:fintrack/features/add_transaction/data/datasource/category.dart';
-import 'dart:io';
-
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_state.dart';
 import 'package:fintrack/features/add_transaction/domain/entities/transaction_entity.dart';
 import 'package:fintrack/features/add_transaction/domain/entities/category_entity.dart';
@@ -52,9 +49,3 @@ class AddTxMerchantChangedEvent extends AddTxEvent {
 }
 
 class AddTxSubmitEvent extends AddTxEvent {}
-
-class UploadImageEvent extends AddTxEvent {
-  final File image;
-
-  UploadImageEvent(this.image);
-}

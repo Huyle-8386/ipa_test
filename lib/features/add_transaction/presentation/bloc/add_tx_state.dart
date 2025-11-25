@@ -122,30 +122,3 @@ class AddTxError extends AddTxState {
   final String error;
   AddTxError(this.error);
 }
-
-class ImageUploadInProgress extends AddTxState {
-  final AddTxLoaded base;
-  ImageUploadInProgress(this.base);
-}
-
-class ImageUploadSuccess extends AddTxState {
-  final int statusCode;
-  final dynamic data;
-  final AddTxLoaded base;
-  ImageUploadSuccess({
-    required this.statusCode,
-    required this.data,
-    required this.base,
-  });
-}
-
-class ImageUploadFailure extends AddTxState {
-  final int statusCode;
-  final dynamic data;
-  final AddTxLoaded base;
-  ImageUploadFailure({
-    required this.statusCode,
-    required this.data,
-    required this.base,
-  });
-}

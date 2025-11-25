@@ -8,9 +8,13 @@ import 'package:fintrack/features/add_transaction/domain/entities/transaction_en
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_bloc.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_event.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_state.dart';
+import 'package:fintrack/features/add_transaction/presentation/bloc/image_entry_bloc.dart';
+import 'package:fintrack/features/add_transaction/presentation/bloc/image_entry_event.dart';
+import 'package:fintrack/features/add_transaction/presentation/bloc/image_entry_state.dart';
 import 'package:fintrack/features/add_transaction/presentation/widget/image_entry.dart';
 import 'package:fintrack/features/add_transaction/presentation/widget/manual_entry.dart';
 import 'package:fintrack/features/add_transaction/presentation/widget/manual_form.dart';
+import 'package:fintrack/features/add_transaction/presentation/page/transaction_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -56,16 +60,29 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
       );
       return;
     }
-    context.read<AddTxBloc>().add(UploadImageEvent(_selectedImage!));
+    final state = context.read<AddTxBloc>().state;
+    if (state is! AddTxLoaded) return;
+
+    context.read<ImageEntryBloc>().add(
+      UploadImageRequested(
+        image: _selectedImage!,
+        moneySources: state.moneySources,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final h = SizeUtils.height(context);
     final w = SizeUtils.width(context);
-    return BlocProvider<AddTxBloc>(
-      create: (_) =>
-          sl<AddTxBloc>()..add(AddTxInitEditEvent(widget.transaction)),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AddTxBloc>(
+          create: (_) =>
+              sl<AddTxBloc>()..add(AddTxInitEditEvent(widget.transaction)),
+        ),
+        BlocProvider<ImageEntryBloc>(create: (_) => sl<ImageEntryBloc>()),
+      ],
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
@@ -76,26 +93,28 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
           backgroundColor: AppColors.background,
           iconTheme: const IconThemeData(color: AppColors.white),
         ),
-        body: BlocListener<AddTxBloc, AddTxState>(
-          listenWhen: (previous, current) =>
-              current is ImageUploadSuccess || current is ImageUploadFailure,
-          listener: (context, state) {
-            if (state is ImageUploadSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Image uploaded (code ${state.statusCode})'),
-                ),
-              );
-            } else if (state is ImageUploadFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Upload failed (${state.statusCode}): ${state.data}',
-                  ),
-                ),
-              );
-            }
-          },
+        body: MultiBlocListener(
+          listeners: [
+            BlocListener<ImageEntryBloc, ImageEntryState>(
+              listenWhen: (previous, current) =>
+                  current is ImageEntryUploadSuccess ||
+                  current is ImageEntryFailure,
+              listener: (context, state) {
+                if (state is ImageEntryUploadSuccess) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          TransactionDetailPage(transaction: state.transaction),
+                    ),
+                  );
+                } else if (state is ImageEntryFailure) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(state.message)));
+                }
+              },
+            ),
+          ],
           child: BlocBuilder<AddTxBloc, AddTxState>(
             builder: (context, state) {
               if (state is AddTxLoading || state is AddTxInitial) {
@@ -110,21 +129,12 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
                 );
               }
 
-              final AddTxLoaded? s = state is AddTxLoaded
-                  ? state
-                  : state is ImageUploadInProgress
-                  ? state.base
-                  : state is ImageUploadSuccess
-                  ? state.base
-                  : state is ImageUploadFailure
-                  ? state.base
-                  : null;
-
-              if (s == null) {
+              if (state is! AddTxLoaded) {
                 return const SizedBox.shrink();
               }
 
-              final isUploading = state is ImageUploadInProgress;
+              final imageState = context.watch<ImageEntryBloc>().state;
+              final isUploading = imageState is ImageEntryUploading;
 
               return Column(
                 children: [
@@ -136,7 +146,7 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
                       children: [
                         Expanded(
                           child: ManualEntry(
-                            active: s.tab == EntryTab.manual,
+                            active: state.tab == EntryTab.manual,
                             icon: "assets/icons/manual_entry.png",
                             text: "Manual Entry",
                             onTap: () => context.read<AddTxBloc>().add(
@@ -146,7 +156,7 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
                         ),
                         Expanded(
                           child: ManualEntry(
-                            active: s.tab == EntryTab.image,
+                            active: state.tab == EntryTab.image,
                             icon: "assets/icons/image_entry.png",
                             text: "Image Entry",
                             onTap: () => context.read<AddTxBloc>().add(
@@ -164,11 +174,11 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
                         horizontal: w * 0.05,
                         vertical: h * 0.03,
                       ),
-                      child: s.tab == EntryTab.manual
+                      child: state.tab == EntryTab.manual
                           ? ManualForm(
                               h: h,
                               w: w,
-                              state: s,
+                              state: state,
                               amountCtrl: amountCtrl,
                               dateCtrl: dateCtrl,
                               moneyCtrl: moneyCtrl,
@@ -208,17 +218,10 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
             }
           },
           builder: (context, state) {
-            final isUploading = state is ImageUploadInProgress;
+            final imageState = context.watch<ImageEntryBloc>().state;
+            final isUploading = imageState is ImageEntryUploading;
             final isLoading = state is AddTxLoading || isUploading;
-            final AddTxLoaded? baseState = state is AddTxLoaded
-                ? state
-                : state is ImageUploadInProgress
-                ? state.base
-                : state is ImageUploadSuccess
-                ? state.base
-                : state is ImageUploadFailure
-                ? state.base
-                : null;
+            final AddTxLoaded? baseState = state is AddTxLoaded ? state : null;
             final isImageTab = baseState?.tab == EntryTab.image;
 
             return BottomAppBar(
