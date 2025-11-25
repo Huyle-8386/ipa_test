@@ -16,6 +16,8 @@ class IncomeLoaded extends IncomeState {
   final List<IncomeEntity> incomes;
   final double totalValue;
   final double previousTotal;
+  final Map<String, double>
+  previousSums; // categoryId -> amount in previous period
   final double diff;
   final bool isIncrease;
   final String activeCategory;
@@ -25,6 +27,7 @@ class IncomeLoaded extends IncomeState {
     required this.incomes,
     required this.totalValue,
     required this.previousTotal,
+    required this.previousSums,
     required this.diff,
     required this.isIncrease,
     required this.activeCategory,
@@ -36,6 +39,7 @@ class IncomeLoaded extends IncomeState {
     incomes,
     totalValue,
     previousTotal,
+    previousSums,
     diff,
     isIncrease,
     activeCategory,

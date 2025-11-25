@@ -34,6 +34,12 @@ class IncomeBloc extends Bloc<IncomeEvent, IncomeState> {
       final defaultCategory = allCategories.first;
       final allIncomes = await getIncome(category: defaultCategory);
       final prevIncomes = await getPreviousIncome(category: defaultCategory);
+      // build map of previous sums per categoryId
+      final Map<String, double> prevSums = {};
+      for (var e in prevIncomes) {
+        final key = e.categoryId;
+        prevSums[key] = (prevSums[key] ?? 0.0) + e.amount;
+      }
       final total = allIncomes.fold(0.0, (sum, item) => sum + item.amount);
       final prevTotal = prevIncomes.fold(0.0, (sum, item) => sum + item.amount);
       final diff = total - prevTotal;
@@ -44,6 +50,7 @@ class IncomeBloc extends Bloc<IncomeEvent, IncomeState> {
           incomes: allIncomes,
           totalValue: total,
           previousTotal: prevTotal,
+          previousSums: prevSums,
           diff: diff,
           isIncrease: isIncrease,
           activeCategory: defaultCategory, // Default là phần tử đầu
@@ -67,6 +74,11 @@ class IncomeBloc extends Bloc<IncomeEvent, IncomeState> {
       try {
         final filteredIncomes = await getIncome(category: event.category);
         final prevIncomes = await getPreviousIncome(category: event.category);
+        final Map<String, double> prevSums = {};
+        for (var e in prevIncomes) {
+          final key = e.categoryId;
+          prevSums[key] = (prevSums[key] ?? 0.0) + e.amount;
+        }
         final total = filteredIncomes.fold(
           0.0,
           (sum, item) => sum + item.amount,
@@ -83,6 +95,7 @@ class IncomeBloc extends Bloc<IncomeEvent, IncomeState> {
             incomes: filteredIncomes,
             totalValue: total,
             previousTotal: prevTotal,
+            previousSums: prevSums,
             diff: diff,
             isIncrease: isIncrease,
             activeCategory: event.category,
@@ -111,6 +124,11 @@ class IncomeBloc extends Bloc<IncomeEvent, IncomeState> {
         final prevIncomes = await getPreviousIncome(
           category: currentState.activeCategory,
         );
+        final Map<String, double> prevSums = {};
+        for (var e in prevIncomes) {
+          final key = e.categoryId;
+          prevSums[key] = (prevSums[key] ?? 0.0) + e.amount;
+        }
         final total = searchResults.fold(0.0, (sum, item) => sum + item.amount);
         final prevTotal = prevIncomes.fold(
           0.0,
@@ -124,6 +142,7 @@ class IncomeBloc extends Bloc<IncomeEvent, IncomeState> {
             incomes: searchResults,
             totalValue: total,
             previousTotal: prevTotal,
+            previousSums: prevSums,
             diff: diff,
             isIncrease: isIncrease,
             activeCategory: currentState.activeCategory,

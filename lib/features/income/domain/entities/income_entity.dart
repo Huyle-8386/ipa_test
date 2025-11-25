@@ -18,9 +18,8 @@ class IncomeEntity {
     required this.isIncome,
   });
 
-  String get formattedAmount => isIncome
-      ? '+\$${amount.toStringAsFixed(2)}'
-      : '-\$${amount.toStringAsFixed(2)}';
+  String get formattedAmount =>
+      isIncome ? amount.toStringAsFixed(2) : amount.toStringAsFixed(2);
 
   String get formattedTime => TransactionEntity(
     categoryId: categoryId,

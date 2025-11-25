@@ -1,27 +1,38 @@
 // Widget cho danh sách thu nhập
+import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/features/income/domain/entities/income_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 
-// Chấp nhận danh sách từ bên ngoài thay vì sử dụng danh sách tĩnh
-Widget buildIncomeList(List<IncomeEntity> incomeItems) {
+// Chấp nhận danh sách từ bên ngoài cùng total và previousSums
+Widget buildIncomeList(
+  List<IncomeEntity> incomeItems,
+  double totalValue,
+  Map<String, double> previousSums,
+) {
   return Column(
-    children: incomeItems.map((income) => buildIncomeListItem(income)).toList(),
+    children: incomeItems
+        .map((income) => buildIncomeListItem(income, totalValue, previousSums))
+        .toList(),
   );
 }
 
 // Widget cho một mục trong danh sách
-Widget buildIncomeListItem(IncomeEntity income) {
+Widget buildIncomeListItem(
+  IncomeEntity income,
+  double totalValue,
+  Map<String, double> previousSums,
+) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 12.0),
     child: Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF212121),
+        color: AppColors.widget,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 2,
             offset: const Offset(0, 1),
@@ -53,32 +64,88 @@ Widget buildIncomeListItem(IncomeEntity income) {
           ),
           const SizedBox(width: 12),
           Expanded(
+            // Sử dụng Expanded để tránh overflow text
             flex: 2,
             child: Text(
               income.categoryName,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
+              style: TextStyle(
+                color: AppColors.white,
+                fontSize: AppTextStyles.body1.fontSize,
+                fontWeight: AppTextStyles.body1.fontWeight,
               ),
-              overflow: TextOverflow.ellipsis,
+              overflow: TextOverflow.ellipsis, // Xử lý tràn text
             ),
           ),
           Expanded(
+            // Sử dụng Expanded cho phần bên phải
             flex: 1,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
                   income.formattedAmount,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                  style: TextStyle(
+                    color: income.isIncome ? AppColors.white : AppColors.white,
+                    fontSize: AppTextStyles.body1.fontSize,
+                    fontWeight: AppTextStyles.body1.fontWeight,
                   ),
                 ),
                 const SizedBox(height: 4),
-                const SizedBox.shrink(),
+                // Show percentage change vs previous period
+                Builder(
+                  builder: (context) {
+                    // previous amount for this category
+                    final prevAmount = previousSums[income.categoryId] ?? 0.0;
+
+                    // If previous missing or zero, display 100% and up arrow
+                    if (prevAmount <= 0) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '100%',
+                            style: TextStyle(
+                              color: AppColors.main,
+                              fontSize: AppTextStyles.body2.fontSize,
+                            ),
+                          ),
+                          SizedBox(width: 6),
+                          Icon(
+                            Icons.arrow_upward,
+                            color: AppColors.main,
+                            size: AppTextStyles.body2.fontSize,
+                          ),
+                        ],
+                      );
+                    }
+
+                    final changePercent =
+                        ((income.amount - prevAmount) / prevAmount) * 100;
+                    final isUp = changePercent >= 0;
+                    final display = (changePercent.abs() >= 1)
+                        ? '${changePercent.abs().toStringAsFixed(0)}%'
+                        : '${changePercent.abs().toStringAsFixed(1)}%';
+
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          display,
+                          style: TextStyle(
+                            color: isUp ? AppColors.white : AppColors.red,
+                            fontSize: AppTextStyles.body2.fontSize,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Icon(
+                          isUp ? Icons.arrow_upward : Icons.arrow_downward,
+                          color: isUp ? Colors.greenAccent : Colors.redAccent,
+                          size: 14,
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -88,6 +155,7 @@ Widget buildIncomeListItem(IncomeEntity income) {
   );
 }
 
+// Icon mapping similar to transaction history
 IconData _getCategoryIcon(String categoryName) {
   final category = categoryName.toLowerCase();
   if (category.contains('food')) return Icons.restaurant;
@@ -116,6 +184,7 @@ Color _getCategoryColor(String categoryName) {
   return AppColors.grey;
 }
 
+// Thêm widget mới để hiển thị khi danh sách trống
 Widget buildEmptyIncomeList() {
   return Center(
     child: Column(
@@ -124,7 +193,7 @@ Widget buildEmptyIncomeList() {
         const Icon(Icons.search_off, color: Colors.grey, size: 50),
         const SizedBox(height: 16),
         Text(
-          "Không tìm thấy khoản thu nhập nào",
+          "No income found",
           style: TextStyle(color: Colors.grey[400], fontSize: 16),
         ),
       ],
