@@ -14,7 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class ManualForm extends StatelessWidget {
   final double h, w;
   final AddTxLoaded state;
-  final TextEditingController amountCtrl, dateCtrl, moneyCtrl, noteCtrl;
+  final TextEditingController amountCtrl, dateCtrl, moneyCtrl, merchantCtrl;
 
   const ManualForm({
     super.key,
@@ -24,7 +24,7 @@ class ManualForm extends StatelessWidget {
     required this.amountCtrl,
     required this.dateCtrl,
     required this.moneyCtrl,
-    required this.noteCtrl,
+    required this.merchantCtrl,
   });
 
   @override
@@ -36,7 +36,9 @@ class ManualForm extends StatelessWidget {
     if (moneyCtrl.text != (state.moneySource ?? '')) {
       moneyCtrl.text = state.moneySource ?? '';
     }
-    if (noteCtrl.text != state.note) noteCtrl.text = state.note;
+    if (merchantCtrl.text != state.merchant) {
+      merchantCtrl.text = state.merchant;
+    }
     return Container(
       decoration: BoxDecoration(
         color: AppColors.widget,
@@ -128,10 +130,12 @@ class ManualForm extends StatelessWidget {
             ),
             SizedBox(height: h * 0.02),
             LabeledTextField(
-              controller: noteCtrl,
-              label: 'Note',
-              hint: 'Enter transaction description',
-              onChanged: (v) => bloc.add(AddTxNoteChangedEvent(v)),
+              controller: merchantCtrl,
+              label: 'Merchant',
+              hint: 'Enter merchant name',
+              required: true,
+              errorText: state.merchantError,
+              onChanged: (v) => bloc.add(AddTxMerchantChangedEvent(v)),
             ),
           ],
         ),

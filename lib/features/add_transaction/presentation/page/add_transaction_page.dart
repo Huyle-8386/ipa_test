@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
@@ -12,6 +14,7 @@ import 'package:fintrack/features/add_transaction/presentation/widget/manual_ent
 import 'package:fintrack/features/add_transaction/presentation/page/transaction_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddTransactionPage extends StatefulWidget {
   const AddTransactionPage({super.key});
@@ -24,7 +27,9 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   final amountCtrl = TextEditingController();
   final dateCtrl = TextEditingController();
   final moneyCtrl = TextEditingController();
-  final noteCtrl = TextEditingController();
+  final merchantCtrl = TextEditingController();
+  final ImagePicker _imagePicker = ImagePicker();
+  File? _selectedImage;
 
   @override
   void initState() {
@@ -36,8 +41,27 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
     amountCtrl.dispose();
     dateCtrl.dispose();
     moneyCtrl.dispose();
-    noteCtrl.dispose();
+    merchantCtrl.dispose();
     super.dispose();
+  }
+
+  Future<void> _openGallery() async {
+    final picked = await _imagePicker.pickImage(source: ImageSource.gallery);
+    if (picked != null) {
+      setState(() {
+        _selectedImage = File(picked.path);
+      });
+    }
+  }
+
+  void _uploadSelectedImage(BuildContext context) {
+    if (_selectedImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select an image first')),
+      );
+      return;
+    }
+    context.read<AddTxBloc>().add(UploadImageEvent(_selectedImage!));
   }
 
   @override
@@ -58,81 +82,123 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         ),
 
         // ========================= BODY =========================
-        body: BlocBuilder<AddTxBloc, AddTxState>(
-          builder: (context, state) {
-            if (state is AddTxLoading || state is AddTxInitial) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (state is AddTxError) {
-              return Center(
-                child: Text(
-                  state.error,
-                  style: const TextStyle(color: Colors.red),
+        body: BlocListener<AddTxBloc, AddTxState>(
+          listenWhen: (previous, current) =>
+              current is ImageUploadSuccess || current is ImageUploadFailure,
+          listener: (context, state) {
+            if (state is ImageUploadSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Image uploaded (code ${state.statusCode})'),
+                ),
+              );
+            } else if (state is ImageUploadFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Upload failed (${state.statusCode}): ${state.data}',
+                  ),
                 ),
               );
             }
-
-            final s = state as AddTxLoaded;
-
-            return Column(
-              children: [
-                // ======== TAB HEADER ========
-                Container(
-                  height: h * 0.1,
-                  width: w,
-                  color: AppColors.widget,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: ManualEntry(
-                          active: s.tab == EntryTab.manual,
-                          icon: "assets/icons/manual_entry.png",
-                          text: "Manual Entry",
-
-                          onTap: () => context.read<AddTxBloc>().add(
-                            AddTxTabChangedEvent(EntryTab.manual),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: ManualEntry(
-                          active: s.tab == EntryTab.image,
-                          icon: "assets/icons/image_entry.png",
-                          text: "Image Entry",
-                          onTap: () => context.read<AddTxBloc>().add(
-                            AddTxTabChangedEvent(EntryTab.image),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                SizedBox(height: h * 0.01),
-
-                // ======== BODY CONTENT ========
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: w * 0.05,
-                      vertical: h * 0.03,
-                    ),
-                    child: s.tab == EntryTab.manual
-                        ? ManualForm(
-                            h: h,
-                            w: w,
-                            state: s,
-                            amountCtrl: amountCtrl,
-                            dateCtrl: dateCtrl,
-                            moneyCtrl: moneyCtrl,
-                            noteCtrl: noteCtrl,
-                          )
-                        : ImageEntry(h: h, w: w),
-                  ),
-                ),
-              ],
-            );
           },
+          child: BlocBuilder<AddTxBloc, AddTxState>(
+            builder: (context, state) {
+              if (state is AddTxLoading || state is AddTxInitial) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (state is AddTxError) {
+                return Center(
+                  child: Text(
+                    state.error,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                );
+              }
+
+              final AddTxLoaded? s = state is AddTxLoaded
+                  ? state
+                  : state is ImageUploadInProgress
+                  ? state.base
+                  : state is ImageUploadSuccess
+                  ? state.base
+                  : state is ImageUploadFailure
+                  ? state.base
+                  : null;
+
+              if (s == null) {
+                return const SizedBox.shrink();
+              }
+
+              return Column(
+                children: [
+                  // ======== TAB HEADER ========
+                  Container(
+                    height: h * 0.1,
+                    width: w,
+                    color: AppColors.widget,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ManualEntry(
+                            active: s.tab == EntryTab.manual,
+                            icon: "assets/icons/manual_entry.png",
+                            text: "Manual Entry",
+
+                            onTap: () => context.read<AddTxBloc>().add(
+                              AddTxTabChangedEvent(EntryTab.manual),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ManualEntry(
+                            active: s.tab == EntryTab.image,
+                            icon: "assets/icons/image_entry.png",
+                            text: "Image Entry",
+                            onTap: () => context.read<AddTxBloc>().add(
+                              AddTxTabChangedEvent(EntryTab.image),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: h * 0.01),
+
+                  // ======== BODY CONTENT ========
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: w * 0.05,
+                        vertical: h * 0.03,
+                      ),
+                      child: s.tab == EntryTab.manual
+                          ? ManualForm(
+                              h: h,
+                              w: w,
+                              state: s,
+                              amountCtrl: amountCtrl,
+                              dateCtrl: dateCtrl,
+                              moneyCtrl: moneyCtrl,
+                              merchantCtrl: merchantCtrl,
+                            )
+                          : ImageEntry(
+                              h: h,
+                              w: w,
+                              selectedImage: _selectedImage,
+                              isUploading: state is ImageUploadInProgress,
+                              onSelectImage: _openGallery,
+                              onUpload: _selectedImage == null
+                                  ? null
+                                  : () => _uploadSelectedImage(context),
+                            ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
 
         // bottomNavigationBar: BlocBuilder<AddTxBloc, AddTxState>(
@@ -163,6 +229,8 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         //   },
         // ),
         bottomNavigationBar: BlocConsumer<AddTxBloc, AddTxState>(
+          listenWhen: (previous, current) =>
+              current is AddTxSubmitSuccess || current is AddTxError,
           listener: (context, state) {
             if (state is AddTxSubmitSuccess) {
               final msg = state.isEdit
@@ -192,7 +260,26 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
           builder: (context, state) {
             final h = SizeUtils.height(context);
 
-            final isLoading = state is AddTxLoading;
+            final isUploading = state is ImageUploadInProgress;
+            final isLoading = state is AddTxLoading || isUploading;
+            final AddTxLoaded? baseState = state is AddTxLoaded
+                ? state
+                : state is ImageUploadInProgress
+                ? state.base
+                : state is ImageUploadSuccess
+                ? state.base
+                : state is ImageUploadFailure
+                ? state.base
+                : null;
+            final isImageTab = baseState?.tab == EntryTab.image;
+            final buttonText = baseState?.tab == EntryTab.manual
+                ? (baseState!.isEdit
+                      ? 'Update transaction'
+                      : baseState.type == TransactionType.expense
+                      ? 'Add Expense Transaction'
+                      : 'Add Income Transaction')
+                : 'Select Image Now';
+            final canSubmit = baseState != null && !isUploading;
             return BottomAppBar(
               color: AppColors.widget,
               child: SizedBox(
@@ -204,23 +291,18 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  onPressed: isLoading
+                  onPressed: isLoading || !canSubmit
                       ? null
-                      : () {
+                      : () async {
+                          if (isImageTab) {
+                            await _openGallery();
+                            return;
+                          }
                           context.read<AddTxBloc>().add(AddTxSubmitEvent());
                         },
                   child: isLoading
                       ? const CircularProgressIndicator()
-                      : Text(
-                          state is AddTxLoaded && state.tab == EntryTab.manual
-                              ? (state is AddTxLoaded && state.isEdit
-                                    ? 'Update transaction'
-                                    : state.type == TransactionType.expense
-                                    ? 'Add Expense Transaction'
-                                    : 'Add Income Transaction')
-                              : 'Select Image Now',
-                          style: AppTextStyles.body2,
-                        ),
+                      : Text(buttonText, style: AppTextStyles.body2),
                 ),
               ),
             );

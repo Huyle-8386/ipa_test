@@ -152,11 +152,11 @@ class _TransactionDetailPageState extends State<TransactionDetailPage> {
                             ),
                           ),
                           SizedBox(height: h * 0.015),
-                          if (transaction.note.trim().isNotEmpty)
+                          if (transaction.merchant.trim().isNotEmpty)
                             _infoRow(
                               context,
-                              label: "Note",
-                              value: transaction.note,
+                              label: "Merchant",
+                              value: transaction.merchant,
                               multiline: true,
                             ),
                           SizedBox(height: h * 0.03),

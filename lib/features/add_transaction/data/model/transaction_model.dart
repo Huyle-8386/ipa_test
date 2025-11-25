@@ -5,7 +5,7 @@ class TransactionModel {
   final String? id;
   final double amount;
   final DateTime dateTime;
-  final String note;
+  final String merchant;
   final String categoryId;
   final String categoryName;
   final String categoryIcon;
@@ -17,7 +17,7 @@ class TransactionModel {
     this.id,
     required this.amount,
     required this.dateTime,
-    required this.note,
+    required this.merchant,
     required this.categoryId,
     required this.categoryName,
     required this.categoryIcon,
@@ -31,7 +31,7 @@ class TransactionModel {
       id: e.id,
       amount: e.amount,
       dateTime: e.dateTime,
-      note: e.note,
+      merchant: e.merchant,
       categoryId: e.category.id,
       categoryName: e.category.name,
       categoryIcon: e.category.icon, // ← Lấy icon từ category
@@ -41,11 +41,27 @@ class TransactionModel {
     );
   }
 
+  factory TransactionModel.fromFirestore(DocumentSnapshot doc) {
+    final data = (doc.data() as Map<String, dynamic>?) ?? <String, dynamic>{};
+    return TransactionModel(
+      id: doc.id,
+      amount: (data['amount'] as num?)?.toDouble() ?? 0,
+      dateTime: (data['dateTime'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      merchant: (data['merchant'] as String?) ?? '',
+      categoryId: data['categoryId'] as String? ?? '',
+      categoryName: data['categoryName'] as String? ?? '',
+      categoryIcon: data['categoryIcon'] as String? ?? '',
+      moneySourceId: data['moneySourceId'] as String? ?? '',
+      moneySourceName: data['moneySourceName'] as String? ?? '',
+      isIncome: data['isIncome'] as bool? ?? false,
+    );
+  }
+
   Map<String, dynamic> toJson({String? uid}) {
     return {
       'amount': amount,
       'dateTime': Timestamp.fromDate(dateTime),
-      'note': note,
+      'merchant': merchant,
       'isIncome': isIncome,
       'categoryId': categoryId,
       'categoryName': categoryName,

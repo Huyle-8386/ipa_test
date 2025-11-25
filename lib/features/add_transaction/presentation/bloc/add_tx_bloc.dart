@@ -1,13 +1,16 @@
 import 'package:fintrack/features/add_transaction/domain/entities/category_entity.dart';
 import 'package:fintrack/features/add_transaction/domain/entities/money_source_entity.dart';
 import 'package:fintrack/features/add_transaction/domain/entities/transaction_entity.dart';
+import 'package:fintrack/features/add_transaction/domain/entities/upload_image_result.dart';
 import 'package:fintrack/features/add_transaction/domain/usecases/change_money_source_balance_usecase.dart';
 import 'package:fintrack/features/add_transaction/domain/usecases/get_categories_usecase.dart';
 import 'package:fintrack/features/add_transaction/domain/usecases/get_money_sources_usecase.dart';
 import 'package:fintrack/features/add_transaction/domain/usecases/save_transaction_usecase.dart';
+import 'package:fintrack/features/add_transaction/domain/usecases/upload_image_usecase.dart';
 import 'package:fintrack/features/add_transaction/domain/usecases/update_transaction_usecase.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_event.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
@@ -16,6 +19,7 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
   final SaveTransactionUsecase saveTx;
   final UpdateTransactionUsecase updateTx;
   final ChangeMoneySourceBalanceUsecase changeBalance;
+  final UploadImageUsecase uploadImage;
 
   AddTxBloc({
     required this.getCategories,
@@ -23,6 +27,7 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
     required this.saveTx,
     required this.updateTx,
     required this.changeBalance,
+    required this.uploadImage,
   }) : super(AddTxInitial()) {
     on<AddTxInitEvent>(_onInit);
     on<AddTxInitEditEvent>(_onInitEdit);
@@ -31,9 +36,10 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
     on<AddTxCategorySelectedEvent>(_onCategory);
     on<AddTxMoneySourceChangedEvent>(_onMoneySource);
     on<AddTxAmountChangedEvent>(_onAmount);
-    on<AddTxNoteChangedEvent>(_onNote);
+    on<AddTxMerchantChangedEvent>(_onMerchant);
     on<AddTxDateChangedEvent>(_onDate);
     on<AddTxSubmitEvent>(_onSubmit);
+    on<UploadImageEvent>(_onUploadImage);
   }
 
   Future<void> _onInit(AddTxInitEvent event, Emitter<AddTxState> emit) async {
@@ -55,7 +61,7 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
             ? normalizedSources.first.name
             : '',
         amount: '',
-        note: '',
+        merchant: '',
         date: '',
         isEdit: false,
         originalTx: null,
@@ -101,7 +107,7 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
         selectedCategory: selectedCat,
         moneySource: selectedMoneySource.name,
         amount: event.transaction.amount.toString(),
-        note: event.transaction.note,
+        merchant: event.transaction.merchant,
         date: dateStr,
         isEdit: true,
         originalTx: event.transaction,
@@ -181,9 +187,11 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
     }
   }
 
-  void _onNote(AddTxNoteChangedEvent event, Emitter<AddTxState> emit) {
+  void _onMerchant(AddTxMerchantChangedEvent event, Emitter<AddTxState> emit) {
     final s = state;
-    if (s is AddTxLoaded) emit(s.copyWith(note: event.note));
+    if (s is AddTxLoaded) {
+      emit(s.copyWith(merchant: event.merchant, merchantError: null));
+    }
   }
 
   Future<void> _onSubmit(
@@ -207,6 +215,9 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
           : null;
 
       final String? dateError = (s.date.isEmpty) ? 'Please pick a date' : null;
+      final String? merchantError = s.merchant.trim().isEmpty
+          ? 'Merchant is required'
+          : null;
 
       final String? moneySourceError = (() {
         if (s.moneySource == null || s.moneySource!.isEmpty) {
@@ -220,6 +231,7 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
         amountError,
         categoryError,
         dateError,
+        merchantError,
         moneySourceError,
       ].any((e) => e != null);
 
@@ -229,6 +241,7 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
             amountError: amountError,
             categoryError: categoryError,
             dateError: dateError,
+            merchantError: merchantError,
             moneySourceError: moneySourceError,
           ),
         );
@@ -253,7 +266,7 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
       final tx = TransactionEntity(
         amount: amount,
         dateTime: dateTime,
-        note: s.note,
+        merchant: s.merchant,
         category: category,
         moneySource: ms,
         isIncome: isIncome,
@@ -270,7 +283,7 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
           id: oldTx.id,
           amount: amount,
           dateTime: dateTime,
-          note: s.note,
+          merchant: s.merchant,
           category: category,
           moneySource: ms,
           isIncome: isIncome,
@@ -289,7 +302,7 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
             amount: s.amount,
             date: s.date,
             moneySource: s.moneySource,
-            note: s.note,
+            merchant: s.merchant,
             isEdit: true,
             originalTx: updatedTx,
           ),
@@ -301,7 +314,7 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
           id: newId,
           amount: amount,
           dateTime: dateTime,
-          note: s.note,
+          merchant: s.merchant,
           category: category,
           moneySource: ms,
           isIncome: isIncome,
@@ -325,7 +338,7 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
             amount: s.amount,
             date: s.date,
             moneySource: s.moneySource,
-            note: s.note,
+            merchant: s.merchant,
             isEdit: false,
             originalTx: savedTx,
           ),
@@ -335,6 +348,62 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
       print('AddTxBloc _onSubmit error: $e');
       print(st);
       emit(AddTxError(e.toString()));
+    }
+  }
+
+  Future<void> _onUploadImage(
+    UploadImageEvent event,
+    Emitter<AddTxState> emit,
+  ) async {
+    final previousState = state;
+    if (previousState is! AddTxLoaded) return;
+
+    emit(ImageUploadInProgress(previousState));
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) {
+        emit(
+          ImageUploadFailure(
+            statusCode: -1,
+            data: 'User not logged in',
+            base: previousState,
+          ),
+        );
+        return;
+      }
+
+      final UploadImageResult result = await uploadImage(
+        image: event.image,
+        userId: uid,
+        moneySources: previousState.moneySources,
+      );
+      if (result.statusCode == 200) {
+        emit(
+          ImageUploadSuccess(
+            statusCode: result.statusCode,
+            data: result.data,
+            base: previousState,
+          ),
+        );
+      } else {
+        emit(
+          ImageUploadFailure(
+            statusCode: result.statusCode,
+            data: result.data,
+            base: previousState,
+          ),
+        );
+      }
+    } catch (e) {
+      emit(
+        ImageUploadFailure(
+          statusCode: -1,
+          data: e.toString(),
+          base: previousState,
+        ),
+      );
+    } finally {
+      emit(previousState);
     }
   }
 }
