@@ -1,34 +1,32 @@
 import 'package:fintrack/features/income/domain/entities/income_entity.dart';
-import 'package:flutter/material.dart';
 
 class IncomeModel extends IncomeEntity {
   const IncomeModel({
-    required super.icon,
-    required super.color,
-    required super.name,
-    required super.value,
+    super.id,
+    required super.categoryId,
+    required super.categoryName,
+    super.categoryIcon,
     required super.amount,
-    required super.percentage,
-    required super.isUp,
+    required super.isIncome,
   });
 
-  factory IncomeModel.fromJson(Map<String, dynamic> json) => IncomeModel(
-    icon: json['icon'] as String,
-    color: Color(json['color'] as int),
-    name: json['name'] as String,
-    value: (json['value'] as num).toDouble(),
-    amount: json['amount'] as String,
-    percentage: json['percentage'] as String,
-    isUp: json['isUp'] as bool,
-  );
+  factory IncomeModel.fromJson(Map<String, dynamic> json) {
+    return IncomeModel(
+      id: json['id'] as String?,
+      categoryId: json['categoryId'] as String? ?? '',
+      categoryName: json['categoryName'] as String? ?? '',
+      categoryIcon: json['categoryIcon'] as String?,
+      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
+      isIncome: json['isIncome'] as bool? ?? true,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-    'icon': icon,
-    'color': color.value,
-    'name': name,
-    'value': value,
+    if (id != null) 'id': id,
+    'categoryId': categoryId,
+    'categoryName': categoryName,
+    'categoryIcon': categoryIcon,
     'amount': amount,
-    'percentage': percentage,
-    'isUp': isUp,
+    'isIncome': isIncome,
   };
 }

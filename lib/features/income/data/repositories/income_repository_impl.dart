@@ -13,6 +13,11 @@ class IncomeRepositoryImpl implements IncomeRepository {
   }
 
   @override
+  Future<List<IncomeEntity>> getPreviousIncome({required String category}) {
+    return localDataSource.getPreviousIncome(category: category);
+  }
+
+  @override
   Future<List<String>> getCategories() {
     return localDataSource.getCategories();
   }
