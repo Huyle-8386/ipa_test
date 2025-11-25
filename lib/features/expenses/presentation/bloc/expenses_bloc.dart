@@ -34,6 +34,12 @@ class ExpensesBloc extends Bloc<ExpensesEvent, ExpensesState> {
       final defaultCategory = allCategories.first;
       final allExpenses = await getExpenses(category: defaultCategory);
       final prevExpenses = await getPreviousExpenses(category: defaultCategory);
+      // build map of previous sums per categoryId
+      final Map<String, double> prevSums = {};
+      for (var e in prevExpenses) {
+        final key = e.categoryId;
+        prevSums[key] = (prevSums[key] ?? 0.0) + e.amount;
+      }
       final total = allExpenses.fold(0.0, (sum, item) => sum + item.amount);
       final prevTotal = prevExpenses.fold(
         0.0,
@@ -47,6 +53,7 @@ class ExpensesBloc extends Bloc<ExpensesEvent, ExpensesState> {
           expenses: allExpenses,
           totalValue: total,
           previousTotal: prevTotal,
+          previousSums: prevSums,
           diff: diff,
           isIncrease: isIncrease,
           activeCategory: defaultCategory,
@@ -72,6 +79,11 @@ class ExpensesBloc extends Bloc<ExpensesEvent, ExpensesState> {
         final prevExpenses = await getPreviousExpenses(
           category: event.category,
         );
+        final Map<String, double> prevSums = {};
+        for (var e in prevExpenses) {
+          final key = e.categoryId;
+          prevSums[key] = (prevSums[key] ?? 0.0) + e.amount;
+        }
         final total = filteredExpenses.fold(
           0.0,
           (sum, item) => sum + item.amount,
@@ -88,6 +100,7 @@ class ExpensesBloc extends Bloc<ExpensesEvent, ExpensesState> {
             expenses: filteredExpenses,
             totalValue: total,
             previousTotal: prevTotal,
+            previousSums: prevSums,
             diff: diff,
             isIncrease: isIncrease,
             activeCategory: event.category,
@@ -120,6 +133,11 @@ class ExpensesBloc extends Bloc<ExpensesEvent, ExpensesState> {
         final prevExpenses = await getPreviousExpenses(
           category: currentState.activeCategory,
         );
+        final Map<String, double> prevSums = {};
+        for (var e in prevExpenses) {
+          final key = e.categoryId;
+          prevSums[key] = (prevSums[key] ?? 0.0) + e.amount;
+        }
         final total = searchResults.fold(0.0, (sum, item) => sum + item.amount);
         final prevTotal = prevExpenses.fold(
           0.0,
@@ -133,6 +151,7 @@ class ExpensesBloc extends Bloc<ExpensesEvent, ExpensesState> {
             expenses: searchResults,
             totalValue: total,
             previousTotal: prevTotal,
+            previousSums: prevSums,
             diff: diff,
             isIncrease: isIncrease,
             activeCategory: currentState.activeCategory,
