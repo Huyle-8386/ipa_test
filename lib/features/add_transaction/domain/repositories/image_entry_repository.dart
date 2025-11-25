@@ -11,4 +11,6 @@ abstract class ImageEntryRepository {
     String userId,
     List<MoneySourceEntity> moneySources,
   );
+
+  Future<void> syncIsIncomeIfNeeded(TransactionEntity tx);
 }

@@ -2,15 +2,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:fintrack/features/add_transaction/domain/usecases/upload_image_usecase.dart';
+import 'package:fintrack/features/add_transaction/domain/usecases/sync_is_income_usecase.dart';
 import 'image_entry_event.dart';
 import 'image_entry_state.dart';
 
 class ImageEntryBloc extends Bloc<ImageEntryEvent, ImageEntryState> {
   final UploadImageUsecase uploadImageUsecase;
+  final SyncIsIncomeUseCase syncIsIncomeUseCase;
   final FirebaseAuth auth;
 
   ImageEntryBloc({
     required this.uploadImageUsecase,
+    required this.syncIsIncomeUseCase,
     required this.auth,
   }) : super(ImageEntryInitial()) {
     on<UploadImageRequested>(_onUploadImageRequested);
@@ -33,9 +36,12 @@ class ImageEntryBloc extends Bloc<ImageEntryEvent, ImageEntryState> {
         userId: userId,
         moneySources: event.moneySources,
       );
-      result.fold(
-        (failure) => emit(ImageEntryFailure(failure.message)),
-        (tx) => emit(ImageEntryUploadSuccess(tx)),
+      await result.fold<Future<void>>(
+        (failure) async => emit(ImageEntryFailure(failure.message)),
+        (tx) async {
+          await syncIsIncomeUseCase(tx);
+          emit(ImageEntryUploadSuccess(tx));
+        },
       );
     } catch (e) {
       emit(ImageEntryFailure(e.toString()));

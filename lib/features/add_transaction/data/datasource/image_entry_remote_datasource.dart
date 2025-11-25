@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:fintrack/features/add_transaction/data/model/transaction_model.dart';
+import 'package:fintrack/features/add_transaction/domain/entities/transaction_entity.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:path/path.dart';
 
 abstract class ImageEntryRemoteDataSource {
@@ -11,13 +14,22 @@ abstract class ImageEntryRemoteDataSource {
     required String userId,
     required List<Map<String, String>> moneySources,
   });
+
+  Future<void> syncIsIncomeIfNeeded(TransactionEntity tx);
 }
 
 class ImageEntryRemoteDataSourceImpl implements ImageEntryRemoteDataSource {
   final Dio dio;
   final String webhookUrl;
+  final FirebaseFirestore firestore;
+  final FirebaseAuth auth;
 
-  ImageEntryRemoteDataSourceImpl({required this.dio, required this.webhookUrl});
+  ImageEntryRemoteDataSourceImpl({
+    required this.dio,
+    required this.webhookUrl,
+    required this.firestore,
+    required this.auth,
+  });
 
   @override
   Future<TransactionModel> uploadImage({
@@ -67,6 +79,32 @@ class ImageEntryRemoteDataSourceImpl implements ImageEntryRemoteDataSource {
       final status = e.response?.statusCode ?? -1;
       final data = e.response?.data ?? e.message ?? 'Unknown Dio error';
       throw Exception('Upload failed ($status): $data');
+    }
+  }
+
+  @override
+  Future<void> syncIsIncomeIfNeeded(TransactionEntity tx) async {
+    final user = auth.currentUser;
+    final txId = tx.id;
+
+    if (user == null || txId == null || txId.isEmpty) {
+      return;
+    }
+
+    final docRef = firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('transactions')
+        .doc(txId);
+
+    final doc = await docRef.get();
+    final data = doc.data();
+
+    if (data == null) return;
+
+    final isIncomeField = data['isIncome'];
+    if (isIncomeField == null) {
+      await docRef.update({'isIncome': tx.isIncome});
     }
   }
 }

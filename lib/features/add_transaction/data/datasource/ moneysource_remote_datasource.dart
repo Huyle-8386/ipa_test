@@ -9,6 +9,8 @@ abstract class MoneySourceRemoteDataSource {
     required String moneySourceId,
     required double delta, // >0: cộng, <0: trừ
   });
+
+  Future<MoneySourceEntity?> getMoneySourceById(String id);
 }
 
 class MoneySourceRemoteDataSourceImpl implements MoneySourceRemoteDataSource {
@@ -54,5 +56,25 @@ class MoneySourceRemoteDataSourceImpl implements MoneySourceRemoteDataSource {
         .collection('money_sources')
         .doc(moneySourceId)
         .update({'balance': FieldValue.increment(delta)});
+  }
+
+  @override
+  Future<MoneySourceEntity?> getMoneySourceById(String id) async {
+    final user = auth.currentUser;
+    if (user == null) {
+      throw Exception("User not logged in");
+    }
+    final uid = user.uid;
+
+    final doc = await firestore
+        .collection('users')
+        .doc(uid)
+        .collection('money_sources')
+        .doc(id)
+        .get();
+
+    if (!doc.exists) return null;
+
+    return MoneySourceModel.fromFirestore(doc);
   }
 }

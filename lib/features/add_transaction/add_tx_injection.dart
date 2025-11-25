@@ -13,7 +13,9 @@ import 'package:fintrack/features/add_transaction/domain/repositories/%20moneyso
 import 'package:fintrack/features/add_transaction/domain/repositories/image_entry_repository.dart';
 import 'package:fintrack/features/add_transaction/domain/repositories/category_repository.dart';
 import 'package:fintrack/features/add_transaction/domain/usecases/change_money_source_balance_usecase.dart';
+import 'package:fintrack/features/add_transaction/domain/usecases/sync_is_income_usecase.dart';
 import 'package:fintrack/features/add_transaction/domain/usecases/upload_image_usecase.dart';
+import 'package:fintrack/features/add_transaction/domain/usecases/get_money_source_by_id_usecase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 
@@ -30,7 +32,7 @@ final sl = GetIt.instance;
 
 Future<void> initAddTransaction() async {
   const webhookUrl =
-      'https://n8n-vietnam.id.vn/webhook-test/91a3525b-d6cb-4f2d-9e9a-d89cd871bcd3';
+      'https://n8n-vietnam.id.vn/webhook/91a3525b-d6cb-4f2d-9e9a-d89cd871bcd3';
 
   sl.registerLazySingleton<Dio>(() => Dio());
 
@@ -42,7 +44,12 @@ Future<void> initAddTransaction() async {
     ),
   );
   sl.registerLazySingleton<ImageEntryRemoteDataSource>(
-    () => ImageEntryRemoteDataSourceImpl(dio: sl(), webhookUrl: webhookUrl),
+    () => ImageEntryRemoteDataSourceImpl(
+      dio: sl(),
+      webhookUrl: webhookUrl,
+      firestore: FirebaseFirestore.instance,
+      auth: FirebaseAuth.instance,
+    ),
   );
   sl.registerLazySingleton<CategoryRemoteDataSource>(
     () => CategoryRemoteDataSource(
@@ -97,6 +104,12 @@ Future<void> initAddTransaction() async {
     () => ChangeMoneySourceBalanceUsecase(sl()),
   );
   sl.registerLazySingleton<UploadImageUsecase>(() => UploadImageUsecase(sl()));
+  sl.registerLazySingleton<SyncIsIncomeUseCase>(
+    () => SyncIsIncomeUseCase(sl()),
+  );
+  sl.registerLazySingleton<GetMoneySourceByIdUseCase>(
+    () => GetMoneySourceByIdUseCase(sl()),
+  );
   // Bloc
   sl.registerFactory<AddTxBloc>(
     () => AddTxBloc(
@@ -110,6 +123,7 @@ Future<void> initAddTransaction() async {
   sl.registerFactory<ImageEntryBloc>(
     () => ImageEntryBloc(
       uploadImageUsecase: sl(),
+      syncIsIncomeUseCase: sl(),
       auth: FirebaseAuth.instance,
     ),
   );

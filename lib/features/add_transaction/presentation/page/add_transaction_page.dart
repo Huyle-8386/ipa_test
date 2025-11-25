@@ -197,15 +197,58 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                               moneyCtrl: moneyCtrl,
                               merchantCtrl: merchantCtrl,
                             )
-                          : ImageEntry(
-                              h: h,
-                              w: w,
-                              selectedImage: _selectedImage,
-                              isUploading: isUploading,
-                              onSelectImage: _openGallery,
-                              onUpload: _selectedImage == null
-                                  ? null
-                                  : () => _uploadSelectedImage(context),
+                          : Stack(
+                              alignment: Alignment.topCenter,
+                              children: [
+                                AbsorbPointer(
+                                  absorbing: isUploading,
+                                  child: ImageEntry(
+                                    h: h,
+                                    w: w,
+                                    selectedImage: _selectedImage,
+                                    // Keep UI unchanged; block taps instead of altering labels or styles.
+                                    isUploading: false,
+                                    onSelectImage: _openGallery,
+                                    onUpload: _selectedImage == null
+                                        ? null
+                                        : () => _uploadSelectedImage(context),
+                                  ),
+                                ),
+                                if (isUploading && _selectedImage != null) ...[
+                                  Positioned(
+                                    top: 0,
+                                    child: Container(
+                                      height: h * 0.4,
+                                      width: w,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.background
+                                            .withOpacity(0.25),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 0,
+                                    child: SizedBox(
+                                      height: h * 0.4,
+                                      width: w,
+                                      child: const Center(
+                                        child: SizedBox(
+                                          height: 34,
+                                          width: 34,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 3,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                              AppColors.main,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                     ),
                   ),
@@ -287,29 +330,49 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                       : 'Add Income Transaction')
                 : 'Select Image Now';
             final canSubmit = baseState != null && !isUploading;
+            final isButtonBlocked = isLoading || !canSubmit;
             return BottomAppBar(
               color: AppColors.widget,
               child: SizedBox(
                 height: h * 0.1,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.main,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                child: AbsorbPointer(
+                  absorbing: isButtonBlocked,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.main,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () async {
+                      if (isButtonBlocked) return;
+                      if (isImageTab) {
+                        await _openGallery();
+                        return;
+                      }
+                      context.read<AddTxBloc>().add(AddTxSubmitEvent());
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(buttonText, style: AppTextStyles.body2),
+                        if (isLoading) ...[
+                          const SizedBox(width: 10),
+                          const SizedBox(
+                            height: 18,
+                            width: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                AppColors.main,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
-                  onPressed: isLoading || !canSubmit
-                      ? null
-                      : () async {
-                          if (isImageTab) {
-                            await _openGallery();
-                            return;
-                          }
-                          context.read<AddTxBloc>().add(AddTxSubmitEvent());
-                        },
-                  child: isLoading
-                      ? const CircularProgressIndicator()
-                      : Text(buttonText, style: AppTextStyles.body2),
                 ),
               ),
             );
