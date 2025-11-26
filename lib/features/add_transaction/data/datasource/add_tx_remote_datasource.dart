@@ -14,6 +14,7 @@ abstract class AddTxRemoteDataSource {
     required TransactionModel oldModel,
     required TransactionModel newModel,
   });
+  Future<void> updateBudgetsWithTransaction(TransactionModel model);
 }
 
 class AddTxRemoteDataSourceImpl implements AddTxRemoteDataSource {
@@ -133,5 +134,41 @@ class AddTxRemoteDataSourceImpl implements AddTxRemoteDataSource {
         transaction.update(newMsRef, {'balance': FieldValue.increment(apply)});
       }
     });
+  }
+
+  @override
+  Future<void> updateBudgetsWithTransaction(TransactionModel model) async {
+    if (model.isIncome) return;
+
+    final user = auth.currentUser;
+    if (user == null) {
+      throw Exception('User not logged in');
+    }
+
+    final budgetsSnap = await firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('budgets')
+        .where('categoryId', isEqualTo: model.categoryId)
+        .where('isActive', isEqualTo: true)
+        .get();
+
+    for (final doc in budgetsSnap.docs) {
+      final data = doc.data();
+      final rawSpent = data['spent'];
+
+      double currentSpent;
+      if (rawSpent is num) {
+        currentSpent = rawSpent.toDouble();
+      } else if (rawSpent is String) {
+        currentSpent = double.tryParse(rawSpent) ?? 0;
+      } else {
+        currentSpent = 0;
+      }
+
+      final newSpent = currentSpent + model.amount;
+
+      await doc.reference.update({'spent': newSpent});
+    }
   }
 }

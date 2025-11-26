@@ -16,6 +16,7 @@ import 'package:fintrack/features/add_transaction/domain/usecases/change_money_s
 import 'package:fintrack/features/add_transaction/domain/usecases/sync_is_income_usecase.dart';
 import 'package:fintrack/features/add_transaction/domain/usecases/upload_image_usecase.dart';
 import 'package:fintrack/features/add_transaction/domain/usecases/get_money_source_by_id_usecase.dart';
+import 'package:fintrack/features/add_transaction/domain/usecases/update_budgets_with_transaction_usecase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 
@@ -103,6 +104,9 @@ Future<void> initAddTransaction() async {
   sl.registerLazySingleton<ChangeMoneySourceBalanceUsecase>(
     () => ChangeMoneySourceBalanceUsecase(sl()),
   );
+  sl.registerLazySingleton<UpdateBudgetsWithTransactionUsecase>(
+    () => UpdateBudgetsWithTransactionUsecase(sl()),
+  );
   sl.registerLazySingleton<UploadImageUsecase>(() => UploadImageUsecase(sl()));
   sl.registerLazySingleton<SyncIsIncomeUseCase>(
     () => SyncIsIncomeUseCase(sl()),
@@ -118,6 +122,7 @@ Future<void> initAddTransaction() async {
       saveTx: sl(),
       updateTx: sl(),
       changeBalance: sl(), // 👈 thêm dòng này
+      updateBudgets: sl(),
     ),
   );
   sl.registerFactory<ImageEntryBloc>(
@@ -125,6 +130,7 @@ Future<void> initAddTransaction() async {
       uploadImageUsecase: sl(),
       syncIsIncomeUseCase: sl(),
       auth: FirebaseAuth.instance,
+      updateBudgetsWithTransactionUsecase: sl(),
     ),
   );
 
