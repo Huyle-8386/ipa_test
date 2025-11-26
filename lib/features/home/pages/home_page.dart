@@ -17,6 +17,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fintrack/features/notifications/presentation/page/notifications_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../money_source/presentation/bloc/money_source_bloc.dart';
+import '../../money_source/presentation/pages/money_source_page.dart';
 import '../../transaction_ history/presentation/pages/transaction_ history_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -37,6 +39,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final h = SizeUtils.height(context);
     final w = SizeUtils.width(context);
+
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -219,8 +224,6 @@ class _HomePageState extends State<HomePage> {
                         // Image.asset("assets/icons/analyst.png"),
                         GestureDetector(
                           onTap: () {
-                            final uid = FirebaseAuth.instance.currentUser!.uid;
-
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -235,7 +238,24 @@ class _HomePageState extends State<HomePage> {
                           child: Image.asset("assets/icons/analyst.png"),
                         ),
 
-                        Image.asset("assets/icons/deposit.png"),
+                        // Image.asset("assets/icons/deposit.png"),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BlocProvider<MoneySourceBloc>(
+                                  create: (_) => sl<MoneySourceBloc>(),
+                                  child: MoneySourcePage(
+                                    uid: uid,
+                                  ), // <-- truyền uid vào đây
+                                ),
+                              ),
+                            );
+                          },
+                          child: Image.asset("assets/icons/deposit.png"),
+                        ),
+
                         Image.asset("assets/icons/buy.png"),
                         Image.asset("assets/icons/add.png"),
                       ],
