@@ -50,3 +50,7 @@ class SignInSubmitted extends AuthEvent {}
 class SignUpSubmitted extends AuthEvent {}
 
 class GoogleSignInSubmitted extends AuthEvent {}
+
+class AuthNavigationHandled extends AuthEvent {
+  const AuthNavigationHandled();
+}

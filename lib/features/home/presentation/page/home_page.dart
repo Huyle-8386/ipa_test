@@ -1,10 +1,7 @@
-import 'package:fintrack/core/di/injector.dart' as di;
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
-import 'package:fintrack/features/budget/presentation/bloc/budget_bloc.dart';
-import 'package:fintrack/features/budget/presentation/bloc/budget_event.dart';
-import 'package:fintrack/features/budget/presentation/pages/budget_page.dart';
+import 'package:fintrack/features/budget/presentation/pages/budget_route.dart';
 import 'package:fintrack/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fintrack/features/home/presentation/bloc/home_event.dart';
 import 'package:fintrack/features/home/presentation/bloc/home_state.dart';
@@ -15,8 +12,8 @@ import 'package:fintrack/features/notifications/presentation/page/notifications_
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../transaction_ history/presentation/pages/transaction_ history_page.dart';
+import 'package:fintrack/features/money_source/presentation/pages/money_source_route.dart';
+import 'package:fintrack/features/transaction_ history/presentation/pages/transaction_ history_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -36,6 +33,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final h = SizeUtils.height(context);
     final w = SizeUtils.width(context);
+
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SizedBox(
@@ -247,23 +247,27 @@ class _HomePageState extends State<HomePage> {
                         Image.asset('assets/icons/swap.png'),
                         GestureDetector(
                           onTap: () {
-                            final uid = FirebaseAuth.instance.currentUser!.uid;
-
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => BlocProvider(
-                                  create: (_) =>
-                                      di.sl<BudgetBloc>()
-                                        ..add(LoadBudgets(uid)),
-                                  child: const BudgetPage(),
-                                ),
+                                builder: (_) => BudgetRoute(uid: uid),
                               ),
                             );
                           },
                           child: Image.asset('assets/icons/analyst.png'),
                         ),
-                        Image.asset('assets/icons/deposit.png'),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => MoneySourceRoute(uid: uid),
+                              ),
+                            );
+                          },
+                          child: Image.asset('assets/icons/deposit.png'),
+                        ),
+
                         Image.asset('assets/icons/buy.png'),
                         Image.asset('assets/icons/add.png'),
                       ],

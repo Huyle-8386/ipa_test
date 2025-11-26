@@ -2,16 +2,13 @@
 
 import 'package:fintrack/features/budget/presentation/bloc/category/category_bloc.dart';
 import 'package:fintrack/features/budget/presentation/bloc/category/category_event.dart';
-import 'package:fintrack/features/budget/presentation/pages/add_budget_page.dart';
+import 'package:fintrack/features/budget/presentation/pages/budget_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/di/injector.dart';
 import '../bloc/budget_bloc.dart';
 import '../bloc/budget_event.dart';
 import '../bloc/budget_state.dart';
-import '../bloc/money_sources/money_source_bloc.dart';
-import '../bloc/money_sources/money_source_event.dart';
 import 'widgets/filter_tab.dart';
 import 'widgets/budget_card.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
@@ -75,28 +72,8 @@ class BudgetPage extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) {
-                                    final uid =
-                                        FirebaseAuth.instance.currentUser!.uid;
-
-                                    return MultiBlocProvider(
-                                      providers: [
-                                        BlocProvider.value(
-                                          value: context.read<BudgetBloc>(),
-                                        ),
-                                        BlocProvider(
-                                          create: (_) => sl<CategoryBloc>()
-                                            ..add(const LoadCategories(false)),
-                                        ),
-                                        BlocProvider(
-                                          create: (_) =>
-                                              sl<MoneySourceBloc>()
-                                                ..add(LoadMoneySources(uid)),
-                                        ),
-                                      ],
-                                      child: AddBudgetPage(),
-                                    );
-                                  },
+                                  builder: (_) =>
+                                      AddBudgetRoute(budgetBloc: budgetBloc),
                                 ),
                               );
                             },

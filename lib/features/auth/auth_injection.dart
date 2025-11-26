@@ -8,6 +8,7 @@ import 'package:fintrack/features/auth/domain/usecases/sign_in_with_google.dart'
 import 'package:fintrack/features/auth/domain/usecases/validate_email.dart';
 import 'package:fintrack/features/auth/domain/usecases/validate_password.dart';
 import 'package:fintrack/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:fintrack/features/money_source/domain/usecases/check_user_has_money_source.dart';
 import 'package:get_it/get_it.dart';
 
 final sl = GetIt.instance;
@@ -37,6 +38,7 @@ Future<void> initAuth() async {
       signInWithGoogle: sl(),
       validateEmail: sl(),
       validatePassword: sl(),
+      checkUserHasMoneySourceUseCase: sl<CheckUserHasMoneySourceUseCase>(),
     ),
   );
 }

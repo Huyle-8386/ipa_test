@@ -11,6 +11,7 @@ import 'package:fintrack/features/setting/setting_injection.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../features/chatbot/ai_chat_injection.dart';
+import '../../features/money_source/money_source_injection.dart';
 
 final sl = GetIt.instance;
 
@@ -25,4 +26,5 @@ Future<void> init() async {
   await initIncome();
   await initTransactionHistory();
   await initChatbotModule();
+  await initMoneySource();
 }
