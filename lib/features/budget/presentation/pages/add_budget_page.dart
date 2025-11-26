@@ -13,7 +13,6 @@ import 'package:fintrack/core/utils/size_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/di/injector.dart';
 import '../bloc/budget_event.dart';
 import '../bloc/budget_state.dart';
 import '../bloc/category/category_event.dart';
