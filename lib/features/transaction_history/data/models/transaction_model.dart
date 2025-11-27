@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fintrack/features/transaction_%20history/domain/entities/transaction_entity.dart';
+import 'package:fintrack/features/transaction_history/domain/entities/transaction_entity.dart';
 
 class TransactionModel extends TransactionEntity {
   const TransactionModel({
@@ -31,7 +31,7 @@ class TransactionModel extends TransactionEntity {
     );
   }
 
-  // Factory với categoryIcon từ JOIN
+  // Nếu muốn thêm categoryIcon từ JOIN
   factory TransactionModel.fromFirestoreWithIcon(
     DocumentSnapshot doc,
     String? categoryIcon,
@@ -42,7 +42,7 @@ class TransactionModel extends TransactionEntity {
       id: doc.id,
       categoryId: data['categoryId'] as String? ?? '',
       categoryName: data['categoryName'] as String? ?? '',
-      categoryIcon: categoryIcon, // Icon từ categories collection
+      categoryIcon: categoryIcon,
       moneySourceName: data['moneySourceName'] as String? ?? '',
       merchant: data['merchant'] as String? ?? '',
       amount: (data['amount'] as num?)?.toDouble() ?? 0.0,

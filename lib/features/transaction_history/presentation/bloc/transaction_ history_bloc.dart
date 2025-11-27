@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fintrack/features/transaction_%20history/presentation/bloc/transaction_%20history_event.dart';
-import 'package:fintrack/features/transaction_%20history/presentation/bloc/transaction_%20history_state.dart';
-import 'package:fintrack/features/transaction_%20history/domain/entities/transaction_entity.dart';
-import 'package:fintrack/features/transaction_%20history/domain/usecases/get_transactions_usecase.dart';
-import 'package:fintrack/features/transaction_%20history/domain/usecases/search_transactions_usecase.dart';
-import 'package:fintrack/features/transaction_%20history/domain/usecases/get_filter_types_usecase.dart';
+import 'package:fintrack/features/transaction_history/presentation/bloc/transaction_%20history_event.dart';
+import 'package:fintrack/features/transaction_history/presentation/bloc/transaction_%20history_state.dart';
+import 'package:fintrack/features/transaction_history/domain/entities/transaction_entity.dart';
+import 'package:fintrack/features/transaction_history/domain/usecases/get_transactions_usecase.dart';
+import 'package:fintrack/features/transaction_history/domain/usecases/search_transactions_usecase.dart';
+import 'package:fintrack/features/transaction_history/domain/usecases/get_filter_types_usecase.dart';
 
 class TransactionHistoryBloc
     extends Bloc<TransactionHistoryEvent, TransactionHistoryState> {
