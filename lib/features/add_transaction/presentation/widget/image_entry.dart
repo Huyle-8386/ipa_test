@@ -30,7 +30,7 @@ class ImageEntry extends StatelessWidget {
           height: h * 0.4,
           width: w,
           decoration: BoxDecoration(
-            color: AppColors.widget,
+            color: AppColors.background,
             borderRadius: BorderRadius.circular(15),
           ),
           child: ClipRRect(
