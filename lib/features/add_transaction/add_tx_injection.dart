@@ -128,6 +128,7 @@ Future<void> initAddTransaction() async {
   sl.registerFactory<ImageEntryBloc>(
     () => ImageEntryBloc(
       uploadImageUsecase: sl(),
+      changeMoneySourceBalanceUsecase: sl(),
       syncIsIncomeUseCase: sl(),
       auth: FirebaseAuth.instance,
       updateBudgetsWithTransactionUsecase: sl(),
