@@ -6,6 +6,7 @@ class SettingInitial extends SettingState {}
 
 class SettingLoaded extends SettingState {
   final List<SettingCardEntity> cards;
+  final String userName;
 
-  SettingLoaded({required this.cards});
+  SettingLoaded({required this.cards, required this.userName});
 }

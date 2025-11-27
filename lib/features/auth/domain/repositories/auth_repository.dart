@@ -19,6 +19,8 @@ abstract class AuthRepository {
 
   Future<Either<String, void>> signOut();
 
+  Future<Either<String, User>> getCurrentUser();
+
   Future<Either<String, String?>> validateEmail(String email);
   Future<Either<String, String?>> validatePassword(String password);
 }

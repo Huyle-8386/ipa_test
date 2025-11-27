@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:fintrack/features/auth/domain/usecases/get_current_user.dart';
 import '../../domain/usecases/get_chart_data_usecase.dart';
 import '../../domain/entities/chart.dart';
 
@@ -7,7 +8,10 @@ part 'chart_state.dart';
 
 class ChartBloc extends Bloc<ChartEvent, ChartState> {
   final GetChartDataUseCase getChartDataUseCase;
-  ChartBloc({required this.getChartDataUseCase}) : super(ChartState.initial()) {
+  final GetCurrentUser getCurrentUser;
+
+  ChartBloc({required this.getChartDataUseCase, required this.getCurrentUser})
+    : super(ChartState.initial()) {
     on<LoadChartDataEvent>(_onLoadData);
     on<ChangeFilterEvent>(_onChangeFilter);
   }
@@ -16,6 +20,16 @@ class ChartBloc extends Bloc<ChartEvent, ChartState> {
     LoadChartDataEvent event,
     Emitter<ChartState> emit,
   ) async {
+    final userResult = await getCurrentUser();
+    var userName = state.userName;
+    userResult.fold((_) {}, (user) {
+      if (user.fullName.isNotEmpty) {
+        userName = user.fullName;
+      } else if (user.email.isNotEmpty) {
+        userName = user.email;
+      }
+    });
+
     final data = await getChartDataUseCase(state.selectedFilter);
     final incomeChange = calculateChange(data.map((e) => e.income).toList());
     final expenseChange = calculateChange(data.map((e) => e.expense).toList());
@@ -25,6 +39,7 @@ class ChartBloc extends Bloc<ChartEvent, ChartState> {
         chartData: data,
         incomeChangePercent: incomeChange,
         expenseChangePercent: expenseChange,
+        userName: userName,
       ),
     );
   }

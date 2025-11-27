@@ -6,15 +6,11 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
-import '../../../../../core/di/injector.dart';
 import '../../bloc/budget_bloc.dart';
 import '../../bloc/budget_event.dart';
 import '../../bloc/budget_state.dart';
-import '../../bloc/category/category_bloc.dart';
-import '../../bloc/category/category_event.dart';
-import '../../bloc/money_sources/money_source_bloc.dart';
-import '../../bloc/money_sources/money_source_event.dart';
-import '../update_budget_page.dart';
+// import '../../domain/entities/budget_entity.dart';
+import '../budget_route.dart';
 // import '../detail_budget_page.dart';
 
 class BudgetCard extends StatelessWidget {
@@ -129,28 +125,12 @@ class BudgetCard extends StatelessWidget {
                           IconButton(
                             icon: Icon(Icons.edit, color: AppColors.main),
                             onPressed: () {
-                              final uid =
-                                  FirebaseAuth.instance.currentUser!.uid;
-
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => MultiBlocProvider(
-                                    providers: [
-                                      BlocProvider.value(
-                                        value: context.read<BudgetBloc>(),
-                                      ),
-                                      BlocProvider(
-                                        create: (_) => sl<CategoryBloc>()
-                                          ..add(const LoadCategories(false)),
-                                      ),
-                                      BlocProvider(
-                                        create: (_) =>
-                                            sl<MoneySourceBloc>()
-                                              ..add(LoadMoneySources(uid)),
-                                      ),
-                                    ],
-                                    child: UpdateBudgetPage(budget: budget),
+                                  builder: (_) => UpdateBudgetRoute(
+                                    budgetBloc: context.read<BudgetBloc>(),
+                                    budget: budget,
                                   ),
                                 ),
                               );

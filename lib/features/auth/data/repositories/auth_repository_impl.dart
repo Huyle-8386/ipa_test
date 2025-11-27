@@ -67,6 +67,16 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<String, User>> getCurrentUser() async {
+    try {
+      final user = await remoteDataSource.getCurrentUser();
+      return Right(user);
+    } catch (e) {
+      return Left('Failed to get current user: ${e.toString()}');
+    }
+  }
+
+  @override
   Future<Either<String, String?>> validateEmail(String email) async {
     if (email.isEmpty) {
       return const Right(null); // No error for empty field

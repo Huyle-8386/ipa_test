@@ -36,11 +36,19 @@ class SettingPage extends StatelessWidget {
                         radius: 20,
                       ),
                       SizedBox(width: w * 0.02),
-                      Text(
-                        "Phung Hao",
-                        style: AppTextStyles.body1.copyWith(
-                          color: AppColors.grey,
-                        ),
+                      BlocBuilder<SettingBloc, SettingState>(
+                        builder: (context, state) {
+                          String userName = '...';
+                          if (state is SettingLoaded) {
+                            userName = state.userName;
+                          }
+                          return Text(
+                            userName,
+                            style: AppTextStyles.body1.copyWith(
+                              color: AppColors.grey,
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

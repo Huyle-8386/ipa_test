@@ -6,8 +6,6 @@ import 'package:fintrack/features/add_transaction/domain/entities/transaction_en
 import 'package:fintrack/features/add_transaction/presentation/bloc/transaction_detail_bloc.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/transaction_detail_event.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/transaction_detail_state.dart';
-import 'package:fintrack/features/home/bloc/home_bloc.dart';
-import 'package:fintrack/features/home/pages/home_page.dart';
 import 'package:fintrack/features/navigation/pages/bottombar_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,24 +31,26 @@ class _TransactionDetailPageState extends State<TransactionDetailPage> {
 
   String _two(int n) => n.toString().padLeft(2, '0');
 
-  String get _dateString {
-    final d = transaction.dateTime;
+  String _dateString(DateTime d) {
     return "${d.year}-${_two(d.month)}-${_two(d.day)} ${_two(d.hour)}:${_two(d.minute)}";
   }
 
-  String get _amountText => transaction.amount.toStringAsFixed(2);
+  String _amountText(double amount) => amount.toStringAsFixed(2);
 
   @override
   Widget build(BuildContext context) {
     final h = SizeUtils.height(context);
     final w = SizeUtils.width(context);
-    final isIncome = transaction.isIncome;
 
     return BlocProvider<TransactionDetailBloc>(
       create: (_) => TransactionDetailBloc(
         deleteTx: sl(),
-        initialState: TransactionDetailState(transaction: transaction),
-      ),
+        getMoneySourceById: sl(),
+        initialState: TransactionDetailState(
+          transaction: transaction,
+          moneySource: transaction.moneySource,
+        ),
+      )..add(LoadMoneySourceById(transaction.moneySource.id)),
       child: BlocConsumer<TransactionDetailBloc, TransactionDetailState>(
         listener: (context, state) {
           if (state.error != null && state.error!.isNotEmpty) {
@@ -61,6 +61,12 @@ class _TransactionDetailPageState extends State<TransactionDetailPage> {
         },
         builder: (context, state) {
           final deleting = state.isDeleting;
+          final tx = state.transaction;
+          final isIncome = tx.isIncome;
+          final moneySource =
+              state.moneySource ?? state.transaction.moneySource;
+          final showDefaultMoneySourceIcon =
+              state.isMoneySourceLoading || state.moneySourceError != null;
           return Scaffold(
             backgroundColor: AppColors.background,
             appBar: AppBar(
@@ -114,7 +120,7 @@ class _TransactionDetailPageState extends State<TransactionDetailPage> {
                                   border: Border.all(color: AppColors.main),
                                 ),
                                 child: Text(
-                                  "\$$_amountText",
+                                  "\$${_amountText(tx.amount)}",
                                   style: AppTextStyles.body1.copyWith(
                                     color: AppColors.white,
                                     fontWeight: FontWeight.w700,
@@ -127,36 +133,36 @@ class _TransactionDetailPageState extends State<TransactionDetailPage> {
                           _infoRow(
                             context,
                             label: "Category",
-                            value: transaction.category.name,
-                            trailing: _iconOrPlaceholder(
-                              transaction.category.icon,
-                            ),
+                            value: tx.category.name,
+                            trailing: _iconOrPlaceholder(tx.category.icon),
                           ),
                           SizedBox(height: h * 0.015),
                           _infoRow(
                             context,
                             label: "Money source",
-                            value: transaction.moneySource.name,
+                            value: moneySource.name,
                             trailing: _iconOrPlaceholder(
-                              transaction.moneySource.icon,
+                              showDefaultMoneySourceIcon
+                                  ? ''
+                                  : moneySource.icon,
                             ),
                           ),
                           SizedBox(height: h * 0.015),
                           _infoRow(
                             context,
                             label: "Date",
-                            value: _dateString,
+                            value: _dateString(tx.dateTime),
                             trailing: const Icon(
                               Icons.calendar_today,
                               color: Colors.white,
                             ),
                           ),
                           SizedBox(height: h * 0.015),
-                          if (transaction.note.trim().isNotEmpty)
+                          if (tx.merchant.trim().isNotEmpty)
                             _infoRow(
                               context,
-                              label: "Note",
-                              value: transaction.note,
+                              label: "Merchant",
+                              value: tx.merchant,
                               multiline: true,
                             ),
                           SizedBox(height: h * 0.03),
@@ -214,6 +220,11 @@ class _TransactionDetailPageState extends State<TransactionDetailPage> {
                                       });
                                       context.read<TransactionDetailBloc>().add(
                                         TransactionDetailUpdated(updated),
+                                      );
+                                      context.read<TransactionDetailBloc>().add(
+                                        LoadMoneySourceById(
+                                          updated.moneySource.id,
+                                        ),
                                       );
                                       ScaffoldMessenger.of(
                                         context,

@@ -1,12 +1,14 @@
 import 'package:fintrack/features/auth/data/datasource/auth_remote_data_source.dart';
 import 'package:fintrack/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:fintrack/features/auth/domain/repositories/auth_repository.dart';
+import 'package:fintrack/features/auth/domain/usecases/get_current_user.dart';
 import 'package:fintrack/features/auth/domain/usecases/sign_in.dart';
 import 'package:fintrack/features/auth/domain/usecases/sign_up.dart';
 import 'package:fintrack/features/auth/domain/usecases/sign_in_with_google.dart';
 import 'package:fintrack/features/auth/domain/usecases/validate_email.dart';
 import 'package:fintrack/features/auth/domain/usecases/validate_password.dart';
 import 'package:fintrack/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:fintrack/features/money_source/domain/usecases/check_user_has_money_source.dart';
 import 'package:get_it/get_it.dart';
 
 final sl = GetIt.instance;
@@ -24,6 +26,7 @@ Future<void> initAuth() async {
   sl.registerLazySingleton(() => SignIn(sl()));
   sl.registerLazySingleton(() => SignUp(sl()));
   sl.registerLazySingleton(() => SignInWithGoogle(sl()));
+  sl.registerLazySingleton(() => GetCurrentUser(sl()));
   sl.registerLazySingleton(() => ValidateEmail(sl()));
   sl.registerLazySingleton(() => ValidatePassword(sl()));
 
@@ -35,6 +38,7 @@ Future<void> initAuth() async {
       signInWithGoogle: sl(),
       validateEmail: sl(),
       validatePassword: sl(),
+      checkUserHasMoneySourceUseCase: sl<CheckUserHasMoneySourceUseCase>(),
     ),
   );
 }

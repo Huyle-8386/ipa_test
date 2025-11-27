@@ -11,3 +11,8 @@ class TransactionDetailUpdated extends TransactionDetailEvent {
   final TransactionEntity transaction;
   TransactionDetailUpdated(this.transaction);
 }
+
+class LoadMoneySourceById extends TransactionDetailEvent {
+  final String moneySourceId;
+  LoadMoneySourceById(this.moneySourceId);
+}

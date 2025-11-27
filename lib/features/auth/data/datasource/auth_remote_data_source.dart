@@ -19,6 +19,8 @@ abstract class AuthRemoteDataSource {
   Future<UserModel> signInWithGoogle();
 
   Future<void> signOut();
+
+  Future<UserModel> getCurrentUser();
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -146,6 +148,25 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       await Future.wait([_firebaseAuth.signOut(), _googleSignIn.signOut()]);
     } catch (e) {
       throw Exception('An error occurred during sign out');
+    }
+  }
+
+  @override
+  Future<UserModel> getCurrentUser() async {
+    try {
+      final user = _firebaseAuth.currentUser;
+      if (user == null) {
+        throw Exception('No authenticated user found');
+      }
+
+      return UserModel(
+        id: user.uid,
+        email: user.email ?? '',
+        fullName: user.displayName ?? user.email ?? 'User',
+        phone: user.phoneNumber,
+      );
+    } catch (e) {
+      throw Exception('Failed to get current user');
     }
   }
 

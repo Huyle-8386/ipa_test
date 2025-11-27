@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fintrack/features/auth/domain/usecases/get_current_user.dart';
 
 // =========================
 //       DATA
@@ -52,7 +53,12 @@ Future<void> initChartFeature() async {
   sl.registerLazySingleton(() => GetChartDataUseCase(sl()));
 
   /// Bloc
-  sl.registerFactory(() => ChartBloc(getChartDataUseCase: sl()));
+  sl.registerFactory(
+    () => ChartBloc(
+      getChartDataUseCase: sl(),
+      getCurrentUser: sl<GetCurrentUser>(),
+    ),
+  );
 
   // =====================================================
   //               MONEY SOURCE FEATURE

@@ -1,21 +1,33 @@
-import 'package:flutter/material.dart';
+import '../../../transaction_history/domain/entities/transaction_entity.dart';
 
+/// IncomeEntity summarizes income per category similar to ExpenseEntity.
 class IncomeEntity {
-  final String icon;
-  final Color color;
-  final String name;
-  final double value;
-  final String amount;
-  final String percentage;
-  final bool isUp;
+  final String? id;
+  final String categoryId;
+  final String categoryName;
+  final String? categoryIcon;
+  final double amount;
+  final bool isIncome;
 
   const IncomeEntity({
-    required this.icon,
-    required this.color,
-    required this.name,
-    required this.value,
+    this.id,
+    required this.categoryId,
+    required this.categoryName,
+    this.categoryIcon,
     required this.amount,
-    required this.percentage,
-    required this.isUp,
+    required this.isIncome,
   });
+
+  String get formattedAmount =>
+      isIncome ? amount.toStringAsFixed(2) : amount.toStringAsFixed(2);
+
+  String get formattedTime => TransactionEntity(
+    categoryId: categoryId,
+    categoryName: categoryName,
+    moneySourceName: '',
+    merchant: '',
+    amount: amount,
+    dateTime: DateTime.now(),
+    isIncome: isIncome,
+  ).formattedTime;
 }

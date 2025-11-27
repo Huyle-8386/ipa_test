@@ -8,6 +8,8 @@ class AuthState extends Equatable {
   final bool rememberMe;
   final bool isLoading;
   final bool isAuthenticated;
+  final User? user;
+  final AuthRedirect redirect;
   final String? emailError;
   final String? passwordError;
   final String? errorMessage;
@@ -20,6 +22,8 @@ class AuthState extends Equatable {
     required this.rememberMe,
     required this.isLoading,
     required this.isAuthenticated,
+    required this.redirect,
+    this.user,
     this.emailError,
     this.passwordError,
     this.errorMessage,
@@ -34,6 +38,7 @@ class AuthState extends Equatable {
       rememberMe: false,
       isLoading: false,
       isAuthenticated: false,
+      redirect: AuthRedirect.none,
     );
   }
 
@@ -45,6 +50,8 @@ class AuthState extends Equatable {
     bool? rememberMe,
     bool? isLoading,
     bool? isAuthenticated,
+    User? user,
+    AuthRedirect? redirect,
     String? emailError,
     String? passwordError,
     String? errorMessage,
@@ -57,6 +64,8 @@ class AuthState extends Equatable {
       rememberMe: rememberMe ?? this.rememberMe,
       isLoading: isLoading ?? this.isLoading,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
+      user: user ?? this.user,
+      redirect: redirect ?? this.redirect,
       emailError: emailError,
       passwordError: passwordError,
       errorMessage: errorMessage,
@@ -80,6 +89,8 @@ class AuthState extends Equatable {
     rememberMe,
     isLoading,
     isAuthenticated,
+    user,
+    redirect,
     emailError,
     passwordError,
     errorMessage,

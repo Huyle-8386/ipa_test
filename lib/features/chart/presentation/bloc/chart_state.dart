@@ -5,12 +5,14 @@ class ChartState {
   final List<Chart> chartData;
   final double incomeChangePercent;
   final double expenseChangePercent;
+  final String userName;
 
   ChartState({
     required this.selectedFilter,
     required this.chartData,
     required this.incomeChangePercent,
     required this.expenseChangePercent,
+    required this.userName,
   });
 
   factory ChartState.initial() => ChartState(
@@ -18,6 +20,7 @@ class ChartState {
     chartData: [],
     incomeChangePercent: 0.0,
     expenseChangePercent: 0.0,
+    userName: 'User',
   );
 
   ChartState copyWith({
@@ -25,12 +28,14 @@ class ChartState {
     List<Chart>? chartData,
     double? incomeChangePercent,
     double? expenseChangePercent,
+    String? userName,
   }) {
     return ChartState(
       selectedFilter: selectedFilter ?? this.selectedFilter,
       chartData: chartData ?? this.chartData,
       incomeChangePercent: incomeChangePercent ?? this.incomeChangePercent,
       expenseChangePercent: expenseChangePercent ?? this.expenseChangePercent,
+      userName: userName ?? this.userName,
     );
   }
 }

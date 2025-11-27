@@ -4,6 +4,7 @@ import 'data/repositories/setting_repository_impl.dart';
 import 'domain/repositories/setting_repository.dart';
 import 'domain/usecase/get_setting_cards_usecase.dart';
 import 'presentation/bloc/setting_bloc.dart';
+import 'package:fintrack/features/auth/domain/usecases/get_current_user.dart';
 
 final sl = GetIt.instance;
 
@@ -23,6 +24,9 @@ Future<void> initSettingFeature() async {
 
   // Bloc (no event dispatch here)
   sl.registerFactory<SettingBloc>(
-    () => SettingBloc(getSettingCardsUseCase: sl()),
+    () => SettingBloc(
+      getSettingCardsUseCase: sl(),
+      getCurrentUser: sl<GetCurrentUser>(),
+    ),
   );
 }

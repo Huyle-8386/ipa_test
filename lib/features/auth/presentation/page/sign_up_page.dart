@@ -1,6 +1,7 @@
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
+import 'package:fintrack/core/di/injector.dart' as di;
 import 'package:fintrack/features/auth/presentation/page/sign_in_page.dart';
 import 'package:fintrack/features/auth/presentation/widget/auth_widgets.dart';
 import 'package:fintrack/features/auth/presentation/bloc/auth_bloc.dart';
@@ -11,7 +12,9 @@ import 'package:fintrack/features/auth/domain/usecases/sign_up.dart';
 import 'package:fintrack/features/auth/domain/usecases/sign_in_with_google.dart';
 import 'package:fintrack/features/auth/domain/usecases/validate_email.dart';
 import 'package:fintrack/features/auth/domain/usecases/validate_password.dart';
-import 'package:fintrack/features/home/pages/home_page.dart';
+import 'package:fintrack/features/money_source/domain/usecases/check_user_has_money_source.dart';
+import 'package:fintrack/features/money_source/presentation/pages/money_source_route.dart';
+import 'package:fintrack/features/navigation/pages/bottombar_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -28,6 +31,8 @@ class SignUpPage extends StatelessWidget {
     final signInWithGoogleUseCase = SignInWithGoogle(repository);
     final validateEmailUseCase = ValidateEmail(repository);
     final validatePasswordUseCase = ValidatePassword(repository);
+    final checkUserHasMoneySourceUseCase = di
+        .sl<CheckUserHasMoneySourceUseCase>();
 
     return BlocProvider(
       create: (context) => AuthBloc(
@@ -36,6 +41,7 @@ class SignUpPage extends StatelessWidget {
         signInWithGoogle: signInWithGoogleUseCase,
         validateEmail: validateEmailUseCase,
         validatePassword: validatePasswordUseCase,
+        checkUserHasMoneySourceUseCase: checkUserHasMoneySourceUseCase,
       ),
       child: const _SignUpView(),
     );
@@ -68,11 +74,21 @@ class _SignUpViewState extends State<_SignUpView> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state.isAuthenticated) {
+        if (state.redirect == AuthRedirect.home) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomePage()),
+            MaterialPageRoute(builder: (context) => const BottombarPage()),
           );
+          context.read<AuthBloc>().add(const AuthNavigationHandled());
+        } else if (state.redirect == AuthRedirect.moneySource &&
+            state.user != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MoneySourceRoute(uid: state.user!.id),
+            ),
+          );
+          context.read<AuthBloc>().add(const AuthNavigationHandled());
         }
         if (state.errorMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
