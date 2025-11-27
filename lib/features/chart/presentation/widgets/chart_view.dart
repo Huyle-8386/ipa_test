@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
+import '../../../../core/utils/currency_formatter.dart';
 import '../../domain/entities/chart.dart';
 
 class ChartView extends StatelessWidget {
@@ -23,7 +24,7 @@ class ChartView extends StatelessWidget {
         .reduce((a, b) => a > b ? a : b);
     final maxValue = (maxIncome > maxExpense ? maxIncome : maxExpense);
     final interval = (maxValue / 3).ceilToDouble();
-
+    final double safeInterval = interval == 0 ? 1.0 : interval;
     final now = DateTime.now();
     final day = now.day.toString().padLeft(2, '0');
     final monthNames = [
@@ -67,19 +68,37 @@ class ChartView extends StatelessWidget {
                 borderData: FlBorderData(show: false),
                 minY: 0,
                 maxY: maxValue + interval,
+
+                lineTouchData: LineTouchData(
+                  enabled: true,
+                  handleBuiltInTouches: true,
+                  touchTooltipData: LineTouchTooltipData(
+                    getTooltipItems: (touchedSpots) {
+                      return touchedSpots.map((spot) {
+                        return LineTooltipItem(
+                          CurrencyFormatter.formatVNDWithSymbol(spot.y),
+                          AppTextStyles.body2.copyWith(
+                            color: spot.bar.color, // <= màu line
+                          ),
+                        );
+                      }).toList();
+                    },
+                  ),
+                ),
+
                 titlesData: FlTitlesData(
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
-                      reservedSize: 50,
-                      interval: interval,
+                      reservedSize: 60,
+                      interval: safeInterval,
                       getTitlesWidget: (value, meta) {
                         return SizedBox(
                           width: w * 0.1,
                           child: FittedBox(
                             fit: BoxFit.scaleDown,
                             child: Text(
-                              '\$${value.toInt()}',
+                              CurrencyFormatter.formatVNDWithSymbol(value),
                               style: AppTextStyles.body2.copyWith(
                                 color: AppColors.grey,
                               ),
@@ -137,15 +156,34 @@ class ChartView extends StatelessWidget {
     );
   }
 
+  // LineChartBarData _buildLine(List<double> values, Color color) {
+  //   return LineChartBarData(
+  //     isCurved: true,
+  //     color: color,
+  //     barWidth: 3,
+  //     belowBarData: BarAreaData(show: false),
+  //     spots: List.generate(
+  //       values.length,
+  //       (i) => FlSpot(i.toDouble(), values[i]),
+  //     ),
+  //   );
+  // }
   LineChartBarData _buildLine(List<double> values, Color color) {
     return LineChartBarData(
       isCurved: true,
       color: color,
       barWidth: 3,
-      belowBarData: BarAreaData(show: false),
       spots: List.generate(
         values.length,
         (i) => FlSpot(i.toDouble(), values[i]),
+      ),
+      belowBarData: BarAreaData(
+        show: true,
+        gradient: LinearGradient(
+          colors: [color.withOpacity(0.4), color.withOpacity(0.0)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
       ),
     );
   }
