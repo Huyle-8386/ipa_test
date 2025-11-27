@@ -171,57 +171,6 @@ class _SignInViewState extends State<_SignInView> {
                       );
                     },
                   ),
-                  SizedBox(height: SizeUtils.height(context) * 0.02),
-                  // Remember me & Forgot password
-                  BlocBuilder<AuthBloc, AuthState>(
-                    builder: (context, state) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Checkbox(
-                                value: state.rememberMe,
-                                onChanged: (value) {
-                                  context.read<AuthBloc>().add(
-                                    ToggleRememberMe(),
-                                  );
-                                },
-                                fillColor: WidgetStateProperty.resolveWith((
-                                  states,
-                                ) {
-                                  if (states.contains(WidgetState.selected)) {
-                                    return AppColors.main;
-                                  }
-                                  return AppColors.widget;
-                                }),
-                                checkColor: Colors.black,
-                              ),
-                              Text(
-                                'Remember Me',
-                                style: AppTextStyles.body2.copyWith(
-                                  color: AppColors.white,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ],
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              // TODO: Implement forgot password
-                            },
-                            child: Text(
-                              'Forgot Password?',
-                              style: AppTextStyles.body2.copyWith(
-                                color: AppColors.main,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
                   SizedBox(height: SizeUtils.height(context) * 0.03),
                   // Sign in button
                   BlocBuilder<AuthBloc, AuthState>(
