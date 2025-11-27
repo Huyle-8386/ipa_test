@@ -11,6 +11,35 @@ class N8nService {
   factory N8nService() => _instance;
   N8nService._internal();
 
+  /// Hàm hỗ trợ làm sạch giá trị tiền tệ - loại bỏ ký hiệu $ và định dạng lại
+  dynamic _cleanCurrencyValue(dynamic value) {
+    if (value == null) return value;
+    if (value is String) {
+      // Loại bỏ ký hiệu $ và các ký tự không phải số
+      String cleaned = value.replaceAll('\$', '').replaceAll(',', '').trim();
+      // Nếu là số hợp lệ, trả về số
+      final parsed = double.tryParse(cleaned);
+      if (parsed != null) return parsed;
+      return cleaned;
+    }
+    if (value is Map) {
+      return _cleanMapCurrencyValues(value as Map<String, dynamic>);
+    }
+    if (value is List) {
+      return value.map((item) => _cleanCurrencyValue(item)).toList();
+    }
+    return value;
+  }
+
+  /// Làm sạch tất cả giá trị tiền tệ trong Map
+  Map<String, dynamic> _cleanMapCurrencyValues(Map<String, dynamic> data) {
+    final cleanedData = <String, dynamic>{};
+    data.forEach((key, value) {
+      cleanedData[key] = _cleanCurrencyValue(value);
+    });
+    return cleanedData;
+  }
+
   // ============================================================
   // Hàm gọi API Budget Suggestions (Flutter2.json)
   // Trả về: your_budgets, needs_attention, detailed_suggestions
@@ -24,10 +53,14 @@ class N8nService {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         // n8n có thể trả về dạng list hoặc object, cần xử lý
+        Map<String, dynamic> result;
         if (data is List && data.isNotEmpty) {
-          return data.first as Map<String, dynamic>;
+          result = data.first as Map<String, dynamic>;
+        } else {
+          result = data as Map<String, dynamic>;
         }
-        return data as Map<String, dynamic>;
+        // Làm sạch dữ liệu tiền tệ (loại bỏ ký hiệu $)
+        return _cleanMapCurrencyValues(result);
       } else {
         throw Exception('Failed to load suggestions: ${response.statusCode}');
       }
@@ -48,10 +81,14 @@ class N8nService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        Map<String, dynamic> result;
         if (data is List && data.isNotEmpty) {
-          return data.first as Map<String, dynamic>;
+          result = data.first as Map<String, dynamic>;
+        } else {
+          result = data as Map<String, dynamic>;
         }
-        return data as Map<String, dynamic>;
+        // Làm sạch dữ liệu tiền tệ (loại bỏ ký hiệu $)
+        return _cleanMapCurrencyValues(result);
       } else {
         throw Exception(
           'Failed to load monthly report: ${response.statusCode}',
@@ -74,10 +111,14 @@ class N8nService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        Map<String, dynamic> result;
         if (data is List && data.isNotEmpty) {
-          return data.first as Map<String, dynamic>;
+          result = data.first as Map<String, dynamic>;
+        } else {
+          result = data as Map<String, dynamic>;
         }
-        return data as Map<String, dynamic>;
+        // Làm sạch dữ liệu tiền tệ (loại bỏ ký hiệu $)
+        return _cleanMapCurrencyValues(result);
       } else {
         throw Exception('Failed to load budget alerts: ${response.statusCode}');
       }

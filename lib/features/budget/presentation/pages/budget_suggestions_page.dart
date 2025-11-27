@@ -3,6 +3,7 @@ import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
 import 'package:fintrack/core/services/n8n_service.dart';
+import 'package:fintrack/core/utils/currency_formatter.dart';
 
 class BudgetSuggestionsPage extends StatefulWidget {
   final String userId;
@@ -318,7 +319,7 @@ class _BudgetSuggestionsPageState extends State<BudgetSuggestionsPage> {
                 style: AppTextStyles.body1.copyWith(color: AppColors.white),
               ),
               Text(
-                "\$${spent.toInt()} / \$${total.toInt()}",
+                "${CurrencyFormatter.formatVNDWithSymbol(spent)} / ${CurrencyFormatter.formatVNDWithSymbol(total)}",
                 style: AppTextStyles.body1.copyWith(color: AppColors.white),
               ),
             ],
@@ -369,7 +370,7 @@ class _BudgetSuggestionsPageState extends State<BudgetSuggestionsPage> {
                 style: AppTextStyles.body1.copyWith(color: AppColors.white),
               ),
               Text(
-                "Spent: \$${spent.toInt()}",
+                "Spent: ${CurrencyFormatter.formatVNDWithSymbol(spent)}",
                 style: AppTextStyles.body2.copyWith(color: AppColors.grey),
               ),
             ],
@@ -426,18 +427,18 @@ class _BudgetSuggestionsPageState extends State<BudgetSuggestionsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Budget: \$${budget.toInt()}",
+                "Budget: ${CurrencyFormatter.formatVNDWithSymbol(budget)}",
                 style: AppTextStyles.caption.copyWith(color: AppColors.grey),
               ),
               Text(
-                "Spent: \$${spent.toInt()}",
+                "Spent: ${CurrencyFormatter.formatVNDWithSymbol(spent)}",
                 style: AppTextStyles.caption.copyWith(color: AppColors.white),
               ),
             ],
           ),
           SizedBox(height: 4),
           Text(
-            "Overspent by \$$overspent",
+            "Overspent by ${CurrencyFormatter.formatVNDWithSymbol(overspent)}",
             style: AppTextStyles.body2.copyWith(color: AppColors.orange),
           ),
         ],
@@ -490,7 +491,7 @@ class _BudgetSuggestionsPageState extends State<BudgetSuggestionsPage> {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    "\$${currentBudget.toInt()}",
+                    CurrencyFormatter.formatVNDWithSymbol(currentBudget),
                     style: AppTextStyles.body1.copyWith(color: AppColors.white),
                   ),
                 ],
@@ -506,7 +507,7 @@ class _BudgetSuggestionsPageState extends State<BudgetSuggestionsPage> {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    "\$${recommended.toInt()}",
+                    CurrencyFormatter.formatVNDWithSymbol(recommended),
                     style: AppTextStyles.body1.copyWith(color: AppColors.main),
                   ),
                 ],

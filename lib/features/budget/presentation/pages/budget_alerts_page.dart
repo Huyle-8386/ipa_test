@@ -3,6 +3,7 @@ import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
 import 'package:fintrack/core/services/n8n_service.dart';
+import 'package:fintrack/core/utils/currency_formatter.dart';
 
 class BudgetAlertsPage extends StatefulWidget {
   final String userId;
@@ -339,7 +340,7 @@ class _BudgetAlertsPageState extends State<BudgetAlertsPage> {
           ),
           SizedBox(height: 10),
           Text(
-            "Budget: \$${budget.toInt()}",
+            "Budget: ${CurrencyFormatter.formatVNDWithSymbol(budget)}",
             style: AppTextStyles.body2.copyWith(color: AppColors.grey),
           ),
         ],
@@ -392,7 +393,7 @@ class _BudgetAlertsPageState extends State<BudgetAlertsPage> {
                         ),
                       ),
                       TextSpan(
-                        text: "\$${budget.toInt()}",
+                        text: CurrencyFormatter.formatVNDWithSymbol(budget),
                         style: AppTextStyles.caption.copyWith(
                           color: AppColors.green,
                         ),
@@ -410,7 +411,7 @@ class _BudgetAlertsPageState extends State<BudgetAlertsPage> {
                         ),
                       ),
                       TextSpan(
-                        text: "\$${spent.toInt()}",
+                        text: CurrencyFormatter.formatVNDWithSymbol(spent),
                         style: AppTextStyles.caption.copyWith(
                           color: AppColors.orange,
                         ),
@@ -425,7 +426,9 @@ class _BudgetAlertsPageState extends State<BudgetAlertsPage> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                isExceeded ? "Overspent by \$$diff" : "Remaining: \$$diff",
+                isExceeded
+                    ? "Overspent by ${CurrencyFormatter.formatVNDWithSymbol(diff)}"
+                    : "Remaining: ${CurrencyFormatter.formatVNDWithSymbol(diff)}",
                 style: AppTextStyles.body2.copyWith(
                   color: isExceeded ? AppColors.red : AppColors.orange,
                 ),

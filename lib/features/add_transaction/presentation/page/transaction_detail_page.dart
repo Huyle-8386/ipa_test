@@ -37,8 +37,6 @@ class _TransactionDetailPageState extends State<TransactionDetailPage> {
     return "${d.year}-${_two(d.month)}-${_two(d.day)} ${_two(d.hour)}:${_two(d.minute)}";
   }
 
-  String _amountText(double amount) => amount.toStringAsFixed(2);
-
   @override
   Widget build(BuildContext context) {
     final h = SizeUtils.height(context);

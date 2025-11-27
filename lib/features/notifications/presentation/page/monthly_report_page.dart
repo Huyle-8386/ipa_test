@@ -3,6 +3,7 @@ import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
 import 'package:fintrack/core/services/n8n_service.dart';
+import 'package:fintrack/core/utils/currency_formatter.dart';
 
 class MonthlyReportPage extends StatefulWidget {
   final String userId;
@@ -87,7 +88,7 @@ class _MonthlyReportPageState extends State<MonthlyReportPage> {
                 .reduce((a, b) => a > b ? a : b);
           }
         } else if (topCategoriesData is String) {
-          // Parse từ text dạng "- Dining: $450\n- Groceries: $300"
+          // Parse từ text dạng "- Dining: 450\n- Groceries: 300"
           _topCategories = _parseTextToCategories(topCategoriesData);
           if (_topCategories.isNotEmpty) {
             _maxCategoryAmount = _topCategories
@@ -128,7 +129,7 @@ class _MonthlyReportPageState extends State<MonthlyReportPage> {
     }
   }
 
-  // Parse text "- Dining: $450.75" thành list categories
+  // Parse text "- Dining: 450.75" thành list categories
   List<Map<String, dynamic>> _parseTextToCategories(String text) {
     final List<Map<String, dynamic>> categories = [];
     final lines = text.split('\n');
@@ -315,7 +316,7 @@ class _MonthlyReportPageState extends State<MonthlyReportPage> {
                   child: _buildStatCard(
                     context,
                     "Total Spending",
-                    "\$${_totalSpending.toStringAsFixed(2)}",
+                    CurrencyFormatter.formatVNDWithSymbol(_totalSpending),
                     Icons.account_balance_wallet,
                   ),
                 ),
@@ -537,7 +538,7 @@ class _MonthlyReportPageState extends State<MonthlyReportPage> {
                     style: AppTextStyles.body1.copyWith(color: AppColors.white),
                   ),
                   Text(
-                    "\$${amount.toStringAsFixed(2)}",
+                    CurrencyFormatter.formatVNDWithSymbol(amount),
                     style: AppTextStyles.body1.copyWith(color: AppColors.white),
                   ),
                 ],
@@ -584,7 +585,7 @@ class _MonthlyReportPageState extends State<MonthlyReportPage> {
             ),
           ),
           Text(
-            "\$${amount.toStringAsFixed(2)}",
+            CurrencyFormatter.formatVNDWithSymbol(amount),
             style: AppTextStyles.body1.copyWith(color: AppColors.white),
           ),
         ],
