@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fintrack/features/add_transaction/presentation/page/edit_transaction_page.dart';
 
+import '../../../../core/utils/currency_formatter.dart';
+
 class TransactionDetailPage extends StatefulWidget {
   final TransactionEntity transaction;
 
@@ -120,7 +122,10 @@ class _TransactionDetailPageState extends State<TransactionDetailPage> {
                                   border: Border.all(color: AppColors.main),
                                 ),
                                 child: Text(
-                                  "\$${_amountText(tx.amount)}",
+                                  // "\$${_amountText(tx.amount)}",
+                                  CurrencyFormatter.formatVNDWithSymbol(
+                                    tx.amount,
+                                  ),
                                   style: AppTextStyles.body1.copyWith(
                                     color: AppColors.white,
                                     fontWeight: FontWeight.w700,

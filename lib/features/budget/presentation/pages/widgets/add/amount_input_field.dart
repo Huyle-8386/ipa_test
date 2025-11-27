@@ -48,7 +48,7 @@ class _AmountInputFieldState extends State<AmountInputField> {
       style: const TextStyle(color: AppColors.white),
       decoration: InputDecoration(
         labelText: "Amount",
-        hintText: "\$0",
+        hintText: "0",
         hintStyle: const TextStyle(color: AppColors.grey),
         labelStyle: const TextStyle(color: AppColors.grey),
         enabledBorder: OutlineInputBorder(

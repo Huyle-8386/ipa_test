@@ -28,6 +28,7 @@ class MoneySourcePage extends StatelessWidget {
         //   icon: const Icon(Icons.arrow_back_ios, color: AppColors.white),
         //   onPressed: () => Navigator.pop(context),
         // ),
+        leading: SizedBox(),
         title: Text(
           'Money Sources',
           style: AppTextStyles.body1.copyWith(color: AppColors.white),

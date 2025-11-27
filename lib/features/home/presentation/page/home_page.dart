@@ -18,6 +18,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fintrack/features/money_source/presentation/pages/money_source_route.dart';
 import 'package:fintrack/features/transaction_history/presentation/pages/transaction_%20history_page.dart';
 
+import '../../../../core/utils/currency_formatter.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -83,21 +85,21 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ],
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const NotificationsPage(),
-                            ),
-                          );
-                        },
-                        child: Row(
-                          children: [
-                            Image.asset('assets/icons/notification.png'),
-                          ],
-                        ),
-                      ),
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //         builder: (context) => const NotificationsPage(),
+                      //       ),
+                      //     );
+                      //   },
+                      //   child: Row(
+                      //     children: [
+                      //       Image.asset('assets/icons/notification.png'),
+                      //     ],
+                      //   ),
+                      // ),
                     ],
                   ),
                   SizedBox(height: h * 0.02),
@@ -118,7 +120,10 @@ class _HomePageState extends State<HomePage> {
                         builder: (context, state) {
                           if (state is HomeLoaded) {
                             return Text(
-                              '\$${state.totalBalance.toStringAsFixed(2)}',
+                              // '\$${state.totalBalance.toStringAsFixed(2)}',
+                              CurrencyFormatter.formatVNDWithCurrency(
+                                state.totalBalance,
+                              ),
                               style: AppTextStyles.heading1.copyWith(
                                 color: AppColors.main,
                               ),

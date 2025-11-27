@@ -10,6 +10,7 @@ import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
 
+import '../../../../core/utils/currency_formatter.dart';
 import '../bloc/chart_bloc.dart';
 import '../bloc/money_source/money_source_bloc.dart';
 
@@ -81,40 +82,40 @@ class _ChartPageState extends State<ChartPage> {
                       ),
                     ],
                   ),
-                  Image.asset("assets/icons/notification.png"),
+                  // Image.asset("assets/icons/notification.png"),
                 ],
               ),
 
               SizedBox(height: h * 0.02),
 
               // Search box
-              Container(
-                height: h * 0.06,
-                width: w * 0.9,
-                decoration: BoxDecoration(
-                  color: AppColors.widget,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: TextField(
-                  controller: _searchController,
-                  style: AppTextStyles.body1.copyWith(color: AppColors.white),
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(vertical: h * 0.02),
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: AppColors.white,
-                      size: h * 0.03,
-                    ),
-                    hintText: "Super AI search",
-                    hintStyle: AppTextStyles.body1.copyWith(
-                      color: AppColors.grey,
-                    ),
-                    border: InputBorder.none,
-                  ),
-                ),
-              ),
+              // Container(
+              //   height: h * 0.06,
+              //   width: w * 0.9,
+              //   decoration: BoxDecoration(
+              //     color: AppColors.widget,
+              //     borderRadius: BorderRadius.circular(12),
+              //   ),
+              //   child: TextField(
+              //     controller: _searchController,
+              //     style: AppTextStyles.body1.copyWith(color: AppColors.white),
+              //     decoration: InputDecoration(
+              //       contentPadding: EdgeInsets.symmetric(vertical: h * 0.02),
+              //       prefixIcon: Icon(
+              //         Icons.search,
+              //         color: AppColors.white,
+              //         size: h * 0.03,
+              //       ),
+              //       hintText: "Super AI search",
+              //       hintStyle: AppTextStyles.body1.copyWith(
+              //         color: AppColors.grey,
+              //       ),
+              //       border: InputBorder.none,
+              //     ),
+              //   ),
+              // ),
 
-              SizedBox(height: h * 0.02),
+              // SizedBox(height: h * 0.02),
 
               // Chart section
               BlocBuilder<ChartBloc, ChartState>(
@@ -227,7 +228,7 @@ class _ChartPageState extends State<ChartPage> {
                           ),
                         ),
                         Text(
-                          "\$${totalBalance.toStringAsFixed(2)}",
+                          CurrencyFormatter.formatVNDWithCurrency(totalBalance),
                           style: AppTextStyles.heading1.copyWith(
                             color: AppColors.main,
                           ),
@@ -254,7 +255,9 @@ class _ChartPageState extends State<ChartPage> {
                           return AccountItem(
                             images: ms.icon,
                             resource: ms.name,
-                            money: "\$${ms.balance.toStringAsFixed(2)}",
+                            money: CurrencyFormatter.formatVNDWithCurrency(
+                              ms.balance,
+                            ),
                           );
                         },
                       );

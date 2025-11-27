@@ -4,6 +4,8 @@ import 'package:fintrack/core/utils/size_utils.dart';
 import 'package:fintrack/features/chart/domain/entities/money_source_entity.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/utils/currency_formatter.dart';
+
 class AccountItem extends StatelessWidget {
   final MoneySourceEntity moneySource;
 
@@ -33,7 +35,8 @@ class AccountItem extends StatelessWidget {
               Image.asset(moneySource.icon),
               SizedBox(height: h * 0.01),
               Text(
-                '\$${moneySource.balance.toStringAsFixed(2)}',
+                // '\$${moneySource.balance.toStringAsFixed(2)}',
+                CurrencyFormatter.formatVNDWithCurrency(moneySource.balance),
                 style: AppTextStyles.body1.copyWith(color: AppColors.white),
               ),
               SizedBox(height: h * 0.01),
