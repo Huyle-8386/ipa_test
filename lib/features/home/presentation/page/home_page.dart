@@ -2,6 +2,8 @@ import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
 import 'package:fintrack/features/budget/presentation/pages/budget_route.dart';
+import 'package:fintrack/features/budget/presentation/pages/budget_alerts_page.dart';
+import 'package:fintrack/features/budget/presentation/pages/budget_suggestions_page.dart';
 import 'package:fintrack/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fintrack/features/home/presentation/bloc/home_event.dart';
 import 'package:fintrack/features/home/presentation/bloc/home_state.dart';
@@ -9,6 +11,7 @@ import 'package:fintrack/features/home/presentation/widgets/account_item.dart';
 import 'package:fintrack/features/home/presentation/widgets/my_pie_chart.dart';
 import 'package:fintrack/features/home/presentation/widgets/transaction_history.dart';
 import 'package:fintrack/features/notifications/presentation/page/notifications_page.dart';
+import 'package:fintrack/features/notifications/presentation/page/monthly_report_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -244,7 +247,17 @@ class _HomePageState extends State<HomePage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Image.asset('assets/icons/swap.png'),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => MonthlyReportPage(userId: uid),
+                              ),
+                            );
+                          },
+                          child: Image.asset('assets/icons/swap.png'),
+                        ),
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -267,9 +280,29 @@ class _HomePageState extends State<HomePage> {
                           },
                           child: Image.asset('assets/icons/deposit.png'),
                         ),
-
-                        Image.asset('assets/icons/buy.png'),
-                        Image.asset('assets/icons/add.png'),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BudgetAlertsPage(userId: uid),
+                              ),
+                            );
+                          },
+                          child: Image.asset('assets/icons/buy.png'),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    BudgetSuggestionsPage(userId: uid),
+                              ),
+                            );
+                          },
+                          child: Image.asset('assets/icons/add.png'),
+                        ),
                       ],
                     ),
                   ),
