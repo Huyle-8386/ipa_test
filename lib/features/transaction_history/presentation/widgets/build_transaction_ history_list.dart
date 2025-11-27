@@ -1,7 +1,7 @@
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
-import 'package:fintrack/features/transaction_%20history/domain/entities/transaction_entity.dart';
+import 'package:fintrack/features/transaction_history/domain/entities/transaction_entity.dart';
 import 'package:flutter/material.dart';
 
 Widget buildTransactionHistoryList(
@@ -91,8 +91,8 @@ Widget _buildTransactionItem(
         children: [
           // Icon with dynamic color
           Container(
-            width: 48,
-            height: 48,
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
               // color: categoryColor.withOpacity(0.2),
               borderRadius: BorderRadius.circular(12),
@@ -124,7 +124,7 @@ Widget _buildTransactionItem(
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  transaction.note,
+                  transaction.merchant,
                   style: TextStyle(
                     color: AppColors.grey,
                     fontSize: AppTextStyles.caption.fontSize,

@@ -52,12 +52,12 @@ class SettingPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Image.asset(
-                    "assets/icons/notification.png",
-                    width: w * 0.06,
-                    height: w * 0.06,
-                    fit: BoxFit.contain,
-                  ),
+                  // Image.asset(
+                  //   "assets/icons/notification.png",
+                  //   width: w * 0.06,
+                  //   height: w * 0.06,
+                  //   fit: BoxFit.contain,
+                  // ),
                 ],
               ),
 

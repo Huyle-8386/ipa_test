@@ -1,7 +1,7 @@
-import 'package:fintrack/features/transaction_%20history/data/datasources/transaction_history_remote_ds.dart';
-import 'package:fintrack/features/transaction_%20history/data/models/transaction_model.dart';
-import 'package:fintrack/features/transaction_%20history/domain/entities/transaction_entity.dart';
-import 'package:fintrack/features/transaction_%20history/domain/repositories/transaction_history_repository.dart';
+import 'package:fintrack/features/transaction_history/data/datasources/transaction_history_remote_ds.dart';
+import 'package:fintrack/features/transaction_history/data/models/transaction_model.dart';
+import 'package:fintrack/features/transaction_history/domain/entities/transaction_entity.dart';
+import 'package:fintrack/features/transaction_history/domain/repositories/transaction_history_repository.dart';
 
 class TransactionHistoryRepositoryImpl implements TransactionHistoryRepository {
   final TransactionHistoryRemoteDataSource remoteDataSource;

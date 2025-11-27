@@ -6,6 +6,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
+import '../../../../../core/utils/currency_formatter.dart';
 import '../../bloc/budget_bloc.dart';
 import '../../bloc/budget_event.dart';
 import '../../bloc/budget_state.dart';
@@ -168,7 +169,9 @@ class BudgetCard extends StatelessWidget {
                             ),
                             SizedBox(height: h * 0.01),
                             Text(
-                              "Spend: \$${budget.spent.toStringAsFixed(0)} / \$${budget.amount.toStringAsFixed(0)}",
+                              // "Spend: \$${budget.spent.toStringAsFixed(0)} / \$${budget.amount.toStringAsFixed(0)}",
+                              "Spend: ${CurrencyFormatter.formatVNDWithSymbol(budget.spent)}" +
+                                  " / ${CurrencyFormatter.formatVNDWithSymbol(budget.amount)}",
                               style: AppTextStyles.caption.copyWith(
                                 color: AppColors.grey,
                               ),

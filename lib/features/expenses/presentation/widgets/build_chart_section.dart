@@ -2,10 +2,12 @@
 import 'dart:math' as math;
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
+import 'package:fintrack/core/utils/currency_formatter.dart';
 import 'package:fintrack/features/expenses/domain/entities/expense_entity.dart';
 import 'package:flutter/material.dart';
 
-Widget buildChartSection(double? totalValue, List<ExpenseEntity> expenses) {
+// Widget chỉ hiển thị biểu đồ và chú giải (không có tổng tiền)
+Widget buildChartSection(List<ExpenseEntity> expenses) {
   return Padding(
     padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
     child: Row(
@@ -15,24 +17,9 @@ Widget buildChartSection(double? totalValue, List<ExpenseEntity> expenses) {
         SizedBox(
           width: 150,
           height: 150,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              CustomPaint(
-                size: const Size(150, 150),
-                painter: PieChartPainter(expenses: expenses),
-              ),
-              // Hiển thị tổng giá trị đã được tính toán
-              Text(
-                "\$${(totalValue ?? 0.0).toStringAsFixed(2)}\nTotal",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontWeight: AppTextStyles.body1.fontWeight,
-                  fontSize: AppTextStyles.heading2.fontSize,
-                ),
-              ),
-            ],
+          child: CustomPaint(
+            size: const Size(150, 150),
+            painter: PieChartPainter(expenses: expenses),
           ),
         ),
         const SizedBox(width: 40),
@@ -67,6 +54,34 @@ Widget buildChartSection(double? totalValue, List<ExpenseEntity> expenses) {
                   ),
                 )
                 .toList(),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+// Widget riêng để hiển thị tổng tiền
+Widget buildTotalSection(double totalValue) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'Total: ',
+          style: TextStyle(
+            color: AppColors.white,
+            fontSize: AppTextStyles.heading2.fontSize,
+            fontWeight: AppTextStyles.heading2.fontWeight,
+          ),
+        ),
+        Text(
+          CurrencyFormatter.formatVNDWithSymbol(totalValue),
+          style: TextStyle(
+            color: AppColors.orange,
+            fontWeight: FontWeight.bold,
+            fontSize: AppTextStyles.heading2.fontSize,
           ),
         ),
       ],
@@ -115,7 +130,7 @@ class PieChartPainter extends CustomPainter {
 // Helper color mapping for categories
 Color _getCategoryColor(String categoryName) {
   final category = categoryName.toLowerCase();
-  if (category.contains('food')) return AppColors.orange;
+  if (category.contains('fnb')) return AppColors.orange;
   if (category.contains('taxi')) return AppColors.blue;
   if (category.contains('shopping')) return AppColors.red;
   if (category.contains('health')) return AppColors.turquoise;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/utils/currency_formatter.dart';
 import '../../domain/entities/money_source_entity.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
@@ -51,7 +52,8 @@ class MoneySourceItem extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          'Balance: \$${moneySource.balance.toStringAsFixed(2)}',
+          // 'Balance: \$${moneySource.balance.toStringAsFixed(2)}',
+          'Balance: ${CurrencyFormatter.formatVNDWithSymbol(moneySource.balance)}',
           style: AppTextStyles.caption.copyWith(color: AppColors.grey),
         ),
         trailing: Row(

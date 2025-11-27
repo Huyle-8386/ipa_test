@@ -1,4 +1,4 @@
-import 'package:fintrack/features/transaction_%20history/domain/repositories/transaction_history_repository.dart';
+import 'package:fintrack/features/transaction_history/domain/repositories/transaction_history_repository.dart';
 
 class GetFilterTypesUsecase {
   final TransactionHistoryRepository repository;

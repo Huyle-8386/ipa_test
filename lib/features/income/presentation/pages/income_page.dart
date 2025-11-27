@@ -266,7 +266,12 @@ class _IncomePageContentState extends State<_IncomePageContent> {
                 Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 600),
-                    child: buildChartSection(state.totalValue, state.incomes),
+                    child: Column(
+                      children: [
+                        buildChartSection(state.incomes),
+                        buildTotalSection(state.totalValue),
+                      ],
+                    ),
                   ),
                 ),
 

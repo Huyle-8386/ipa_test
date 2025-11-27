@@ -2,11 +2,14 @@
 import 'dart:math' as math;
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/theme/app_text_styles.dart';
+import 'package:fintrack/core/utils/currency_formatter.dart';
 import 'package:fintrack/features/income/domain/entities/income_entity.dart';
 import 'package:flutter/material.dart';
 
-Widget buildChartSection(double? totalValue, List<IncomeEntity> incomes) {
-  return Center(
+// Widget chỉ hiển thị biểu đồ và chú giải (không có tổng tiền)
+Widget buildChartSection(List<IncomeEntity> incomes) {
+  return Padding(
+    padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -14,24 +17,9 @@ Widget buildChartSection(double? totalValue, List<IncomeEntity> incomes) {
         SizedBox(
           width: 150,
           height: 150,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              CustomPaint(
-                size: const Size(150, 150),
-                painter: PieChartPainter(incomes: incomes),
-              ),
-              // Hiển thị tổng giá trị đã được tính toán
-              Text(
-                "\$${(totalValue ?? 0.0).toStringAsFixed(2)}\nTotal",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: AppTextStyles.heading2.fontSize,
-                ),
-              ),
-            ],
+          child: CustomPaint(
+            size: const Size(150, 150),
+            painter: PieChartPainter(incomes: incomes),
           ),
         ),
         const SizedBox(width: 40),
@@ -66,6 +54,34 @@ Widget buildChartSection(double? totalValue, List<IncomeEntity> incomes) {
                   ),
                 )
                 .toList(),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+// Widget riêng để hiển thị tổng tiền
+Widget buildTotalSection(double totalValue) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'Total: ',
+          style: TextStyle(
+            color: AppColors.white,
+            fontSize: AppTextStyles.heading2.fontSize,
+            fontWeight: AppTextStyles.heading2.fontWeight,
+          ),
+        ),
+        Text(
+          CurrencyFormatter.formatVNDWithCurrency(totalValue),
+          style: TextStyle(
+            color: AppColors.brightOrange,
+            fontWeight: FontWeight.bold,
+            fontSize: AppTextStyles.heading2.fontSize,
           ),
         ),
       ],

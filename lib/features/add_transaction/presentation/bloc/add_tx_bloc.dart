@@ -6,6 +6,7 @@ import 'package:fintrack/features/add_transaction/domain/usecases/get_categories
 import 'package:fintrack/features/add_transaction/domain/usecases/get_money_sources_usecase.dart';
 import 'package:fintrack/features/add_transaction/domain/usecases/save_transaction_usecase.dart';
 import 'package:fintrack/features/add_transaction/domain/usecases/update_transaction_usecase.dart';
+import 'package:fintrack/features/add_transaction/domain/usecases/update_budgets_with_transaction_usecase.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_event.dart';
 import 'package:fintrack/features/add_transaction/presentation/bloc/add_tx_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,6 +17,7 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
   final SaveTransactionUsecase saveTx;
   final UpdateTransactionUsecase updateTx;
   final ChangeMoneySourceBalanceUsecase changeBalance;
+  final UpdateBudgetsWithTransactionUsecase updateBudgets;
 
   AddTxBloc({
     required this.getCategories,
@@ -23,6 +25,7 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
     required this.saveTx,
     required this.updateTx,
     required this.changeBalance,
+    required this.updateBudgets,
   }) : super(AddTxInitial()) {
     on<AddTxInitEvent>(_onInit);
     on<AddTxInitEditEvent>(_onInitEdit);
@@ -320,6 +323,8 @@ class AddTxBloc extends Bloc<AddTxEvent, AddTxState> {
           amount: amount,
           isIncome: isIncome,
         );
+
+        await updateBudgets(savedTx);
 
         emit(
           AddTxSubmitSuccess(

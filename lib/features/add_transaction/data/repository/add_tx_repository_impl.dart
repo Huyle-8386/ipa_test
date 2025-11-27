@@ -42,4 +42,10 @@ class AddTxRepositoryImpl implements AddTxRepository {
       newModel: newModel,
     );
   }
+
+  @override
+  Future<void> updateBudgetsWithTransaction(TransactionEntity tx) {
+    final model = TransactionModel.fromEntity(tx);
+    return remote.updateBudgetsWithTransaction(model);
+  }
 }

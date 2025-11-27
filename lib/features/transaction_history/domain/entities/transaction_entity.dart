@@ -1,3 +1,5 @@
+import 'package:fintrack/core/utils/currency_formatter.dart';
+
 enum TransactionType { spending, income, all }
 
 class TransactionEntity {
@@ -6,7 +8,7 @@ class TransactionEntity {
   final String categoryName;
   final String? categoryIcon; // Icon path from category
   final String moneySourceName;
-  final String note;
+  final String merchant;
   final double amount;
   final DateTime dateTime;
   final bool isIncome;
@@ -17,7 +19,7 @@ class TransactionEntity {
     required this.categoryName,
     this.categoryIcon,
     required this.moneySourceName,
-    required this.note,
+    required this.merchant,
     required this.amount,
     required this.dateTime,
     required this.isIncome,
@@ -28,8 +30,8 @@ class TransactionEntity {
       isIncome ? TransactionType.income : TransactionType.spending;
 
   String get formattedAmount => isIncome
-      ? '+\$${amount.toStringAsFixed(2)}'
-      : '-\$${amount.toStringAsFixed(2)}';
+      ? '+${CurrencyFormatter.formatVNDWithSymbol(amount)}'
+      : '-${CurrencyFormatter.formatVNDWithSymbol(amount)}';
 
   String get formattedTime {
     final hour = dateTime.hour > 12 ? dateTime.hour - 12 : dateTime.hour;

@@ -178,15 +178,14 @@ IconData _getCategoryIcon(String categoryName) {
 
 Color _getCategoryColor(String categoryName) {
   final category = categoryName.toLowerCase();
-  if (category.contains('food')) return AppColors.red;
-  if (category.contains('taxi') || category.contains('transport'))
-    return AppColors.blue;
-  if (category.contains('shopping')) return AppColors.orange;
+  if (category.contains('FnB')) return AppColors.orange;
+  if (category.contains('taxi')) return AppColors.blue;
+  if (category.contains('shopping')) return AppColors.red;
   if (category.contains('transfer') || category.contains('salary'))
     return AppColors.green;
   if (category.contains('entertainment')) return AppColors.purple;
   if (category.contains('health')) return Colors.pink;
-  if (category.contains('education')) return Colors.teal;
+  if (category.contains('groceries')) return Colors.green;
   return AppColors.grey;
 }
 
@@ -199,7 +198,7 @@ Widget buildEmptyExpenseList() {
         const Icon(Icons.search_off, color: AppColors.grey, size: 50),
         const SizedBox(height: 16),
         Text(
-          "Không tìm thấy khoản chi tiêu nào",
+          "No expenses found",
           style: TextStyle(
             color: AppColors.grey,
             fontSize: AppTextStyles.body1.fontSize,

@@ -5,7 +5,7 @@ import 'package:fintrack/features/chart/chart_injection.dart';
 import 'package:fintrack/features/expenses/expenses_injection.dart';
 import 'package:fintrack/features/home/home_injection.dart';
 import 'package:fintrack/features/income/income_injection.dart';
-import 'package:fintrack/features/transaction_%20history/transaction_history_injection.dart';
+import 'package:fintrack/features/transaction_history/transaction_history_injection.dart';
 
 import 'package:fintrack/features/setting/setting_injection.dart';
 import 'package:get_it/get_it.dart';

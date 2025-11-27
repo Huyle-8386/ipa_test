@@ -51,7 +51,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-
+        leading: SizedBox(),
         title: Text(
           "AI Chat",
           style: AppTextStyles.body1.copyWith(

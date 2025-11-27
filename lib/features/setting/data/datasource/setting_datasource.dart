@@ -20,8 +20,8 @@ class SettingDatasource {
       ),
       SettingCardEntity(
         iconPath: 'assets/icons/account.png',
-        title: 'Account',
-        subTitle: 'Account settings, alerts & notifications',
+        title: 'Logout',
+        subTitle: 'Sign out from the app',
       ),
       SettingCardEntity(
         iconPath: 'assets/icons/data.png',

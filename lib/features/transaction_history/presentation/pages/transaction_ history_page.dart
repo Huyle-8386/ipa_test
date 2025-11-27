@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fintrack/core/theme/app_colors.dart';
 import 'package:fintrack/core/utils/size_utils.dart';
-import 'package:fintrack/features/transaction_%20history/domain/entities/transaction_entity.dart';
-import 'package:fintrack/features/transaction_%20history/presentation/bloc/transaction_%20history_bloc.dart';
-import 'package:fintrack/features/transaction_%20history/presentation/bloc/transaction_%20history_event.dart';
-import 'package:fintrack/features/transaction_%20history/presentation/bloc/transaction_%20history_state.dart';
-import 'package:fintrack/features/transaction_%20history/presentation/widgets/build_transaction_%20history_list.dart';
+import 'package:fintrack/features/transaction_history/domain/entities/transaction_entity.dart';
+import 'package:fintrack/features/transaction_history/presentation/bloc/transaction_%20history_bloc.dart';
+import 'package:fintrack/features/transaction_history/presentation/bloc/transaction_%20history_event.dart';
+import 'package:fintrack/features/transaction_history/presentation/bloc/transaction_%20history_state.dart';
+import 'package:fintrack/features/transaction_history/presentation/widgets/build_transaction_%20history_list.dart';
 
 class TransactionHistoryPage extends StatelessWidget {
   const TransactionHistoryPage({super.key});

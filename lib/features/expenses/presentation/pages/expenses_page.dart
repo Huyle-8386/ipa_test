@@ -264,7 +264,12 @@ class _ExpensesPageContentState extends State<_ExpensesPageContent> {
                 ),
 
                 Center(
-                  child: buildChartSection(state.totalValue, state.expenses),
+                  child: Column(
+                    children: [
+                      buildChartSection(state.expenses),
+                      buildTotalSection(state.totalValue),
+                    ],
+                  ),
                 ),
 
                 const SizedBox(height: 20),

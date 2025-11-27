@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fintrack/features/transaction_%20history/data/models/transaction_model.dart';
-import 'package:fintrack/features/transaction_%20history/domain/entities/transaction_entity.dart';
+import 'package:fintrack/features/transaction_history/data/models/transaction_model.dart';
+import 'package:fintrack/features/transaction_history/domain/entities/transaction_entity.dart';
 
 abstract class TransactionHistoryRemoteDataSource {
   Future<List<TransactionModel>> getTransactions();
@@ -95,10 +95,10 @@ class TransactionHistoryRemoteDataSourceImpl
 
     return filtered.where((t) {
       final category = t.categoryName.toLowerCase();
-      final note = t.note.toLowerCase();
+      final merchant = t.merchant.toLowerCase();
       final moneySource = t.moneySourceName.toLowerCase();
       return category.contains(q) ||
-          note.contains(q) ||
+          merchant.contains(q) ||
           moneySource.contains(q);
     }).toList();
   }
